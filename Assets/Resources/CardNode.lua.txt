@@ -1,0 +1,64 @@
+local Object = require("BaseNode");
+
+-- 创建子类Child
+Object:subclass("Card");
+
+Card.prototype.initStates =1;
+
+function Card.prototype:output(a, b)
+    -- 求和后平方
+    local sum = Card.super.prototype.output(self, a, b);
+    return sum ^ 2;
+end
+
+--卡牌名
+function  Card.prototype:setName(objName)
+    self.name=objName;
+end
+--卡牌id
+function Card.prototype:setId(objId)
+    self.objId=objId;
+end
+--卡牌类型
+function Card.prototype:setType(objType)
+    self.type=objType;
+end
+--卡牌数值
+function Card.prototype:setNumber(objNumber)
+    self.number=objNumber;
+end
+--初始化
+function Card.prototype:init(objName,objId,objType,objNumber)
+    if self.initStates ==1 then
+        self:setName(objName);
+        self:setId(objId);
+        self:setType(objType);
+        self:setNumber(objNumber);
+        self.initStates=0;
+    else
+        print("不能重复赋值");
+    end
+end
+
+function Card.prototype:changeInformation()
+    print('wait');
+end
+
+function Card.prototype:cardInformation()
+    print("Card information is here");
+    return 1
+end
+
+function start()
+    local c = Card:new('obj');
+    --print (c:output(2, 2));    -- 输出16
+    print(c.name)
+    local a =Card();
+    print(a.name);
+    a:init('card2',1,1,1);
+    a:init('card3',1,1,1);
+    print(a.name..a.objId);
+
+end
+
+return Card

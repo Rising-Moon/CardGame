@@ -49,6 +49,7 @@ namespace XLuaBehaviour{
         
         void Awake(){
             Thread.Sleep(1000);
+            
             LuaTable meta = luaEnv.NewTable();
             meta.Set("__index", luaEnv.Global);
             foreach (var script in scripts) {
@@ -104,6 +105,7 @@ namespace XLuaBehaviour{
                     
                     lastGCTime = Time.time;
                 }
+                
             }
         }
 

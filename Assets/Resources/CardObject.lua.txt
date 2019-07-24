@@ -1,0 +1,37 @@
+local Object= require("BaseObject");
+
+CardObject = {objId= nil};
+
+setmetatable(CardObject,Object);
+
+--还是和类定义一样，表索引设定为自身
+CardObject.__index = CardObject
+
+function CardObject:new(CardName)
+    local self = {}             --初始化对象自身
+    self = Object:new(CardName)       --将对象自身设定为父类，这个语句相当于其他语言的super ，可以理解为调用父类的构造函数
+    setmetatable(self, CardObject)    --将对象自身元表设定为SubClass类
+    self.objId= 10                   --新的属性初始化，如果没有将会按照声明=0
+    self:init();
+    return self
+end
+
+function CardObject:upId()
+    self.objId=self.objId+1;
+end
+
+function CardObject:init()
+    print(self.objname..":"..self.objId);
+end
+
+function start()
+    print("lua start...");
+    local test = Object:new('obj');
+    test:change('hello');
+    --print(test.objname);
+    local cardTest = CardObject:new('huoqiyu');
+    print(cardTest.objId..":"..cardTest.objname);
+    cardTest:upId();
+    print(cardTest.objId);
+
+end
