@@ -1,0 +1,47 @@
+local Object = require("BaseNode");
+
+-- 创建子类Child
+Object:subclass("Human");
+Human.prototype.initStates =1;
+--名
+function  Human.prototype:setName(objName)
+    self.name=objName;
+end
+--id
+function Human.prototype:setId(objId)
+    self.objId=objId;
+end
+--类型
+function Human.prototype:setType(objType)
+    self.type=objType;
+end
+--数值
+function Human.prototype:setNumber(objNumber)
+    self.number=objNumber;
+end
+
+--初始化
+function Human.prototype:init(objName,objId,objType,objNumber)
+    if self.initStates ==1 then
+        self:setName(objName);
+        self:setId(objId);
+        self:setType(objType);
+        self:setNumber(objNumber);
+        self.initStates=0;
+    else
+        print("不能重复赋值");
+    end
+end
+
+function start()
+    local c = Human:new('obj');
+    print(c.name)
+    local a =Human();
+    print(a.name);
+    a:init('card2',1,1,1);
+    a:init('card3',1,1,1);
+    print(a.name..a.objId);
+
+end
+
+return human

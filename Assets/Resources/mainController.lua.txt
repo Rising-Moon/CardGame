@@ -1,0 +1,10 @@
+local Card = require('CardNode');
+
+
+
+function start()
+    local c = Card:new('obj');
+    print(c.name)
+
+
+end
