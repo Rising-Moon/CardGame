@@ -56,6 +56,7 @@ namespace XLuaBehaviour{
                 script.scriptEnv.SetMetaTable(meta);
                 script.scriptEnv.Set("self",this);
                 script.scriptEnv.Set("vm",luaEnv);
+                script.scriptEnv.Set("messageQueue",MessageQueueManager.GetMessageQueue());
 
                 foreach (var injection in script.injections) {
                     script.scriptEnv.Set(injection.name,injection.value);
