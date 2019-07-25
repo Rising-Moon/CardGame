@@ -22,6 +22,7 @@ end
 --卡牌类型
 function Card.prototype:setType(objType)
     self.type=objType;
+    print(objType);
 end
 --卡牌数值
 function Card.prototype:setNumber(objNumber)
@@ -49,16 +50,8 @@ function Card.prototype:cardInformation()
     return 1
 end
 
-function start()
-    local c = Card:new('obj');
-    --print (c:output(2, 2));    -- 输出16
-    print(c.name)
-    local a =Card();
-    print(a.name);
-    a:init('card2',1,1,1);
-    a:init('card3',1,1,1);
-    print(a.name..a.objId);
 
-end
+
+
 
 return Card

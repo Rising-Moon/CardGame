@@ -44,4 +44,4 @@ function start()
 
 end
 
-return human
+return Human
