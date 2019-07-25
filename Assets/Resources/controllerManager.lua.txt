@@ -1,0 +1,26 @@
+local resourcesManager =require("resourcesManager");
+local Card =require("CardNode");
+local Human = require("humanNode");
+local enum =require("enumTable");
+local BaseNode =require("BaseNode");
+cardTypeTable =
+{
+    "attack",
+    "defense",
+    "treatment",
+    "Effect",
+}
+
+cardTypeTable =enum:CreatEnumTable(cardTypeTable);
+
+function start()
+
+    local a =Card();
+    print(a.name);
+    print(cardTypeTable.attack);
+    a:init('card2',1,cardTypeTable.Effect,1);
+    --print(a.name..a.type);
+    local man = Human:new("主角");
+    print(man.name);
+    --local res =resourcesManager:loadAllTypeResources('human', type(CS.UnityEngine.GameObject));
+end
