@@ -3,8 +3,12 @@
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
+
+#Custom
 .idea/
-Assets/AssetStoreTools*
+Assets/Tasty_Characters - Forest Pack
+Assets/Import/
+Assets/Import.meta
 
 # Visual Studio cache directory
 .vs/
