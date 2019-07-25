@@ -48,15 +48,27 @@ namespace XLuaBehaviour{
         
         
         void Awake(){
+
             Thread.Sleep(1000);
             
             LuaTable meta = luaEnv.NewTable();
+            
+            ///////////////////////////////////////////
+            
+            luaEnv.AddBuildin("rapidjson", XLua.LuaDLL.Lua.LoadRapidJson);
+            luaEnv.AddBuildin("lpeg", XLua.LuaDLL.Lua.LoadLpeg);
+            luaEnv.AddBuildin("pb", XLua.LuaDLL.Lua.LoadLuaProfobuf);
+            luaEnv.AddBuildin("ffi", XLua.LuaDLL.Lua.LoadFFI);
+
+            //////////////////////////////////////////
+
             meta.Set("__index", luaEnv.Global);
             foreach (var script in scripts) {
                 script.scriptEnv = luaEnv.NewTable();
                 script.scriptEnv.SetMetaTable(meta);
                 script.scriptEnv.Set("self",this);
                 script.scriptEnv.Set("vm",luaEnv);
+                script.scriptEnv.Set("messageQueue",MessageQueueManager.GetMessageQueue());
 
                 foreach (var injection in script.injections) {
                     script.scriptEnv.Set(injection.name,injection.value);
