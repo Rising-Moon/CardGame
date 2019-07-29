@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using XLua;
 using System;
 using System.IO;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using XLua.LuaDLL;
@@ -53,19 +54,16 @@ namespace XLuaBehaviour{
             
             LuaTable meta = luaEnv.NewTable();
             
-            ///////////////////////////////////////////
-            
-            luaEnv.AddBuildin("rapidjson", XLua.LuaDLL.Lua.LoadRapidJson);
-            luaEnv.AddBuildin("lpeg", XLua.LuaDLL.Lua.LoadLpeg);
+            ////////////////////导入Lua依赖///////////////////////
             luaEnv.AddBuildin("pb", XLua.LuaDLL.Lua.LoadLuaProfobuf);
-            luaEnv.AddBuildin("ffi", XLua.LuaDLL.Lua.LoadFFI);
-
-            //////////////////////////////////////////
+            ////////////////////////////////////////////////////
+            luaEnv.AddLoader(LuaPathLoader);
 
             meta.Set("__index", luaEnv.Global);
             foreach (var script in scripts) {
                 script.scriptEnv = luaEnv.NewTable();
                 script.scriptEnv.SetMetaTable(meta);
+                //设置全局变量
                 script.scriptEnv.Set("self",this);
                 script.scriptEnv.Set("vm",luaEnv);
                 script.scriptEnv.Set("messageQueue",MessageQueueManager.GetMessageQueue());
@@ -84,19 +82,22 @@ namespace XLuaBehaviour{
                 if (luaAwake != null)
                     luaAwake();
             }
+
             meta.Dispose();
         }
 
-        private byte[] MyLoader(ref string path){
-            string p = "Assets/protoc-gen-lua/protobuf/" + path;
+        //自定义Loader定位到Lua文件夹
+        private byte[] LuaPathLoader(ref string path){
+            string p = "Assets/Scripts/Lua/" + path + ".lua.txt";
+            //Debug.Log(path);
             if (!File.Exists(p)) {
+                //Debug.Log("文件" + p + "不存在");
                 return null;
             }
 
             return Encoding.UTF8.GetBytes(File.ReadAllText(p));
         }
-
-        // Use this for initialization
+        
         void Start()
         {
             foreach (var script in scripts) {
@@ -105,8 +106,7 @@ namespace XLuaBehaviour{
                 }
             }
         }
-
-        // Update is called once per frame
+        
         void Update()
         {
             foreach (var script in scripts) {
@@ -142,21 +142,6 @@ namespace XLuaBehaviour{
                 script.scriptEnv.Dispose();
                 script.injections = null;
             }
-        }
-
-        public void P(int aa,string hh){
-            print("Hello World!!!!!" + " : "+aa+hh);
-        }
-        
-        
-        
-        public Vector3 Raycast(Ray ray, int distance, LayerMask layerMask){
-            Debug.Log(ray + "  " + distance + "  " + layerMask);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, distance, layerMask)) {
-                return hit.point;
-            }
-            return hit.point;
         }
     }
 }

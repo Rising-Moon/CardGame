@@ -224,8 +224,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scripts:
-  - luaScript: {fileID: 4900000, guid: 3809d3284e5274d29a61bc41b54d7ca5, type: 3}
-    injections: []
+  - luaScript: {fileID: 4900000, guid: d3a9c185597c44f2f93bad8d6922198c, type: 3}
+    injections:
+    - name: outbytes
+      value: {fileID: 0}
 --- !u!4 &312619420
 Transform:
   m_ObjectHideFlags: 0
