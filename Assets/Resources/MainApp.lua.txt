@@ -1,0 +1,24 @@
+local class =require("class");
+local Object =require("BaseObject");
+local CardObject=require("CardObject");
+local ResourcesManager =require("ResourcesManager");
+local resourcesTable = {};
+
+local canvas =Canvas;
+
+function start()
+
+    resourcesTable=ResourcesManager:init();
+    resourcesTable:LoadAllResources("Prefabs/Card",1,CS.UnityEngine.Vector3(-23,-50,0),canvas);
+
+    c=CardObject:new();
+    c:init("火球",1,1,1,resourcesTable.object);
+    --c:drop();
+    --resourcesTable:dropResoureces();
+end
+
+function update()
+    --print("run");
+    c:moveCard();
+    --print("run");
+end

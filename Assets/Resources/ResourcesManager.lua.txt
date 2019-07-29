@@ -1,0 +1,73 @@
+local ResourcesManager ={};
+
+ResourcesManager.__index =ResourcesManager;
+ResourcesManager.path =nil;
+ResourcesManager.type =nil;
+ResourcesManager.location =nil;
+ResourcesManager.object =nil;
+
+
+function ResourcesManager:init()
+    local instance = {};
+    setmetatable(instance,ResourcesManager);
+    return instance
+end
+--提供给外部调用
+function ResourcesManager:LoadAllResources(path,type,location,parent)
+    self.type = type;
+    self.location =location;
+    --加载resources资源
+
+    if type == 1  then
+        self:LoadResources(path,location,parent);
+
+    elseif type == 2 then
+        self:LoadAssetBundle(path,location,parent);
+    else
+        print("hello world");
+    end
+
+end
+
+--加载resources资源
+function ResourcesManager:LoadResources(path,location,parent)
+    self.path = path;
+    local temp = CS.UnityEngine.Resources.Load(self.path);
+    self.object =CS.UnityEngine.Object.Instantiate(temp);
+    self.object:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
+    self.object.transform.localPosition=location;
+end
+
+function ResourcesManager:findPath(path)
+    local objpath = nil;
+
+    return objpath
+end
+
+--加载assetbundle资源
+function ResourcesManager:LoadAssetBundle(path,loaction,parent)
+    self.path =path;
+    local temp =CS.UnityEngine.AssetBundle.LoadFromFile(self.path);
+    local temppath = findPath(self.path);
+    self.object=CS.UnityEngine.Object.Instantiate(temp.LoadAsset(temppath));
+
+
+end
+
+--删除对内存资源的引用
+--提供给外部调用
+function ResourcesManager:dropResoureces()
+    if self.type==1 then
+        CS.UnityEngine.GameObject.Destroy(self.object);
+    end
+
+    for i,v in ipairs(self) do
+        self.remove(self,i);
+    end
+    for j,v in ipairs(self) do
+        print(j..v);
+    end
+    print("resources drop");
+end
+
+return ResourcesManager

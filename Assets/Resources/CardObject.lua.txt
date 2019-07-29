@@ -1,0 +1,83 @@
+class =require("class");
+local Object = require("BaseObject");
+
+--更改创建方法，避免全局混用
+-- 创建子类Child
+local Card =class("Card",Object);
+Card.__index =Card;
+
+--初始化状态
+Card.initStates =1;
+
+--卡牌名
+function  Card:setName(objName)
+    self.name=objName;
+end
+--卡牌id
+function Card:setId(objId)
+    self.objId=objId;
+end
+--卡牌类型
+function Card:setType(objType)
+    self.type=objType;
+end
+--卡牌数值
+function Card:setNumber(objNumber)
+    self.number=objNumber;
+end
+--游戏对象
+function Card:setInstantiate(objInstantiate)
+    self.objInstantiate=objInstantiate or "error";
+    print(self.objInstantiate);
+end
+
+--构造函数
+function Card:ctor()
+    Card.super.ctor(self,"Card");
+end
+--初始化
+function Card:init(objName,objId,objType,objNumber,objInstantiate)
+
+    if self.initStates ==1 then
+        self:setName(objName);
+        self:setId(objId);
+        self:setType(objType);
+        self:setNumber(objNumber);
+        self:setInstantiate(objInstantiate);
+        self.initStates=0;
+    else
+        print("不能重复赋值");
+    end
+
+end
+
+function Card:changeInformation()
+    print('wait');
+end
+
+function Card:cardInformation()
+    print("Card information is here");
+    return 1
+end
+
+function Card:moveCard()
+    --self.objInstantiate:AddListener(function()
+        if CS.UnityEngine.Input.GetMouseButton(0) then
+            local h =CS.UnityEngine.Input.GetAxis("Mouse X");
+            local v =CS.UnityEngine.Input.GetAxis("Mouse Y");
+            self.objInstantiate.transform.position= self.objInstantiate.transform.position+CS.UnityEngine.Vector3(h*100,v*100,0);
+        end
+
+    --end)
+end
+
+function Card:useCard()
+
+end
+
+function Card:drop()
+    Card.super.drop(self);
+    print("Card drop");
+end
+
+return Card

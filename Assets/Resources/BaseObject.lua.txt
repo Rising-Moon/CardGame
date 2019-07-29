@@ -1,0 +1,21 @@
+class = require("class");
+-- 定义基类
+local Object = class("Object");
+
+-- 构造函数
+--调用new会自动执行
+function Object:ctor(baseName)
+    self.objName = baseName;
+end
+--清除函数
+function Object:drop()
+    for i,v in ipairs(self) do
+        self.remove(self,i);
+    end
+    for j,v in ipairs(self) do
+        print(j..v);
+    end
+    print("object drop");
+end
+
+return Object

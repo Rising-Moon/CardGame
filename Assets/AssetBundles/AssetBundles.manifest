@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 1088545026
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: loadingmusic.music
+      Dependencies: {}
