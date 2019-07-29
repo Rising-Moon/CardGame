@@ -8,7 +8,6 @@ message = '';
 line = file:read();
 
 while(line ~= nil) do
-
     message = string.format("%s %s",message,line);
     line = file:read();
 end
@@ -20,5 +19,8 @@ local test = {
     age = 30,
     sex = 'male',
 };
+
+str = CS.System.String("Hello World");
+CS.UnityEngine.Debug.Log(str);
 
 bytes = assert(pb.encode("Test",test));

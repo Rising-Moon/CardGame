@@ -16,7 +16,7 @@ public class ClientSocket : MonoBehaviour
     }
 
     private Socket socketSend;
-    void ConnectSocket(){
+    private void ConnectSocket(){
         try {
             int port = 8082;
             string _ip = "127.0.0.1";
@@ -35,7 +35,7 @@ public class ClientSocket : MonoBehaviour
         }
     }
 
-    void Recieve(){
+    private void Recieve(){
         while (true) {
             try {
                 byte[] buffer = new byte[1024 * 1024 * 3];
@@ -64,7 +64,7 @@ public class ClientSocket : MonoBehaviour
         }
     }
 
-    void Send(string str){
+    private void Send(string str){
         try {
             string msg = str;
             byte[] buffer = new byte[1024 * 1024 * 3];
@@ -76,9 +76,9 @@ public class ClientSocket : MonoBehaviour
         }
     }
     
-    private void OnDestroy(){
-        string closeMsg = "exit(0)";
-        byte[] buffer = Encoding.UTF8.GetBytes(closeMsg);
-        socketSend.Send(buffer);
+    void OnDestroy(){
+        string closeMsg = "exit()";
+        Send(closeMsg);
+        socketSend.Close();
     }
 }

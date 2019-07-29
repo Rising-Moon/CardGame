@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using UnityEngine;
-using Object = System.Object;
+
 
 public class ServerSocket : MonoBehaviour
 {
-    // Start is called before the first frame update
+    
     void Start(){
         ServerStart();
     }
@@ -50,7 +47,7 @@ public class ServerSocket : MonoBehaviour
         }
     }
 
-    void Recieve(Object o){
+    void Recieve(object o){
         try {
             Socket socketSend = o as Socket;
             while (true) {
@@ -67,11 +64,5 @@ public class ServerSocket : MonoBehaviour
         catch (Exception e) {
             Debug.Log(e.Message);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
