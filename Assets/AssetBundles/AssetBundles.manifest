@@ -1,7 +1,10 @@
 ManifestFileVersion: 0
-CRC: 1088545026
+CRC: 1998566611
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: loadingmusic.music
+      Dependencies: {}
+    Info_1:
+      Name: human.pre
       Dependencies: {}
