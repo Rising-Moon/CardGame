@@ -1,0 +1,24 @@
+local pb = require 'pb'
+local protoc = require 'protoc'
+
+file = io.open("Assets/Scripts/Lua/person_out.proto");
+
+message = '';
+
+line = file:read();
+
+while(line ~= nil) do
+
+    message = string.format("%s %s",message,line);
+    line = file:read();
+end
+
+assert(protoc:load(message));
+
+local test = {
+    name = 'bob',
+    age = 30,
+    sex = 'male',
+};
+
+bytes = assert(pb.encode("Test",test));
