@@ -12,11 +12,14 @@ local canvas =CS.UnityEngine.GameObject.Find("Canvas");
 
 function start()
 
-    SceneManager:init();
     SceneManager:startGame();
 
     resourcesTable=ResourcesManager:init();
-    resourcesTable:LoadAllResources("Assets/AssetBundles/human.pre",21,CS.UnityEngine.Vector3(-23,-50,0),canvas);
+    local go =resourcesTable:syncInstantiate("Prefabs/Card",1,CS.UnityEngine.Vector3(-23,-50,0),canvas);
+    resourcesTable:dropResoureces(go);
+    go = nil --删除引用，不知道unity内部如何实现
+    print(go);
+    resourcesTable:clear();
 
     --c=CardObject:new();
     --c:init("fire",21,1,1,resourcesTable.object);

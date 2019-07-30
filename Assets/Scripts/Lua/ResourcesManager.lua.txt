@@ -1,12 +1,17 @@
 local ResourcesManager ={};
 
 ResourcesManager.__index =ResourcesManager;
-ResourcesManager.path =nil;
-ResourcesManager.type =nil;
-ResourcesManager.location =nil;
-ResourcesManager.object =nil;
 
----------------------------外部接口-------------------------
+
+--------------------------资源表--------------------------
+--所有不销毁的obj列表
+ResourcesManager.dontDestroyObjAry = {};
+
+--已加载资源的实例化列表，实例化后的obj都存储在这里
+--asset--{path, userMap={id--obj}}
+ResourcesManager.assetListenerMap = {};
+
+
 
 --产生一个实例
 function ResourcesManager:init()
@@ -15,36 +20,35 @@ function ResourcesManager:init()
     return instance
 end
 
---提供给外部调用
-function ResourcesManager:LoadAllResources(path,type,location,parent)
-    self.type = type;
-    self.location =location;
+
+---------------------------外部接口-------------------------
+--同步实例化
+--请求路径，类型，位置，父物体
+function ResourcesManager:syncInstantiate(path,type,position,parent)
+    --提供借口
+    local objAsset ;
     --加载resources资源
     if type == 1  then
-        self:LoadResources(path,location,parent);
-    --加载assetbundle资源
+        objAsset=self:LoadResources(path);
+        --加载assetbundle资源
     elseif type >= 20 then
-        self:LoadAssetBundle(path,location,parent);
+        objAsset =self:LoadAssetBundle(path,location,parent);
     else
         print("hello world");
+    end
+
+
+    if objAsset then
+        return self:instantiate(path, parent, position);
+    else
+        print('error to load');
     end
 
 end
 
 --删除对内存资源的引用
 --提供给外部调用
-function ResourcesManager:dropResoureces()
-    if self.type==1 then
-        CS.UnityEngine.GameObject.Destroy(self.object);
-    elseif
-    self.type >=20 then
-        CS.UnityEngine.GameObject.Destroy(self.object);
-        print(" success");
-        CS.UnityEngine.Resources.UnloadUnusedAssets();
-        --卸载有误
-        --CS.UnityEngine.AssetBundle.Unload(true);
-    end
-
+function ResourcesManager:clear()
     for i,v in ipairs(self) do
         self.remove(self,i);
     end
@@ -54,7 +58,36 @@ function ResourcesManager:dropResoureces()
     print("resources drop");
 end
 
+--删除单个物体
+function ResourcesManager:dropResoureces(obj)
+
+    CS.UnityEngine.GameObject.Destroy(obj);
+    print("success");
+    --CS.UnityEngine.Resources.UnloadUnusedAssets();
+        --卸载有误
+        --CS.UnityEngine.AssetBundle.Unload(true);
+end
+
 ----------------------------内部接口---------------------------------------
+
+--资源实例化
+function ResourcesManager:instantiate(path, parent, position, rotation)
+    local gameObj
+    if parent then
+        --self.object:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
+        if position then
+            gameObj = CS.UnityEngine.Object.Instantiate(self.assetListenerMap[path], position, rotation or CS.UnityEngine.Quaternion.identity);
+        else
+            gameObj = CS.UnityEngine.Object.Instantiate(self.assetListenerMap[path], parent, false)
+        end
+        gameObj:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
+    else
+        gameObj = CS.UnityEngine.Object.Instantiate(self.assetListenerMap[path], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity)
+    end
+    --GameObject =CS.UnityEngine.Object.Instantiate(self.assetListenerMap[original]);
+    --self.object.transform.localPosition=location;
+    return gameObj
+end
 
 --根据assetbundle路径查找ab资源信息
 function ResourcesManager:findPath(path)
@@ -66,28 +99,32 @@ function ResourcesManager:findPath(path)
 end
 
 --加载resources资源
-function ResourcesManager:LoadResources(path,location,parent)
-    self.path = path;
-    local temp = CS.UnityEngine.Resources.Load(self.path);
-    self.object =CS.UnityEngine.Object.Instantiate(temp);
-    self.object:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
-    self.object.transform.localPosition=location;
+function ResourcesManager:LoadResources(path)
+    --print("resources test");
+    self.assetListenerMap[path] = CS.UnityEngine.Resources.Load(path);
+    --print(path);
+    --print(CS.UnityEngine.Resources.Load(path));
+    --print(self.assetListenerMap[path]);
+    if self.assetListenerMap[path] then
+        --print(self.assetListenerMap[path]);
+        return 1
+    else
+        return nil
+    end
+
 end
 
-
-
+--加载assetbundle资源
 function ResourcesManager:LoadAssetBundle(path,location,parent)
     self.path =path;
     if self.type ==21 then
-        self:LoadLocalAssetBundle();
+        return self:LoadLocalAssetBundle();
     elseif self.type ==22 then
-        self:LoadMemoryAssetBundle();
+        return self:LoadMemoryAssetBundle();
     elseif self.type ==23 then
-        self:LoadRequestAssetBundle();
+        return self:LoadRequestAssetBundle();
     end
 
-    self.object:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
-    self.object.transform.localPosition= location;
 end
 
 --加载本地assetbundle资源
@@ -95,7 +132,13 @@ end
 function ResourcesManager:LoadLocalAssetBundle()
     local temp =CS.UnityEngine.AssetBundle.LoadFromFile(self.path);
     local temppath = self:findPath(self.path);
-    self.object=CS.UnityEngine.Object.Instantiate(temp:LoadAsset(temppath));
+    self.assetListenerMap[path]=temp:LoadAsset(temppath);
+    if self.assetListenerMap[path] then
+        --print(self.assetListenerMap[path]);
+        return 1
+    else
+        return nil
+    end
 end
 
 --加载内存assetbundle资源
@@ -114,5 +157,7 @@ function ResourcesManager:LoadRequestAssetBundle()
     local temppath = self:findPath(self.path);
     self.object=CS.UnityEngine.Object.Instantiate(temp:LoadAsset(temppath));
 end
+
+ResourcesManager:init();
 
 return ResourcesManager
