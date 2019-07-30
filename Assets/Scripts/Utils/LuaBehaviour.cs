@@ -63,6 +63,7 @@ namespace XLuaBehaviour{
                 //设置全局变量
                 script.scriptEnv.Set("self",this);
                 script.scriptEnv.Set("vm",luaEnv);
+                script.scriptEnv.Set("global",luaEnv.Global);
                 //导入配置表
                 LuaTable configs = luaEnv.NewTable();
                 foreach (var pair in Config.configList) {

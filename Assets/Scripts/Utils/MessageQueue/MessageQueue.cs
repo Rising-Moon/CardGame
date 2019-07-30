@@ -37,7 +37,7 @@ public class MessageQueue : MonoBehaviour{
         return true;
     }
 
-    private void Update(){
+    private void FixedUpdate(){
         if (mMessageQueue.Count != 0) {
             for (int i = 0; i < mListeners.Count; i++) {
                 if (mListeners[i] != null && mListeners[i].Response(mMessageQueue.Peek())) {
