@@ -9,8 +9,6 @@ AudioManager.audio=nil;
 --asset--{path, userMap={id--obj}}
 ResourcesManager.assetListenerMap = {};
 
-
-
 function AudioManager:init()
     if self.audioStack then
         return

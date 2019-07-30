@@ -36,10 +36,12 @@ function SceneManager:startGame()
     self:initRoot();
 end
 
+
 function SceneManager:restartGame()
     --loadingScene是一个静态打包的场景，直接加载
     CS.UnityEngine.SceneManagement.SceneManager.LoadScene(2);
 end
+
 
 function SceneManager:recieveChange()
 

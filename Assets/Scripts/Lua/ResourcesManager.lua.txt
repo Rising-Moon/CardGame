@@ -30,9 +30,10 @@ function ResourcesManager:syncInstantiate(path,type,position,parent)
     --加载resources资源
     if type == 1  then
         objAsset=self:LoadResources(path);
+
         --加载assetbundle资源
     elseif type >= 20 then
-        objAsset =self:LoadAssetBundle(path,location,parent);
+        objAsset =self:LoadAssetBundle(type,path);
     else
         print("hello world");
     end
@@ -51,6 +52,7 @@ end
 function ResourcesManager:clear()
     for i,v in ipairs(self) do
         self.remove(self,i);
+        self.assetListenerMap.Unload
     end
     for j,v in ipairs(self) do
         print(j..v);
@@ -62,10 +64,10 @@ end
 function ResourcesManager:dropResoureces(obj)
 
     CS.UnityEngine.GameObject.Destroy(obj);
-    print("success");
-    --CS.UnityEngine.Resources.UnloadUnusedAssets();
-        --卸载有误
-        --CS.UnityEngine.AssetBundle.Unload(true);
+    --弱卸载，回收无用Assets
+    CS.UnityEngine.Resources.UnloadUnusedAssets();
+    --卸载有误
+    obj.CS.UnityEngine.AssetBundle.Unload(true);
 end
 
 ----------------------------内部接口---------------------------------------
@@ -100,13 +102,8 @@ end
 
 --加载resources资源
 function ResourcesManager:LoadResources(path)
-    --print("resources test");
     self.assetListenerMap[path] = CS.UnityEngine.Resources.Load(path);
-    --print(path);
-    --print(CS.UnityEngine.Resources.Load(path));
-    --print(self.assetListenerMap[path]);
     if self.assetListenerMap[path] then
-        --print(self.assetListenerMap[path]);
         return 1
     else
         return nil
@@ -115,13 +112,15 @@ function ResourcesManager:LoadResources(path)
 end
 
 --加载assetbundle资源
-function ResourcesManager:LoadAssetBundle(path,location,parent)
-    self.path =path;
-    if self.type ==21 then
-        return self:LoadLocalAssetBundle();
-    elseif self.type ==22 then
+function ResourcesManager:LoadAssetBundle(type,path)
+    --local load
+    if type ==21 then
+        return self:LoadLocalAssetBundle(path);
+    --memoery load
+    elseif type ==22 then
         return self:LoadMemoryAssetBundle();
-    elseif self.type ==23 then
+    --request load
+    elseif type ==23 then
         return self:LoadRequestAssetBundle();
     end
 
@@ -129,12 +128,13 @@ end
 
 --加载本地assetbundle资源
 --已测试
-function ResourcesManager:LoadLocalAssetBundle()
-    local temp =CS.UnityEngine.AssetBundle.LoadFromFile(self.path);
-    local temppath = self:findPath(self.path);
+function ResourcesManager:LoadLocalAssetBundle(path)
+    --加载
+    local temp =CS.UnityEngine.AssetBundle.LoadFromFile(path);
+    --寻找路径中的ab包名
+    local temppath = self:findPath(path);
     self.assetListenerMap[path]=temp:LoadAsset(temppath);
     if self.assetListenerMap[path] then
-        --print(self.assetListenerMap[path]);
         return 1
     else
         return nil
@@ -143,10 +143,17 @@ end
 
 --加载内存assetbundle资源
 --未测试
-function ResourcesManager:LoadMemoryAssetBundle()
-    local temp =CS.UnityEngine.AssetBundle.LoadFromMemory(File.ReadAllBytes(self.path));
+function ResourcesManager:LoadMemoryAssetBundle(path)
+    --加载assetbundle
+    local temp =CS.UnityEngine.AssetBundle.LoadFromMemory(CS.UnityEngine.Windows.File.ReadAllBytes(path));
     local temppath = self:findPath(self.path);
-    self.object=CS.UnityEngine.Object.Instantiate(temp:LoadAsset(temppath));
+    --加载asset
+    self.assetListenerMap[path]=temp:LoadAsset(temppath);
+    if self.assetListenerMap[path] then
+        return 1
+    else
+        return nil
+    end
 end
 
 --加载服务器assetbundle资源
