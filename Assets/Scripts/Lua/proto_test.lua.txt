@@ -1,26 +1,32 @@
 local pb = require 'pb'
 local protoc = require 'protoc'
 
-file = io.open("Assets/Scripts/Lua/person_out.proto");
+file = io.open("Assets/Resources/Protos/Message.proto");
 
 message = '';
 
 line = file:read();
 
 while(line ~= nil) do
-    message = string.format("%s %s",message,line);
+    message = message .. line;
     line = file:read();
 end
 
+local msg = {
+    type = 0,
+    head = 'update',
+    body = 'Map'
+}
+
 assert(protoc:load(message));
 
-local test = {
-    name = 'bob',
-    age = 30,
-    sex = 'male',
-};
+bytes = assert(pb.encode("MessageProto",msg));
+function update()
 
-str = CS.System.String("Hello World");
-CS.UnityEngine.Debug.Log(str);
-
-bytes = assert(pb.encode("Test",test));
+    if CS.UnityEngine.Input.GetKeyDown(CS.UnityEngine.KeyCode.Z) then
+        print('按下Z');
+        msg = CS.Message.ByteMessage(CS.Message.MessageType.SocketToServer,bytes);
+        result = messageQueue:SendMessage(msg);
+    end
+    
+end
