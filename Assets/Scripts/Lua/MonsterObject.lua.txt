@@ -1,0 +1,89 @@
+class =require("class");
+local Character = require("CharacterObject");
+
+
+--更改创建方法，避免全局混用
+-- 创建子类Child
+local Monster =class("Monster",Character);
+Monster.__index =Monster;
+
+--初始化状态
+Monster.initStates =1;
+
+--Monster名
+function  Monster:setName(objName)
+    self.objName=objName;
+end
+
+--Monster id
+function Monster:setId()
+    --id唯一
+    Monster.super.setId(self);
+end
+
+--Monster类型
+function Monster:setType()
+    --2表示怪物
+    self.type=2;
+end
+--Monster数值
+function Monster:setNumber(objNumber)
+    --血条
+    self.lifNumber=10+self.level*2;
+end
+--Monster对象
+function Monster:setInstantiate(objInstantiate)
+    self.objInstantiate=objInstantiate or "error";
+    print(self.objInstantiate);
+end
+
+--构造函数
+function Monster:ctor()
+    Monster.super.ctor(self,"player");
+end
+
+--初始化
+function Monster:init(objName,objId,objInstantiate)
+
+    if self.initStates ==1 then
+        self:setName(objName);
+        self:setId(objId);
+        self:setType();
+        self:setNumber();
+        self:setInstantiate(objInstantiate);
+        self.level =1;
+        self.experience =0;
+        self.initStates=0;
+    else
+        print("不能重复赋值");
+    end
+
+end
+
+--掉落经验
+function Monster:dropExperience()
+    return self.experience;
+
+end
+
+--
+function Monster:playerInformation()
+    print("Player information is here");
+    return 1
+end
+
+--
+function Monster:movePlayer()
+
+end
+
+function Monster:usePlayer()
+
+end
+
+function Monster:drop()
+    Monster.super.drop(self);
+    print("Monster  drop");
+end
+
+return Monster

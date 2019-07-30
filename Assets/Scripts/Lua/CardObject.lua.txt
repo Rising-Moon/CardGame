@@ -1,8 +1,14 @@
 class =require("class");
 local Object = require("BaseObject");
 
+nameDictionary = {
+    fire =" this is fire card , use to fight",
+    water ="this is water card, use to fight"
+}
+
 --更改创建方法，避免全局混用
--- 创建子类Child
+--参考cocos的语法糖
+-- 创建子类
 local Card =class("Card",Object);
 Card.__index =Card;
 
@@ -11,20 +17,29 @@ Card.initStates =1;
 
 --卡牌名
 function  Card:setName(objName)
-    self.name=objName;
+    self.objName=objName;
 end
+
 --卡牌id
-function Card:setId(objId)
-    self.objId=objId;
+function Card:setId()
+    --id唯一
+    self.objId=Card.super.RandomIndex();
 end
+
 --卡牌类型
 function Card:setType(objType)
-    self.type=objType;
+    --1表示攻击
+    --2表示防御，护盾
+    --3表示治疗，回血
+    --4表示特殊效果
+    self.objType=objType;
 end
+
 --卡牌数值
 function Card:setNumber(objNumber)
-    self.number=objNumber;
+    self.objNumber=objNumber;
 end
+
 --游戏对象
 function Card:setInstantiate(objInstantiate)
     self.objInstantiate=objInstantiate or "error";
@@ -35,15 +50,17 @@ end
 function Card:ctor()
     Card.super.ctor(self,"Card");
 end
+
 --初始化
-function Card:init(objName,objId,objType,objNumber,objInstantiate)
+function Card:init(objName,objType,objNumber,objInstantiate)
 
     if self.initStates ==1 then
         self:setName(objName);
-        self:setId(objId);
+        self:setId();
         self:setType(objType);
         self:setNumber(objNumber);
         self:setInstantiate(objInstantiate);
+        self.level =1;
         self.initStates=0;
     else
         print("不能重复赋值");
@@ -51,15 +68,23 @@ function Card:init(objName,objId,objType,objNumber,objInstantiate)
 
 end
 
-function Card:changeInformation()
-    print('wait');
+--卡牌升级（可选）
+function Card:updateLevel()
+    if self.level<3 then
+        self.level=self.level+1;
+        print(self.level);
+    else
+        print("不能重复升级");
+    end
 end
 
+--返回卡牌信息
 function Card:cardInformation()
     print("Card information is here");
-    return 1
+    return self.objId
 end
 
+--移动卡牌（未完成）
 function Card:moveCard()
     --self.objInstantiate:AddListener(function()
         if CS.UnityEngine.Input.GetMouseButton(0) then
@@ -67,14 +92,16 @@ function Card:moveCard()
             local v =CS.UnityEngine.Input.GetAxis("Mouse Y");
             self.objInstantiate.transform.position= self.objInstantiate.transform.position+CS.UnityEngine.Vector3(h*100,v*100,0);
         end
-
     --end)
 end
 
+--使用卡牌
+--利用通信将卡牌信息发送给网络层
 function Card:useCard()
 
 end
 
+--删除卡牌
 function Card:drop()
     Card.super.drop(self);
     print("Card drop");

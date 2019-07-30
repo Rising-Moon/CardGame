@@ -1,0 +1,104 @@
+class =require("class");
+local Character = require("CharacterObject");
+
+
+--更改创建方法，避免全局混用
+-- 创建子类Child
+local Player =class("Player",Character);
+Player.__index =Player;
+
+--初始化状态
+Player.initStates =1;
+
+--卡player名
+function  Player:setName(objName)
+    self.objName=objName;
+end
+
+--player id
+function Player:setId()
+    --id唯一
+    Player.super.setId(self);
+end
+
+--player类型
+function Player:setType()
+    --1表示玩家
+    self.type=1;
+end
+--player数值
+function Player:setNumber(objNumber)
+    --血条
+    self.lifNumber=10+self.level*2;
+end
+--player对象
+function Player:setInstantiate(objInstantiate)
+    self.objInstantiate=objInstantiate or "error";
+    print(self.objInstantiate);
+end
+
+--构造函数
+function Player:ctor()
+    Player.super.ctor(self,"player");
+end
+
+--初始化
+function Player:init(objName,objId,objInstantiate)
+
+    if self.initStates ==1 then
+        self.level =1;
+        self:setName(objName);
+        self:setId(objId);
+        self:setType();
+        self:setNumber();
+        self:setInstantiate(objInstantiate);
+
+        self.experience =0;
+        self.initStates=0;
+    else
+        print("不能重复赋值");
+    end
+
+end
+
+--获得经验
+function Player:getExperience(experience)
+    self.experience =self.experience+experience;
+    self.experience =self:updateLevel();
+end
+
+--升级
+function Player:updateLevel()
+    if self.level<10 then
+        --升级标准
+        local restExperience = self.experience % self.level;
+        self.level=self.level+self.experience/self.level;
+
+        print(self.level);
+    else
+        print("不能重复升级");
+    end
+    return restExperience
+end
+
+--
+function Player:playerInformation()
+    print("Player information is here");
+    return 1
+end
+
+--
+function Player:movePlayer()
+
+end
+
+function Player:usePlayer()
+
+end
+
+function Player:drop()
+    Player.super.drop(self);
+    print("Player  drop");
+end
+
+return Player

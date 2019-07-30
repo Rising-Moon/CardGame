@@ -2,23 +2,35 @@ local class =require("class");
 local Object =require("BaseObject");
 local CardObject=require("CardObject");
 local ResourcesManager =require("ResourcesManager");
-local resourcesTable = {};
+local Player = require("PlayerObject");
+local Monster = require("MonsterObject");
+local SceneManager =require("SceneManager");
 
-local canvas =Canvas;
+
+local resourcesTable = {};
+local canvas =CS.UnityEngine.GameObject.Find("Canvas");
 
 function start()
 
-    resourcesTable=ResourcesManager:init();
-    resourcesTable:LoadAllResources("Prefabs/Card",1,CS.UnityEngine.Vector3(-23,-50,0),canvas);
+    SceneManager:init();
+    SceneManager:startGame();
 
-    c=CardObject:new();
-    c:init("火球",1,1,1,resourcesTable.object);
-    --c:drop();
+    resourcesTable=ResourcesManager:init();
+    resourcesTable:LoadAllResources("Assets/AssetBundles/human.pre",21,CS.UnityEngine.Vector3(-23,-50,0),canvas);
+
+    --c=CardObject:new();
+    --c:init("fire",21,1,1,resourcesTable.object);
+    --print(c:cardInformation());
+    --d = Player:new();
+    --d : init("fire",21,1,1,resourcesTable.object);
+    --print(d.objId);
     --resourcesTable:dropResoureces();
+    --SceneManager:init();
+    --SceneManager:restartGame();
+
 end
 
 function update()
     --print("run");
-    c:moveCard();
     --print("run");
 end
