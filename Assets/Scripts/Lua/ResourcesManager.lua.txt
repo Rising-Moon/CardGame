@@ -11,7 +11,15 @@ ResourcesManager.dontDestroyObjAry = {};
 --asset--{path, userMap={id--obj}}
 ResourcesManager.assetListenerMap = {};
 
+--缓存了所有的AB本身
+--path = {assetBundle, refCount}
+ResourcesManager.assetBundleCacheMap = {}
 
+--初始化解析主manifest后获得，记录所有AB之间的依赖
+ResourcesManager.abAllDependenciesMap = {}
+
+--路径缓存表
+ResourcesManager.pathCache ={};
 
 --产生一个实例
 function ResourcesManager:init()
@@ -50,9 +58,14 @@ end
 --删除对内存资源的引用
 --提供给外部调用
 function ResourcesManager:clear()
+
+    for i,v in ipairs(self.pathCache) do
+        print(self.assetBundleCacheMap[v].assetBundle);
+        self.assetBundleCacheMap[v].assetBundle:Unload(false);
+    end
     for i,v in ipairs(self) do
         self.remove(self,i);
-        self.assetListenerMap.Unload
+        --self.assetListenerMap.Unloado();
     end
     for j,v in ipairs(self) do
         print(j..v);
@@ -66,12 +79,10 @@ function ResourcesManager:dropResoureces(obj)
     CS.UnityEngine.GameObject.Destroy(obj);
     --弱卸载，回收无用Assets
     CS.UnityEngine.Resources.UnloadUnusedAssets();
-    --卸载有误
-    obj.CS.UnityEngine.AssetBundle.Unload(true);
 end
 
-----------------------------内部接口---------------------------------------
 
+----------------------------内部接口---------------------------------------
 --资源实例化
 function ResourcesManager:instantiate(path, parent, position, rotation)
     local gameObj
@@ -91,13 +102,22 @@ function ResourcesManager:instantiate(path, parent, position, rotation)
     return gameObj
 end
 
---根据assetbundle路径查找ab资源信息
-function ResourcesManager:findPath(path)
+--根据assetbundle路径查找ab资源信息(不含后缀）
+function ResourcesManager:findName(path)
     local objpath = nil;
     --print("正则表达式:");
     objpath =string.match(path,"/[%w]+%.");
     --print(string.sub(objpath,2,#objpath-1));
     return string.sub(objpath,2,#objpath-1)
+end
+
+--根据assetbundle路径查找ab资源信息（含后缀）
+function ResourcesManager:findAllName(path)
+    local allName =nil;
+    --print("正则表达式");
+    allName =string.match(path,"/[%w]+%.[%w]+");
+    --print(allName);
+    return string.sub(allName,2);
 end
 
 --加载resources资源
@@ -113,6 +133,8 @@ end
 
 --加载assetbundle资源
 function ResourcesManager:LoadAssetBundle(type,path)
+
+    self:LoadManifest('Assets/AssetBundles',self:findAllName(path));
     --local load
     if type ==21 then
         return self:LoadLocalAssetBundle(path);
@@ -131,8 +153,12 @@ end
 function ResourcesManager:LoadLocalAssetBundle(path)
     --加载
     local temp =CS.UnityEngine.AssetBundle.LoadFromFile(path);
+    --缓存ab本身
+    self.assetBundleCacheMap[path] ={assetBundle = temp,refCount =1};
+    --缓存ab索引
+    table.insert(self.pathCache,path);
     --寻找路径中的ab包名
-    local temppath = self:findPath(path);
+    local temppath = self:findName(path);
     self.assetListenerMap[path]=temp:LoadAsset(temppath);
     if self.assetListenerMap[path] then
         return 1
@@ -146,7 +172,7 @@ end
 function ResourcesManager:LoadMemoryAssetBundle(path)
     --加载assetbundle
     local temp =CS.UnityEngine.AssetBundle.LoadFromMemory(CS.UnityEngine.Windows.File.ReadAllBytes(path));
-    local temppath = self:findPath(self.path);
+    local temppath = self:findName(self.path);
     --加载asset
     self.assetListenerMap[path]=temp:LoadAsset(temppath);
     if self.assetListenerMap[path] then
@@ -156,12 +182,22 @@ function ResourcesManager:LoadMemoryAssetBundle(path)
     end
 end
 
+--加载asset资源包所依赖的资源包的名字
+function ResourcesManager:LoadManifest(abPath,abName)
+    local manifestAb = CS.UnityEngine.AssetBundle.LoadFromFile(abPath);
+    local manifest =manifestAb:LoadAsset("AssetBundleManifest");
+    self.abAllDependenciesMap[abPath] = manifest:GetAllDependencies(abName);
+    for i ,v in self.abAllDependenciesMap[abPath] do
+        CS.UnityEngine.AssetBundle.LoadFromFile("Asset/AssetBundles/"..v);
+    end
+end
+
 --加载服务器assetbundle资源
 --未实现
 function ResourcesManager:LoadRequestAssetBundle()
     local request = {};
     local temp =CS.UnityEngine.AssetBundle.LoadFromMemory(File.ReadAllBytes(self.path));
-    local temppath = self:findPath(self.path);
+    local temppath = self:findName(self.path);
     self.object=CS.UnityEngine.Object.Instantiate(temp:LoadAsset(temppath));
 end
 
