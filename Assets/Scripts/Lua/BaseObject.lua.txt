@@ -27,4 +27,9 @@ function Object:drop()
     print("object drop");
 end
 
+--gc时也调用清除
+function Object:__gc()
+    self:drop();
+end
+
 return Object
