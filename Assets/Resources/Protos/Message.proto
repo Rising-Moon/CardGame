@@ -1,0 +1,5 @@
+message MessageProto{
+    required int32 type = 1 [default = 0];
+    optional string head = 2;
+    optional string body = 3;
+}
