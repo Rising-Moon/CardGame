@@ -28,27 +28,24 @@ namespace XLuaBehaviour{
         internal Action luaStart;
         internal Action luaUpdate;
         internal Action luaOnDestory;
+        //监听消息列表
+        internal Action luaMessageCast;
     }
 
     [LuaCallCSharp]
-    public class LuaBehaviour : MonoBehaviour
+    public class LuaBehaviour : MonoBehaviour,IMessageListener
     {
-        [LuaCallCSharp]
-        public static class LuaCallCS{
-            public static List<Type> lua_call_cs = new List<Type>() {
-                typeof(Physics)
-            };
-        } 
-            
+        //lua脚本列表
         public LuaScript[] scripts;
 
         internal static LuaEnv luaEnv = new LuaEnv(); //all lua behaviour shared one luaenv only!
         internal static float lastGCTime = 0;
         internal const float GCInterval = 1;//1 second 
-
-        
         
         void Awake(){
+            
+            //将luaBehaviour注册到消息列表监听
+            MessageQueueManager.GetMessageQueue().RegisteredListener(this);
 
             Thread.Sleep(1000);
             
@@ -78,6 +75,7 @@ namespace XLuaBehaviour{
                 script.luaUpdate = script.scriptEnv.Get<Action>("update");
                 script.luaOnDestory = script.scriptEnv.Get<Action>("ondestroy");
                 script.luaFixedUpdate = script.scriptEnv.Get<Action>("fixedupdate");
+                script.luaMessageCast = script.scriptEnv.Get<Action>("response");
 
                 if (luaAwake != null)
                     luaAwake();
@@ -142,6 +140,21 @@ namespace XLuaBehaviour{
                 script.scriptEnv.Dispose();
                 script.injections = null;
             }
+        }
+
+        //接收消息处理后映射到lua中，消息内容在lua的messageCast变量中
+        public bool Response(Message msg){
+            foreach (var script in scripts) {
+                LuaTable luaTable = luaEnv.NewTable();
+                luaTable.Set("message",msg is Message.ByteMessage?(Message.ByteMessage)msg : msg);
+                luaTable.Set("type",msg is Message.ByteMessage ? 2 : 1);
+                script.scriptEnv.Set("messageCast",luaTable);
+
+                if (script.luaMessageCast != null)
+                    script.luaMessageCast();
+            }
+
+            return false;
         }
     }
 }
