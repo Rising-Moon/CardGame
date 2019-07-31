@@ -55,6 +55,8 @@ namespace XLuaBehaviour{
             luaEnv.AddBuildin("pb", XLua.LuaDLL.Lua.LoadLuaProfobuf);
             ////////////////////////////////////////////////////
             luaEnv.AddLoader(LuaPathLoader);
+            
+            luaEnv.Global.Set("global",luaEnv.Global);
 
             meta.Set("__index", luaEnv.Global);
             foreach (var script in scripts) {
@@ -63,7 +65,7 @@ namespace XLuaBehaviour{
                 //设置全局变量
                 script.scriptEnv.Set("self",this);
                 script.scriptEnv.Set("vm",luaEnv);
-                script.scriptEnv.Set("global",luaEnv.Global);
+                
                 //导入配置表
                 LuaTable configs = luaEnv.NewTable();
                 foreach (var pair in Config.configList) {

@@ -1,8 +1,15 @@
 local pb = require 'pb'
 local protoc = require 'protoc'
 
+function start ()
+    messageQueue = CS.MessageQueueManager.GetMessageQueue();
+    canvas = CS.UnityEngine.GameObject.Find("Canvas");
+    local resourceManager = require('ResourcesManager');
+    obj = resourceManager:syncInstantiate('Prefabs/Card',1,canvas);
+end
+
 --读取proto文件
-file = io.open("Assets/Resources/Protos/Message.proto");
+file = io.open("Assets/Resources/Protos/Message.proto","r");
 message = '';
 
 line = file:read();
