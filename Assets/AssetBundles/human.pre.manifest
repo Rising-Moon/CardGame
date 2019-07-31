@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 858974220
+CRC: 3570629389
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: ef3e4d4284252a53c958318e02363a62
+    Hash: 17dfc8f2de0b37dd4cdc1f1a188a03a0
   TypeTreeHash:
     serializedVersion: 2
     Hash: d290421992127e5d271c6306023bdd82
@@ -37,4 +37,5 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Resources/Prefabs/Human.prefab
-Dependencies: []
+Dependencies:
+- /Users/guojinlong/Desktop/learndemo/CardGame/Assets/AssetBundles/humanpic.pic

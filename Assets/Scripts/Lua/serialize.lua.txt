@@ -1,0 +1,11 @@
+global.serialize = function(objtable)
+    local str = "{";
+    function doTtoS(i,v)
+        if type(i) == "number" then
+            str = str.."["..i.."]=";
+            if true then
+                
+            end
+        end
+    end
+end

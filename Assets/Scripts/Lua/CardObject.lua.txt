@@ -1,10 +1,18 @@
 class =require("class");
+--require("json");
 local Object = require("BaseObject");
+
+typeDir ={
+    fight = 1;
+    defense = 2;
+    treatment = 3;
+    effect = 4;
+};
 
 nameDictionary = {
     fire =" this is fire card , use to fight",
     water ="this is water card, use to fight"
-}
+};
 
 --更改创建方法，避免全局混用
 --参考cocos的语法糖
@@ -32,7 +40,7 @@ function Card:setType(objType)
     --2表示防御，护盾
     --3表示治疗，回血
     --4表示特殊效果
-    self.objType=objType;
+    self.objType=typeDir[objType];
 end
 
 --卡牌数值
@@ -97,8 +105,9 @@ end
 
 --使用卡牌
 --利用通信将卡牌信息发送给网络层
-function Card:useCard()
-
+--未实现
+function Card:useCard(type)
+    print(typeDir[type]);
 end
 
 --删除卡牌
@@ -107,18 +116,21 @@ function Card:drop()
     print("Card drop");
 end
 
-function Card:writeFile()
-    file = io.open("Assets/Resources/Config/Card.txt","a+");
-    --print(file:read());
-    -- 设置默认输入文件为 test.lua
-    io.input(file)
+--读取文件
+function Card:readFile()
 
-    -- 输出文件第一行
-    print(io.read())
-    file:close();
-    --file:write(1);
-    --file:close();
+
 end
 
-Card:new();
+--写txt文件
+function Card:writeFile()
+
+    file = io.open("Assets/Resources/Config/Card.txt","w");
+    file:close();
+
+end
+
+
+
+
 return Card

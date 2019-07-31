@@ -16,8 +16,8 @@ function Object:RandomIndex()
 end
 
 function Object:setUniqueId()
-    local id =config.id + 1;
-    return id
+    --local id =config.id + 1;
+    --return id
 end
 
 --清除函数

@@ -32,7 +32,7 @@ end
 ---------------------------外部接口-------------------------
 --同步实例化
 --请求路径，类型，位置，父物体
-function ResourcesManager:syncInstantiate(path,type,position,parent)
+function ResourcesManager:syncInstantiate(path,type,parent,position,rotation)
     --提供借口
     local objAsset ;
     --加载resources资源
@@ -48,7 +48,7 @@ function ResourcesManager:syncInstantiate(path,type,position,parent)
 
 
     if objAsset then
-        return self:instantiate(path, parent, position);
+        return self:instantiate(path, parent, position,rotation);
     else
         print('error to load');
     end
@@ -91,11 +91,11 @@ function ResourcesManager:instantiate(path, parent, position, rotation)
         if position then
             gameObj = CS.UnityEngine.Object.Instantiate(self.assetListenerMap[path], position, rotation or CS.UnityEngine.Quaternion.identity);
         else
-            gameObj = CS.UnityEngine.Object.Instantiate(self.assetListenerMap[path], parent, false)
+            gameObj = CS.UnityEngine.Object.Instantiate(self.assetListenerMap[path], parent.Transform, false);
         end
         gameObj:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
     else
-        gameObj = CS.UnityEngine.Object.Instantiate(self.assetListenerMap[path], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity)
+        gameObj = CS.UnityEngine.Object.Instantiate(self.assetListenerMap[path], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity);
     end
     --GameObject =CS.UnityEngine.Object.Instantiate(self.assetListenerMap[original]);
     --self.object.transform.localPosition=location;
@@ -124,17 +124,17 @@ end
 function ResourcesManager:LoadResources(path)
     self.assetListenerMap[path] = CS.UnityEngine.Resources.Load(path);
     if self.assetListenerMap[path] then
+        --print(self.assetListenerMap[path]);
         return 1
     else
         return nil
     end
-
 end
 
 --加载assetbundle资源
 function ResourcesManager:LoadAssetBundle(type,path)
-
-    self:LoadManifest('Assets/AssetBundles',self:findAllName(path));
+    --加载manifest查找依赖
+    --self:LoadManifest('Assets/AssetBundles',self:findAllName(path));
     --local load
     if type ==21 then
         return self:LoadLocalAssetBundle(path);
