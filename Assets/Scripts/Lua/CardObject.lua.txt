@@ -23,7 +23,7 @@ end
 --卡牌id
 function Card:setId()
     --id唯一
-    self.objId=Card.super.RandomIndex();
+    self.objId=Card.super.setUniqueId();
 end
 
 --卡牌类型
@@ -107,4 +107,18 @@ function Card:drop()
     print("Card drop");
 end
 
+function Card:writeFile()
+    file = io.open("Assets/Resources/Config/Card.txt","a+");
+    --print(file:read());
+    -- 设置默认输入文件为 test.lua
+    io.input(file)
+
+    -- 输出文件第一行
+    print(io.read())
+    file:close();
+    --file:write(1);
+    --file:close();
+end
+
+Card:new();
 return Card

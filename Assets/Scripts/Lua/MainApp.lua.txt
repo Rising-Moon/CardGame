@@ -11,15 +11,19 @@ local resourcesTable = {};
 local canvas =CS.UnityEngine.GameObject.Find("Canvas");
 
 function start()
+    print(config.server_ip);
+    local c =CardObject:writeFile();
+    print("test");
+    --SceneManager:startGame();
 
-    SceneManager:startGame();
-
-    resourcesTable=ResourcesManager:init();
-    local go =resourcesTable:syncInstantiate("Prefabs/Card",1,CS.UnityEngine.Vector3(-23,-50,0),canvas);
-    resourcesTable:dropResoureces(go);
-    go = nil --删除引用，不知道unity内部如何实现
-    print(go);
-    resourcesTable:clear();
+    --resourcesTable=ResourcesManager:init();
+    --local go =resourcesTable:syncInstantiate("Assets/AssetBundles/human.pre",21,CS.UnityEngine.Vector3(-23,-50,0),canvas);
+    --resourcesTable:dropResoureces(go);
+    --resourcesTable:findAllName("Assets/AssetBundles/human.pre");
+    --print(go);
+    --go = nil --删除引用，不知道unity内部如何实现
+    --print(go);
+    --resourcesTable:clear();
 
     --c=CardObject:new();
     --c:init("fire",21,1,1,resourcesTable.object);
@@ -31,9 +35,18 @@ function start()
     --SceneManager:init();
     --SceneManager:restartGame();
 
+    local messageQueue = CS.MessageQueueManager.GetMessageQueue();
+    local msg = CS.Message(CS.Message.MessageType.TestMessage,'123');
+    messageQueue:SendMessage(msg);
+
 end
 
 function update()
     --print("run");
     --print("run");
+end
+
+
+function response()
+    print(messageCast.message.msg);
 end

@@ -18,7 +18,7 @@ end
 --character id
 function Character:setId()
     --id唯一
-    self.objId=Character.super.RandomIndex();
+    self.objId=Character.super.setUniqueId();
     print(self.objId);
 end
 
