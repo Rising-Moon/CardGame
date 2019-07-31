@@ -1,0 +1,7 @@
+{
+["objId"]=0,
+["level"]=1,
+["objName"]="fire",
+["objType"]=4,
+["objNumber"]=1,
+}

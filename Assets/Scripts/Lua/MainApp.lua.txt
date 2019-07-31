@@ -14,12 +14,14 @@ function start()
 
 
     local c =CardObject:new();
-
+    local a =CardObject:new();
     resourcesTable=ResourcesManager:init();
     local go =resourcesTable:syncInstantiate("Prefabs/Card",1);
-
-    c:init("fire",21,1,1,resourcesTable.object);
-    c:writeFile();
+    print(a.objNumber);
+    c:init("fire","effect",1,1,resourcesTable.object);
+    --a:init("water",21,1,1,resourcesTable.object);
+    --c:writeFile();
+    c:readLastFile();
 
     local messageQueue = CS.MessageQueueManager.GetMessageQueue();
     local msg = CS.Message(CS.Message.MessageType.TestMessage,'form messageCast');
