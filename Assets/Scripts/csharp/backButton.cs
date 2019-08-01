@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using XLuaBehaviour;
-
-public class goToPamking : MonoBehaviour
+public class backButton : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -22,7 +21,7 @@ public class goToPamking : MonoBehaviour
     void OnClick()
     {
         print("run");
-        LuaBehaviour.sceneList.push(SceneManager.GetActiveScene().buildIndex);
-        SceneManager.LoadScene(3);
+        //LuaBehaviour.sceneList.push(1);
+        SceneManager.LoadScene(LuaBehaviour.sceneList.pop());
     }
 }

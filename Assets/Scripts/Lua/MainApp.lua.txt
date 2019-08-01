@@ -6,26 +6,33 @@ local Player = require("PlayerObject");
 local Monster = require("MonsterObject");
 local SceneManager =require("SceneManager");
 require("serialize");
-
+require("test");
+--------------------------------------------
 local resourcesTable = {};
 local canvas =CS.UnityEngine.GameObject.Find("Canvas");
+
+
+--local c =CardObject:new();
+--local p =Player:new();
 
 function start()
 
 
-    local c =CardObject:new();
-    local a =CardObject:new();
-    resourcesTable=ResourcesManager:init();
-    local go =resourcesTable:syncInstantiate("Prefabs/Card",1);
-    print(a.objNumber);
-    c:init("fire","effect",1,1,resourcesTable.object);
-    --a:init("water",21,1,1,resourcesTable.object);
-    --c:writeFile();
-    c:readLastFile();
 
-    local messageQueue = CS.MessageQueueManager.GetMessageQueue();
-    local msg = CS.Message(CS.Message.MessageType.TestMessage,'form messageCast');
-    messageQueue:SendMessage(msg);
+    --resourcesTable=ResourcesManager:init();
+    --local go =resourcesTable:syncInstantiate("Prefabs/Card",1,canvas);
+    --print(type(go));
+    --将物体不在渲染台显示，无法调用，报错为在c#被弃用
+    --go.renderer:enabled();
+    --将某个物体设置为不可用吧
+    --go:SetActive(false);
+    --c:init("water","fight",1,1,go);
+    --c:useCard();
+    --p:init("大都会的猫","effect",1,1,go);
+    --p:handleCard();
+    --local messageQueue = CS.MessageQueueManager.GetMessageQueue();
+    --local msg = CS.Message(CS.Message.MessageType.TestMessage,'form messageCast');
+    --messageQueue:SendMessage(msg);
 
 end
 
@@ -36,5 +43,6 @@ end
 
 
 function response()
-    print(messageCast.message.msg);
+    --p:handleCard(messageCast.message.msg)
+    --print("from main:"..messageCast.message.msg);
 end

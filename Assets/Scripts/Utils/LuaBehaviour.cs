@@ -35,6 +35,8 @@ namespace XLuaBehaviour{
     [LuaCallCSharp]
     public class LuaBehaviour : MonoBehaviour,IMessageListener
     {
+        //注册一个scenestack
+        public static SceneStack<int> sceneList;
         //lua脚本列表
         public LuaScript[] scripts;
 
@@ -43,7 +45,10 @@ namespace XLuaBehaviour{
         internal const float GCInterval = 1;//1 second 
         
         void Awake(){
-            
+            //初始化scenstack
+            //stacke只记录6个场景
+            sceneList = new SceneStack<int>(6);
+
             //将luaBehaviour注册到消息列表监听
             MessageQueueManager.GetMessageQueue().RegisteredListener(this);
 
