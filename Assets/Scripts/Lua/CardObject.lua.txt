@@ -133,10 +133,13 @@ function Card:moveCard()
 end
 
 --使用卡牌
---利用通信将卡牌信息发送给网络层
+--进行消息队列的使用
+--预想利用通信将卡牌信息发送给网络层，由网络层的后段进行计算
 --未实现
-function Card:useCard(type)
-    print(typeDir[type]);
+function Card:useCard()
+    local messageQueue = CS.MessageQueueManager.GetMessageQueue();
+    local msg = CS.Message(CS.Message.MessageType.TestMessage,'form Card');
+    messageQueue:SendMessage(msg);
 end
 
 --删除卡牌

@@ -43,7 +43,7 @@ function ResourcesManager:syncInstantiate(path,type,parent,position,rotation)
     elseif type >= 20 then
         objAsset =self:LoadAssetBundle(type,path);
     else
-        print("hello world");
+        print("没有这种加载类型");
     end
 
 

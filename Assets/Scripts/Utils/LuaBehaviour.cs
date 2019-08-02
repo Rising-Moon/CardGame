@@ -11,8 +11,10 @@ using XLua.LuaDLL;
 using Object = System.Object;
 
 namespace XLuaBehaviour{
+
     [System.Serializable]
-    public class Injection{
+    public class Injection
+    {
         public string name;
         public GameObject value;
     }
@@ -25,56 +27,59 @@ namespace XLuaBehaviour{
         internal Action luaFixedUpdate;
         internal Action luaStart;
         internal Action luaUpdate;
-
         internal Action luaOnDestory;
-
         //监听消息列表
         internal Action luaMessageCast;
     }
 
     [LuaCallCSharp]
-    public class LuaBehaviour : MonoBehaviour, IMessageListener{
+    public class LuaBehaviour : MonoBehaviour,IMessageListener
+    {
+        //注册一个scenestack
+        public static SceneStack<int> sceneList;
         //lua脚本列表
         public LuaScript[] scripts;
 
         internal static LuaEnv luaEnv = new LuaEnv(); //all lua behaviour shared one luaenv only!
         internal static float lastGCTime = 0;
-        internal const float GCInterval = 1; //1 second 
-
+        internal const float GCInterval = 1;//1 second 
+        
         void Awake(){
+            //初始化scenstack
+            //stacke只记录6个场景
+            sceneList = new SceneStack<int>(6);
+
             //将luaBehaviour注册到消息列表监听
             MessageQueueManager.GetMessageQueue().RegisteredListener(this);
 
             Thread.Sleep(1000);
-
+            
             LuaTable meta = luaEnv.NewTable();
-
+            
             ////////////////////导入Lua依赖///////////////////////
             luaEnv.AddBuildin("pb", XLua.LuaDLL.Lua.LoadLuaProfobuf);
             ////////////////////////////////////////////////////
             luaEnv.AddLoader(LuaPathLoader);
-
-            //设置global为lua全局变量表的映射
-            luaEnv.Global.Set("global", luaEnv.Global);
+            
+            luaEnv.Global.Set("global",luaEnv.Global);
 
             meta.Set("__index", luaEnv.Global);
             foreach (var script in scripts) {
                 script.scriptEnv = luaEnv.NewTable();
                 script.scriptEnv.SetMetaTable(meta);
                 //设置全局变量
-                script.scriptEnv.Set("self", this);
-                script.scriptEnv.Set("vm", luaEnv);
-
+                script.scriptEnv.Set("self",this);
+                script.scriptEnv.Set("vm",luaEnv);
+                
                 //导入配置表
                 LuaTable configs = luaEnv.NewTable();
                 foreach (var pair in Config.configList) {
-                    configs.Set(pair.Key, pair.Value);
+                    configs.Set(pair.Key,pair.Value);
                 }
-
-                script.scriptEnv.Set("config", configs);
+                script.scriptEnv.Set("config",configs);
 
                 foreach (var injection in script.injections) {
-                    script.scriptEnv.Set(injection.name, injection.value);
+                    script.scriptEnv.Set(injection.name,injection.value);
                 }
 
                 luaEnv.DoString(script.luaScript.text, script.luaScript.name, script.scriptEnv);
@@ -103,24 +108,27 @@ namespace XLuaBehaviour{
 
             return Encoding.UTF8.GetBytes(File.ReadAllText(p));
         }
-
-        void Start(){
+        
+        void Start()
+        {
             foreach (var script in scripts) {
                 if (script.luaStart != null) {
                     script.luaStart();
                 }
             }
         }
-
-        void Update(){
+        
+        void Update()
+        {
             foreach (var script in scripts) {
                 if (script.luaUpdate != null) {
                     script.luaUpdate();
                 }
-
                 if (Time.time - lastGCTime > GCInterval) {
+                    
                     lastGCTime = Time.time;
                 }
+                
             }
         }
 
@@ -132,7 +140,8 @@ namespace XLuaBehaviour{
             }
         }
 
-        void OnDestroy(){
+        void OnDestroy()
+        {
             foreach (var script in scripts) {
                 if (script.luaOnDestory != null) {
                     script.luaOnDestory();
@@ -149,13 +158,13 @@ namespace XLuaBehaviour{
         //接收消息处理后映射到lua中，消息内容在lua的messageCast变量中
         public bool Response(Message msg){
             foreach (var script in scripts) {
-                if (script.luaMessageCast != null) {
-                    LuaTable luaTable = luaEnv.NewTable();
-                    luaTable.Set("message", msg is Message.ByteMessage ? (Message.ByteMessage) msg : msg);
-                    luaTable.Set("type", msg is Message.ByteMessage ? 2 : 1);
-                    script.scriptEnv.Set("messageCast", luaTable);
+                LuaTable luaTable = luaEnv.NewTable();
+                luaTable.Set("message",msg is Message.ByteMessage?(Message.ByteMessage)msg : msg);
+                luaTable.Set("type",msg is Message.ByteMessage ? 2 : 1);
+                script.scriptEnv.Set("messageCast",luaTable);
+
+                if (script.luaMessageCast != null)
                     script.luaMessageCast();
-                }
             }
 
             return false;
