@@ -3,9 +3,6 @@ local protoc = require 'protoc'
 
 function start ()
     messageQueue = CS.MessageQueueManager.GetMessageQueue();
-    canvas = CS.UnityEngine.GameObject.Find("Canvas");
-    local resourceManager = require('ResourcesManager');
-    obj = resourceManager:syncInstantiate('Prefabs/Card',1,canvas);
 end
 
 --读取proto文件
