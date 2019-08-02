@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
 
-public class MsgLoger : MonoBehaviour,IMessageListener
-{
+public class MsgLoger : MonoBehaviour, IMessageListener{
     private void Awake(){
         MessageQueue mq = MessageQueueManager.GetMessageQueue();
         mq.RegisteredListener(this);
     }
 
     public bool Response(Message msg){
-        Debug.Log("Head:" + msg.head + "\nBody:"+msg.msg);
+        if (msg.head == Message.MessageType.Debug)
+            Debug.Log("DEBUG :" + msg.msg);
         return false;
     }
 }
