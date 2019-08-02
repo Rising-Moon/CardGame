@@ -96,12 +96,12 @@ public class ClientSocket : MonoBehaviour, IMessageListener{
                         .SendMessage(new Message.ByteMessage(Message.MessageType.SocketResponse, pack));
                     
                     //Debug:拆包后消息
-                    Debug.Log("包数据:"+Encoding.UTF8.GetString(pack));
+                    MessageQueueManager.GetMessageQueue().SendMessage(new Message(Message.MessageType.Debug, "包数据:"+Encoding.UTF8.GetString(pack)));
                 }
                 
             }
             catch (Exception e) {
-                Debug.LogError(e.Message);
+                MessageQueueManager.GetMessageQueue().SendMessage(new Message(Message.MessageType.Debug, e.Message));
                 break;
             }
             
@@ -125,7 +125,7 @@ public class ClientSocket : MonoBehaviour, IMessageListener{
             socketSend.Send(buffer);
         }
         catch (Exception e) {
-            Debug.Log(e.Message);
+            MessageQueueManager.GetMessageQueue().SendMessage(new Message(Message.MessageType.Debug, e.Message));
         }
     }
 
@@ -144,7 +144,7 @@ public class ClientSocket : MonoBehaviour, IMessageListener{
             socketSend.Send(pack);
         }
         catch (Exception e) {
-            Debug.Log(e.Message);
+            MessageQueueManager.GetMessageQueue().SendMessage(new Message(Message.MessageType.Debug, e.Message));
         }
     }
 
@@ -152,8 +152,8 @@ public class ClientSocket : MonoBehaviour, IMessageListener{
         string closeMsg = "exit()";
         Send(closeMsg);
         if (socketSend != null && socketSend.Connected) {
-            socketSend.Disconnect(false);
             socketSend.Close();
+            socketSend = null;
         }
     }
 

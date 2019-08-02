@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class HttpUtil : MonoBehaviour{
-    protected UnityWebRequest www;
     protected string url;
     protected string path;
 
@@ -28,23 +29,25 @@ public class HttpUtil : MonoBehaviour{
     private IEnumerator Get(){
         using (UnityWebRequest www = UnityWebRequest.Get(url)) {
             www.SendWebRequest();
-            Debug.Log("开始下载");
-            
-            while (!www.isDone) {
-                Debug.Log("进度:" + www.downloadProgress);
-            }
-
-            if (www.isDone) {
-                Debug.Log("下载完成");
-                File.WriteAllBytes(path, www.downloadHandler.data);
-            }
+            Debug.Log("开始下载: " + url);
 
             if (www.isHttpError || www.isNetworkError) {
                 Debug.LogError(www.error);
+                Destroy(this);
+            }
+            else {
+                while (!www.isDone) {
+                    Debug.Log("进度:" + www.downloadProgress);
+                }
+
+                if (www.isDone) {
+                    Debug.Log("下载内容: " + www.downloadHandler.text);
+                    File.WriteAllBytes(path, www.downloadHandler.data);
+                }
             }
         }
-
-        Destroy(this);
+        AssetDatabase.Refresh();
+        Destroy(gameObject);
         yield break;
     }
 }
