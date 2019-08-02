@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using XLuaBehaviour;
 
-public class goToPamking : MonoBehaviour
+public class goAhead : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -17,14 +17,20 @@ public class goToPamking : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+      
     }
 
     void OnClick()
     {
-        print("go to pamking scene");
-        //将当前场景入栈
-        LuaBehaviour.sceneList.push(SceneManager.GetActiveScene().buildIndex);
-        SceneManager.LoadScene(3);
+          print("go to next scene");
+          //将当前场景入栈
+          int index = SceneManager.GetActiveScene().buildIndex;
+          if(index != 0) 
+              LuaBehaviour.sceneList.push(index);
+          else
+          {
+              print("场景0 不能进栈 ");
+          }
+          SceneManager.LoadScene(index+1);
     }
 }

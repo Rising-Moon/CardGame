@@ -9,6 +9,7 @@ public class backButton : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //绑定按钮事件
         this.GetComponent<Button>().onClick.AddListener(OnClick);
     }
 
@@ -20,8 +21,15 @@ public class backButton : MonoBehaviour
 
     void OnClick()
     {
-        print("run");
+        print("back to last scene");
         //LuaBehaviour.sceneList.push(1);
-        SceneManager.LoadScene(LuaBehaviour.sceneList.pop());
+        //加载上一个场景
+        int index = LuaBehaviour.sceneList.pop();
+        if(index != 0)
+            SceneManager.LoadScene(index);
+        else
+        {
+            print("不能回到场景0");
+        }
     }
 }

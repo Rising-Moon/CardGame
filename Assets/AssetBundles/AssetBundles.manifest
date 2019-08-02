@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 3573450376
+CRC: 773073575
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -8,7 +8,7 @@ AssetBundleManifest:
     Info_1:
       Name: human.pre
       Dependencies:
-        Dependency_0: humanpic.pic
+        Dependency_0: human.pic
     Info_2:
-      Name: humanpic.pic
+      Name: human.pic
       Dependencies: {}

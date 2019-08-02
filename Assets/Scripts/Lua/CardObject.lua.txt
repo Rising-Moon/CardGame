@@ -10,18 +10,6 @@ local Object = require("BaseObject");
 local Card =class("Card",Object);
 Card.__index = Card;
 
--------------------配置表---------------------
-typeDir ={
-    fight = 1;
-    defense = 2;
-    treatment = 3;
-    effect = 4;
-};
-
-nameDictionary = {
-    fire =" this is fire card , use to fight",
-    water ="this is water card, use to fight"
-};
 
 
 ---------------属性列表---------------
@@ -62,7 +50,8 @@ function Card:setType(objType)
     --2表示防御，护盾
     --3表示治疗，回血
     --4表示特殊效果
-    self.objType=typeDir[objType];
+    print(type(global.typeDir));
+    self.objType=global.typeDir[objType];
 end
 
 --卡牌数值
@@ -149,12 +138,12 @@ function Card:drop()
 end
 
 ----------------------存储相关-----------------
---提取数据
+--提取数据的临时拷贝
 --进行序列化
 function Card:dataCopy()
     local objdata ={};
     objdata = { objId = self.objId or 0,objName = self.objName or "card",
-                objType =self.objType or typeDir.defense, objNumber =self.objNumber or 10 ,
+                objType =self.objType or global.typeDir.fight, objNumber =self.objNumber or 10 ,
                 level =self.level or 1};
     --table.sort(objdata);
     --用pair全部遍历数据进行测试
@@ -168,7 +157,7 @@ end
 --读取文件
 function Card:readLastFile()
     local file =io.open("Assets/Resources/Config/Card.txt","r");
-    local num = 9;
+    --local num = 9;
     for i in file:lines() do
         print(i);
     end
@@ -180,6 +169,7 @@ end
 function Card:writeFile()
 
     local file = io.open("Assets/Resources/Config/Card.txt","a+");
+    --将卡牌的临时复制序列化
     local tempStr = serialize(self:dataCopy());
     --print("demo is here "..tempStr);
     file:write(tempStr);

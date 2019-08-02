@@ -1,147 +1,164 @@
+
 local ResourcesManager ={};
 
 ResourcesManager.__index =ResourcesManager;
 
 
 --------------------------资源表--------------------------
---所有不销毁的obj列表
-ResourcesManager.dontDestroyObjAry = {};
 
---已加载资源的实例化列表，实例化后的obj都存储在这里
---asset--{path, userMap={id--obj}}
-ResourcesManager.assetListenerMap = {};
-
---缓存了所有的AB本身
---path = {assetBundle, refCount}
-ResourcesManager.assetBundleCacheMap = {}
-
---初始化解析主manifest后获得，记录所有AB之间的依赖
-ResourcesManager.abAllDependenciesMap = {}
-
---路径缓存表
-ResourcesManager.pathCache ={};
 
 --产生一个实例
+--改成"单例模式"
 function ResourcesManager:init()
-    local instance = {};
-    setmetatable(instance,ResourcesManager);
-    return instance
+    --local instance = {};
+    --setmetatable(instance,ResourcesManager);
+    --return instance
+
+    --加载好的gameobj
+    --{path = gameobj}
+    self.objMap ={};
+
+    --缓存了所有的AB本身，path = {assetBundle, refCount}
+    self.assetBundleCacheMap = {};
+
+    --初始化解析主manifest后获得，记录所有AB之间的依赖
+    self.abAllDependenciesMap = {};
+
+    --资源池
+    --{path = name,gameobj =gameobj}
+    self.objPool ={};
 end
 
 
 ---------------------------外部接口-------------------------
 --同步实例化
---请求路径，类型，位置，父物体
+--请求路径，类型，父物体，位置，角度
 function ResourcesManager:syncInstantiate(path,type,parent,position,rotation)
-    --提供借口
-    local objAsset ;
+    --path是否正确且资源是否能被加载
+    local objBool;
     --加载resources资源
-    if type == 1  then
-        objAsset=self:LoadResources(path);
-
+    if type == 1 then
+        objBool = self:LoadResources(path);
         --加载assetbundle资源
-    elseif type >= 20 then
-        objAsset =self:LoadAssetBundle(type,path);
+    elseif type >= 2 then
+        objBool =self:LoadAssetBundle(type,path);
     else
-        print("没有这种加载类型");
+        print("error type ");
+    end
+
+    --返回实例化的对象
+    if objBool then
+        return self:instantiate(path,parent,position,rotation);
+    else
+        print("load path error or resources wrong");
     end
 
 
-    if objAsset then
-        return self:instantiate(path, parent, position,rotation);
-    else
-        print('error to load');
-    end
 
 end
 
 --删除对内存资源的引用
+--删除资源
 --提供给外部调用
 function ResourcesManager:clear()
+    print("ResourcesManager is clearing ");
+    for path, abCache in pairs(self.assetBundleCacheMap) do
+        print("unload asset bundle, path is ", path);
+        abCache.assetBundle:Unload(false);
+    end
+    self.assetBundleCacheMap = {};
+    --直接不持有，即可在UnloadUnusedAssets中回收相关资源
 
-    for i,v in ipairs(self.pathCache) do
-        print(self.assetBundleCacheMap[v].assetBundle);
-        self.assetBundleCacheMap[v].assetBundle:Unload(false);
+    print("destroy objmap");
+    for i, obj in pairs(self.objMap) do
+        print(obj);
+        self.objMap[i] =nil;
     end
-    for i,v in ipairs(self) do
-        self.remove(self,i);
-        --self.assetListenerMap.Unloado();
+    print("destroy objpool");
+    for i,obj in pairs(self.objPool) do
+        print(obj);
+        CS.UnityEngine.Object.Destroy(obj);
     end
-    for j,v in ipairs(self) do
-        print(j..v);
-    end
-    print("resources drop");
 end
 
 --删除单个物体
 function ResourcesManager:dropResoureces(obj)
-
-    CS.UnityEngine.GameObject.Destroy(obj);
-    --弱卸载，回收无用Assets
-    CS.UnityEngine.Resources.UnloadUnusedAssets();
+    --清除对象
+    CS.UnityEngine.Object.Destroy(obj)
 end
 
 
 ----------------------------内部接口---------------------------------------
+
+function ResourcesManager:DontDestroyOnLoad(obj)
+
+end
+
 --资源实例化
 function ResourcesManager:instantiate(path, parent, position, rotation)
-    local gameObj
+    local gameobj;
+    --实例化
     if parent then
-        --self.object:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
         if position then
-            gameObj = CS.UnityEngine.Object.Instantiate(self.assetListenerMap[path], position, rotation or CS.UnityEngine.Quaternion.identity);
+            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], position, rotation or CS.UnityEngine.Quaternion.identity);
         else
-            gameObj = CS.UnityEngine.Object.Instantiate(self.assetListenerMap[path], parent.Transform, false);
+            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], parent.Transform, false);
         end
         gameObj:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
     else
-        gameObj = CS.UnityEngine.Object.Instantiate(self.assetListenerMap[path], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity);
+        gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity);
     end
-    --GameObject =CS.UnityEngine.Object.Instantiate(self.assetListenerMap[original]);
-    --self.object.transform.localPosition=location;
+
     return gameObj
 end
 
 --根据assetbundle路径查找ab资源信息(不含后缀）
+--例如 human
 function ResourcesManager:findName(path)
-    local objpath = nil;
-    --print("正则表达式:");
-    objpath =string.match(path,"/[%w]+%.");
-    --print(string.sub(objpath,2,#objpath-1));
-    return string.sub(objpath,2,#objpath-1)
+    local objPath = nil;
+    objPath =string.match(path,"/[%w]+%.");
+    return string.sub(objPath,2,#objPath-1)
 end
 
 --根据assetbundle路径查找ab资源信息（含后缀）
+--例如 human.pre
 function ResourcesManager:findAllName(path)
-    local allName =nil;
-    --print("正则表达式");
-    allName =string.match(path,"/[%w]+%.[%w]+");
-    --print(allName);
-    return string.sub(allName,2);
+    local fullName =nil;
+    fullName =string.match(path,"/[%w]+%.[%w]+");
+    return string.sub(fullName,2);
+end
+
+--加载asset资源包所依赖的资源包的名字
+--manifes 文件无法被读取
+function ResourcesManager:LoadManifest()
+    local manifestAb = CS.UnityEngine.AssetBundle.LoadFromFile("Assets/AssetBundles");
+    print(manifestAb);
+    local manifest =manifestAb:LoadAsset("AssetBundleManifest");
+    self.abAllDependenciesMap["Assets/AssetBundles"] = manifest:GetAllDependencies("human");
+    for i ,v in pairs(self.abAllDependenciesMap["Assets/AssetBundles"]) do
+        CS.UnityEngine.AssetBundle.LoadFromFile("Asset/AssetBundles/"..v);
+    end
 end
 
 --加载resources资源
 function ResourcesManager:LoadResources(path)
-    self.assetListenerMap[path] = CS.UnityEngine.Resources.Load(path);
-    if self.assetListenerMap[path] then
-        --print(self.assetListenerMap[path]);
-        return 1
+    self.objMap[path] = CS.UnityEngine.Resources.Load(path);
+    if self.objMap[path] then
+        return true
     else
-        return nil
+        return false
     end
 end
 
 --加载assetbundle资源
 function ResourcesManager:LoadAssetBundle(type,path)
-    --加载manifest查找依赖
-    --self:LoadManifest('Assets/AssetBundles',self:findAllName(path));
     --local load
     if type ==21 then
         return self:LoadLocalAssetBundle(path);
-    --memoery load
+        --memoery load
     elseif type ==22 then
-        return self:LoadMemoryAssetBundle();
-    --request load
+        return self:LoadMemoryAssetBundle(path);
+        --request load
     elseif type ==23 then
         return self:LoadRequestAssetBundle();
     end
@@ -155,50 +172,53 @@ function ResourcesManager:LoadLocalAssetBundle(path)
     local temp =CS.UnityEngine.AssetBundle.LoadFromFile(path);
     --缓存ab本身
     self.assetBundleCacheMap[path] ={assetBundle = temp,refCount =1};
-    --缓存ab索引
-    table.insert(self.pathCache,path);
     --寻找路径中的ab包名
-    local temppath = self:findName(path);
-    self.assetListenerMap[path]=temp:LoadAsset(temppath);
-    if self.assetListenerMap[path] then
-        return 1
+    local tempPath = self:findName(path);
+    --加载对象
+    self.objMap[path]=temp:LoadAsset(tempPath);
+    --print(self.objMap[path]);
+    if self.objMap[path] then
+        return true
     else
-        return nil
+        return false
     end
 end
 
 --加载内存assetbundle资源
---未测试
+--
 function ResourcesManager:LoadMemoryAssetBundle(path)
     --加载assetbundle
     local temp =CS.UnityEngine.AssetBundle.LoadFromMemory(CS.UnityEngine.Windows.File.ReadAllBytes(path));
-    local temppath = self:findName(self.path);
+    local tempPath = self:findName(path);
     --加载asset
-    self.assetListenerMap[path]=temp:LoadAsset(temppath);
-    if self.assetListenerMap[path] then
-        return 1
+    self.objMap[path]=temp:LoadAsset(tempPath);
+    if self.objMap[path] then
+        return true
     else
-        return nil
+        return false
     end
 end
 
---加载asset资源包所依赖的资源包的名字
-function ResourcesManager:LoadManifest(abPath,abName)
-    local manifestAb = CS.UnityEngine.AssetBundle.LoadFromFile(abPath);
-    local manifest =manifestAb:LoadAsset("AssetBundleManifest");
-    self.abAllDependenciesMap[abPath] = manifest:GetAllDependencies(abName);
-    for i ,v in self.abAllDependenciesMap[abPath] do
-        CS.UnityEngine.AssetBundle.LoadFromFile("Asset/AssetBundles/"..v);
-    end
-end
 
 --加载服务器assetbundle资源
 --未实现
 function ResourcesManager:LoadRequestAssetBundle()
-    local request = {};
-    local temp =CS.UnityEngine.AssetBundle.LoadFromMemory(File.ReadAllBytes(self.path));
-    local temppath = self:findName(self.path);
-    self.object=CS.UnityEngine.Object.Instantiate(temp:LoadAsset(temppath));
+
+end
+
+--向对象池中存对象
+function ResourcesManager:pushInPool(obj)
+    table.insert(self.objPool,obj);
+    obj:SetActive(false);
+end
+
+--从对象池中取对象
+--存在index错误的可能，发生在对象池中不存在对象的情况下
+function ResourcesManager:popPool()
+    local obj =self.objPool[1];
+    obj:SetActive(true);
+    table.remove(self.objPool,1);
+    return obj
 end
 
 ResourcesManager:init();
