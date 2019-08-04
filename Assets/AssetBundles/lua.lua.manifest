@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
-CRC: 3568490096
+CRC: 1859240045
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c349e9b58ff97a9659a31b3ead55ab90
+    Hash: f7ae0d238d3686ea8a5b1ab1c2944ecc
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
 HashAppended: 0
 ClassTypes:
-- Class: 83
+- Class: 49
   Script: {instanceID: 0}
 Assets:
-- "Assets/Resources/music/\u79BB\u5C9B\u4E4B\u6B4C.mp3"
+- Assets/Scripts/Lua/FIleRead.lua.txt
 Dependencies: []

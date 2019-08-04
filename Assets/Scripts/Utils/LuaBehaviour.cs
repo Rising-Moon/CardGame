@@ -59,7 +59,10 @@ namespace XLuaBehaviour{
             ////////////////////导入Lua依赖///////////////////////
             luaEnv.AddBuildin("pb", XLua.LuaDLL.Lua.LoadLuaProfobuf);
             ////////////////////////////////////////////////////
+            
+            //添加自定义Loader
             luaEnv.AddLoader(LuaPathLoader);
+            luaEnv.AddLoader(LuaABLoader);
             
             luaEnv.Global.Set("global",luaEnv.Global);
 
@@ -70,13 +73,6 @@ namespace XLuaBehaviour{
                 //设置全局变量
                 script.scriptEnv.Set("self",this);
                 script.scriptEnv.Set("vm",luaEnv);
-                
-                //导入配置表
-                LuaTable configs = luaEnv.NewTable();
-                foreach (var pair in Config.configList) {
-                    configs.Set(pair.Key,pair.Value);
-                }
-                script.scriptEnv.Set("config",configs);
 
                 foreach (var injection in script.injections) {
                     script.scriptEnv.Set(injection.name,injection.value);
@@ -107,6 +103,12 @@ namespace XLuaBehaviour{
             }
 
             return Encoding.UTF8.GetBytes(File.ReadAllText(p));
+        }
+        
+        //自定义Loader可以从AssetsBundle包读出
+        private byte[] LuaABLoader(ref string path){
+            string bundlePath = Config.Get("asset_bundle_path");
+            return null;
         }
         
         void Start()

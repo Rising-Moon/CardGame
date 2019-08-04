@@ -10,6 +10,7 @@ function start()
 
 end
 
+-- 处理响应服务器消息
 local responseHandle = {
     -- 处理服务器返回的消息
     SocketResponse = function()
@@ -36,6 +37,11 @@ local responseHandle = {
             -- 获取解析更新文件列表
             [1] = function()
                 CS.UpdateUtil.Update(msg.body);
+            end,
+            -- 直接放入消息队列
+            [2] = function()
+                local message = CS.Message(msg.head,msg.body);
+                messageQueue:SendMessage(message);
             end
         }
 
@@ -59,12 +65,6 @@ function response()
     elseif (messageCast.message.head == CS.Message.MessageType.SocketLuaPack) then
         responseHandle.SocketLuaPack();
     end
-
-
-
-
-    --调试
-    --print(msg.type);
-    --print(msg.head);
-    --print(msg.body);
 end
+
+

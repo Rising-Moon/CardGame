@@ -22,8 +22,8 @@ public class ClientSocket : MonoBehaviour, IMessageListener{
 
     private void ConnectSocket(){
         try {
-            int port = Int32.Parse(Config.configList["port"]);
-            string _ip = Config.configList["server_ip"];
+            int port = Int32.Parse(Config.Get("port"));
+            string _ip = Config.Get("server_ip");
 
             socketSend = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             IPAddress ip = IPAddress.Parse(_ip);

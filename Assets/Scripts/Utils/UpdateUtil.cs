@@ -12,7 +12,7 @@ public class UpdateUtil{
             foreach (var info in infos) {
                 Debug.Log(info);
             }
-            HttpUtil.Download(targetUrl + infos[1] + infos[0],infos[2] + infos[0]);
+            DownloadManager.Download(targetUrl + infos[1] + infos[0],infos[2] + infos[0]);
         }
     }
 }

@@ -9,18 +9,20 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class HttpUtil : MonoBehaviour{
+public class DownloadManager : MonoBehaviour{
+
     protected string url;
     protected string path;
 
+    //调用时创建一个本身实例
     public static void Download(string url, string path){
         GameObject downLoadObject = new GameObject("download");
-        downLoadObject.AddComponent(typeof(HttpUtil));
+        downLoadObject.AddComponent(typeof(DownloadManager));
         DontDestroyOnLoad(downLoadObject);
-        HttpUtil httpUtil = downLoadObject.GetComponent<HttpUtil>();
-        httpUtil.url = url;
-        httpUtil.path = path;
-        httpUtil.StartDownload();
+        DownloadManager httpManager = downLoadObject.GetComponent<DownloadManager>();
+        httpManager.url = url;
+        httpManager.path = path;
+        httpManager.StartDownload();
     }
 
     protected void StartDownload(){
@@ -58,8 +60,6 @@ public class HttpUtil : MonoBehaviour{
                 }
             }
         }
-
-        AssetDatabase.Refresh();
         Destroy(gameObject);
         yield break;
     }
