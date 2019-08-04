@@ -56,6 +56,7 @@ namespace XLuaBehaviour{
             //Debug.Log(mainApp.name);
             //不销毁mainApp避免lua脚本失效
             DontDestroyOnLoad(this.gameObject);
+            Debug.Log(Application.dataPath);
             
             //将luaBehaviour注册到消息列表监听
             MessageQueueManager.GetMessageQueue().RegisteredListener(this);

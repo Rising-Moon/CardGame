@@ -6,6 +6,7 @@ global.typeDir ={
     treatment = 3;
     effect = 4;
 };
+
 --卡牌描述
 global.nameDictionary = {
     fire =" this is fire card , use to fight",

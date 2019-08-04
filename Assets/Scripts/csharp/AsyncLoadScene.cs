@@ -20,7 +20,7 @@ public class AsyncLoadScene : MonoBehaviour
     {
         // 初始化进度条
         loadingSlider.value = 0.0f;
-        loadingSlider.transform.SetActive(true);
+        //loadingSlider.transform.SetActive(true);
 
         if (SceneManager.GetActiveScene ().buildIndex == 0) {
             // 启动协程

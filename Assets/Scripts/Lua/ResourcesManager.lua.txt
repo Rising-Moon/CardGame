@@ -51,16 +51,39 @@ function ResourcesManager:syncInstantiate(path,type,parent,position,rotation)
         return self:instantiate(path,parent,position,rotation);
     else
         print("load path error or resources wrong");
+        return nil
     end
 
+end
 
+--只使用路径和类型加载
+--下次想要使用资源的时候可以直接加载
+function ResourcesManager:LoadPath(path,type)
+    --加载resources资源
+    if type == 1 then
+        self:LoadResources(path);
+        --加载assetbundle资源
+    elseif type >= 2 then
+        self:LoadAssetBundle(type,path);
+    else
+        print("error type ");
+    end
+    return self.objMap[path];
+end
 
+function ResourcesManager:instantiatePath(path,type,parent,position,rotation)
+    if self.objMap[path] == nil then
+        return self:syncInstantiate(path,type,parent,position,rotation);
+    else
+        return self:syncInstantiate(path,type,parent,position,rotation);
+    end
 end
 
 --删除对内存资源的引用
 --删除资源
 --提供给外部调用
 function ResourcesManager:clear()
+    --删除缓存
     print("ResourcesManager is clearing ");
     for path, abCache in pairs(self.assetBundleCacheMap) do
         print("unload asset bundle, path is ", path);
@@ -84,33 +107,20 @@ end
 --删除单个物体
 function ResourcesManager:dropResoureces(obj)
     --清除对象
-    CS.UnityEngine.Object.Destroy(obj)
+    CS.UnityEngine.Object.Destroy(obj);
 end
 
 
-----------------------------内部接口---------------------------------------
+----------------------------内部接口----------------------------------
 
+--不销毁资源接口
+--暂时无不需要销毁的资源，唯一不销毁资源只有挂靠luabehaviour的物体，直接在luabehaviour声明
 function ResourcesManager:DontDestroyOnLoad(obj)
-
+    CS.UnityEngine.GameObject.DontDestroyOnLoad(obj);
+    table.insert(self.dontDestroyObjAry, obj);
 end
 
---资源实例化
-function ResourcesManager:instantiate(path, parent, position, rotation)
-    local gameobj;
-    --实例化
-    if parent then
-        if position then
-            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], position, rotation or CS.UnityEngine.Quaternion.identity);
-        else
-            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], parent.Transform, false);
-        end
-        gameObj:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
-    else
-        gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity);
-    end
 
-    return gameObj
-end
 
 --根据assetbundle路径查找ab资源信息(不含后缀）
 --例如 human
@@ -129,14 +139,17 @@ function ResourcesManager:findAllName(path)
 end
 
 --加载asset资源包所依赖的资源包的名字
---manifes 文件无法被读取
+--manifest 文件在assetbundle下无法被读取
 function ResourcesManager:LoadManifest()
-    local manifestAb = CS.UnityEngine.AssetBundle.LoadFromFile("Assets/AssetBundles");
+    --print("Assets/AssetBundles");
+    print(CS.UnityEngine.Application.dataPath);
+    local manifestAb = CS.UnityEngine.AssetBundle.LoadFromFile(CS.UnityEngine.Application.streamingAssetsPath.."/StreamingAssets");
     print(manifestAb);
     local manifest =manifestAb:LoadAsset("AssetBundleManifest");
-    self.abAllDependenciesMap["Assets/AssetBundles"] = manifest:GetAllDependencies("human");
-    for i ,v in pairs(self.abAllDependenciesMap["Assets/AssetBundles"]) do
-        CS.UnityEngine.AssetBundle.LoadFromFile("Asset/AssetBundles/"..v);
+    print(manifest);
+    self.abAllDependenciesMap= manifest:GetAllDependencies("human");
+    for i ,v in pairs(self.abAllDependenciesMap) do
+        CS.UnityEngine.AssetBundle.LoadFromFile(CS.UnityEngine.Application.streamingAssetsPath.."/StreamingAssets"..v);
     end
 end
 

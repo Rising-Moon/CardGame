@@ -7,6 +7,7 @@ public class UpdateUtil{
     public static void Update(string updateItem){
         string[] items = updateItem.Split('\n');
         foreach (var item in items) {
+            Debug.Log(item);
             string[] infos = item.Split(':');
             foreach (var info in infos) {
                 Debug.Log(info);
