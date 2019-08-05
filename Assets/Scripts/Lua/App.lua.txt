@@ -36,7 +36,8 @@ local responseHandle = {
             end,
             -- 获取解析更新文件列表
             [1] = function()
-                CS.UpdateUtil.Update(msg.body);
+                updateUtil = CS.UpdateUtil(msg.body);
+                updateUtil:Update(msg.body);
             end,
             -- 直接放入消息队列
             [2] = function()
