@@ -5,12 +5,29 @@ ResourcesManager.__index =ResourcesManager;
 
 ----------------资源表---------------
 function ResourcesManager:init()
-    --路径加载后获取的资源
+    --resources路径加载后获取的资源
     --objMap[path]=...
     self.objMap ={};
+
     --资源池
     --[path]{gameobj}
     self.objPool ={};
+
+    --ab的manifest依赖
+    --初始化manifest
+    self.manifest = self:InitManifest();
+
+    --AssetBundle缓存
+    --{assetBundle ,refCount}
+    self.AssetBundleCacheMap ={};
+
+    --Asset缓存 path - asset
+    self.AssetCacheMap={};
+
+    --Assets依赖关系
+    self.AssetBundleIndependenceMap ={};
+
+
 end
 -------------------------------------
 
@@ -20,8 +37,8 @@ end
 function ResourcesManager:instantiatePath(path,parent,position,rotation)
     --如果资源被缓存下来，直接进行初始化
     print("from instantiatePath is :");
-    print(self.objMap[path]);
-    if self.objMap[path] == nil then
+    --print(self.objMap[path]);
+    if self.objMap[path] == nil and self.AssetCacheMap[path] == nil then
         print("run syncInstantiate");
         return self:syncInstantiate(path,parent,position,rotation);
         --加载资源
@@ -48,6 +65,14 @@ function ResourcesManager:clear()
         CS.UnityEngine.Object.Destroy(obj);
     end
     self.objPool = nil;
+    print("destroy AssetBundle");
+    print(self.AssetBundleCacheMap["Assets/StreamingAssets/AssetBundles/human.pre"].assetBundle);
+    for k,obj in pairs(self.AssetBundleCacheMap) do
+        print("path is "..k);
+        obj.assetBundle:Unload(false);
+    end
+    self.AssetBundleCacheMap ={};
+    self.AssetCacheMap ={};
 end
 
 ---------------------------不推荐使用的外部接口---------------------------------
@@ -97,7 +122,9 @@ end
 ------------------正则处理路径相关------------------------
 --根据路径判断从何处加载资源
 function ResourcesManager:BoolAsset(path)
-    local boolAsset = string.find(path,".");
+    local boolAsset = string.find(path,"%.");
+    --print("from path boolAsset");
+    --print(boolAsset);
     return boolAsset
 end
 
@@ -118,9 +145,62 @@ function ResourcesManager:findAllName(path)
 end
 
 -------------------资源加载相关---------------------
+--加载manifest
+function ResourcesManager:InitManifest()
+    --路径只有一个
+    local manifestAB = CS.UnityEngine.AssetBundle.LoadFromFile(CS.UnityEngine.Application.streamingAssetsPath.."/AssetBundles/AssetBundles");
+    --print("read manifestAb success");
+    local manifest = manifestAB:LoadAsset("AssetBundleManifest");
+    return manifest
+end
+
+
+--加载assetbundle 封装后包含一个ab包 和一个引用计数)
+function ResourcesManager:LoadAssetBundle(path)
+
+    local assetBundle = self.AssetBundleCacheMap[path];
+    if assetBundle then
+        assetBundle.refCount = assetBundle.refCount + 1;
+    else
+        local cache = CS.UnityEngine.AssetBundle.LoadFromFile(path);
+        --print("assetbundle has be down");
+        self.AssetBundleCacheMap[path] = {assetBundle = cache , refCount=1};
+        print(path);
+        print(self.AssetBundleCacheMap[path].assetBundle);
+        assetBundle =self.AssetBundleCacheMap[path];
+    end
+
+    return assetBundle
+end
+
+--加载asset
+function ResourcesManager:LoadAsset(ab, path)
+
+    local asset = self.AssetCacheMap[path];
+    --asset不存在的时候
+    if not asset then
+        asset = ab.assetBundle:LoadAsset(self:findName(path));
+        self.AssetCacheMap[path] = asset;
+        local dependences = self.AssetBundleIndependenceMap[path]
+        --加载依赖
+        --这里没有考虑到如果两个asset都依赖同一项而这一项在第二个加载时没有重内存中移除，而被重新加载出错
+        if not dependences then
+            dependences = self.manifest:GetAllDependencies(self:findAllName(path));
+            self.AssetBundleIndependenceMap[path] = dependences;
+        end
+        --加载所有依赖
+        for i=0, dependences.Length-1, 1 do
+            self:LoadAssetBundle(dependences[i]);
+        end
+    end
+    print("LoadAsset: "..path);
+    return asset
+end
+
 --加载resources资源
 function ResourcesManager:LoadResources(path)
     self.objMap[path] = CS.UnityEngine.Resources.Load(path);
+    --print(self.objMap[path]);
     if self.objMap[path] then
         return true
     else
@@ -128,7 +208,41 @@ function ResourcesManager:LoadResources(path)
     end
 end
 
+--加载assetbundle资源
+function ResourcesManager:LoadAssetBundleResources(path)
+    --先加载assetbundle，再加载asset
+    self.AssetCacheMap[path] =self:LoadAsset(self:LoadAssetBundle(path),path);
+    if self.AssetCacheMap[path] then
+        return true
+    else
+        return false
+    end
+end
+
 -----------------------------------------------------------------
+--同步实例化
+--请求路径，类型，父物体，位置，角度
+function ResourcesManager:syncInstantiate(path,parent,position,rotation)
+    local boolAsset =self:BoolAsset(path);
+    --path是否正确且资源是否能被加载
+    local boolright =nil;
+    if boolAsset then
+        --加载assetbundle资源
+        boolright =self:LoadAssetBundleResources(path);
+    else
+        --加载assetbundle资源
+        boolright =self:LoadResources(path);
+    end
+
+    --返回实例化的对象
+    if boolright then
+        return self:instantiate(path,parent,position,rotation);
+    else
+        print("load path error or resources wrong");
+        return nil
+    end
+end
+
 --资源实例化
 function ResourcesManager:instantiate(path, parent, position, rotation)
     local gameObj;
@@ -136,13 +250,13 @@ function ResourcesManager:instantiate(path, parent, position, rotation)
     if parent then
         --self.object:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
         if position then
-            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], position, rotation or CS.UnityEngine.Quaternion.identity);
+            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path] or self.AssetCacheMap[path], position, rotation or CS.UnityEngine.Quaternion.identity);
         else
-            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], parent.Transform, false);
+            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path] or self.AssetCacheMap[path], parent.Transform, false);
         end
         gameObj:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
     else
-        gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity);
+        gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path] or self.AssetCacheMap[path], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity);
     end
     --GameObject =CS.UnityEngine.Object.Instantiate(self.assetListenerMap[original]);
     --self.object.transform.localPosition=location;

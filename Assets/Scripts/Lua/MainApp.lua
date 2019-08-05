@@ -23,20 +23,40 @@ local ResourcesManager = require("ResourcesManager");
 ---引入基类
 local BaseObject =require("BaseObject");
 
+local canvas =CS.UnityEngine.GameObject.Find("Canvas");
+
 function start()
+
+    --[[
+    --需要改为异步加载
     -------------scenesmanager 测试-----------
     print("here is scenesmananger test");
-    ScenesManager:LoadScene(1);
     print("load 1");
-    ScenesManager:LoadScene();
-    print("load 2");
-    ScenesManager:BackScene();
+    print(ScenesManager:LoadScene(1));
+    print("load 2")
+    ScenesManager:LoadScene(2);
     print("back 1");
-
+    ScenesManager:BackScene();
+    ]]--
+    --[[
     -------------resourcesmanager 测试--------
     print("here is resourcesmanager");
-    ResourcesManager:instantiatePath("Prefabs/Card");
-
+    --资源加载只需要路径即可
+    --完整为 instantiatePath(path,parent,position,rotation)
+    --resources 资源测试完成
+    --ResourcesManager:instantiatePath("Prefabs/Card",canvas);
+    -- assetbundle 资源测试完毕
+    --ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre",canvas);
+    --ResourcesManager:clear();
+    ]]--
     -----------------测试结束标示-------------
     print("test is down here");
+end
+
+function update()
+
+end
+
+function fixedupdate()
+
 end
