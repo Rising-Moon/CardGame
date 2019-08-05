@@ -10,7 +10,7 @@ using XLua;
 
 public static class Config{
     public static Dictionary<string, string> configList = null;
-    private static string filePath = "Assets/config.json";
+    private static string filePath = Application.dataPath+"/config.json";
 
     //从配置文件中读取配置
     static Config(){

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: d1e9f26d40d71428ea1ec9836477c54b
-DefaultImporter:
+guid: 8d1d70ab30ccb468f9547e28e8fd9a33
+TextScriptImporter:
   externalObjects: {}
   userData: 
   assetBundleName: lua

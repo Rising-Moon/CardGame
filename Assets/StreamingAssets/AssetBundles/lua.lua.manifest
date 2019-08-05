@@ -1,0 +1,32 @@
+ManifestFileVersion: 0
+CRC: 3920205020
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 476356069f2c20f448fbb45486398610
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/Scripts/Lua/out/FIleRead.lua.bytes
+- Assets/Scripts/Lua/out/SceneManager.lua.bytes
+- Assets/Scripts/Lua/out/CardObject.lua.bytes
+- Assets/Scripts/Lua/out/MainApp.lua.bytes
+- Assets/Scripts/Lua/out/App.lua.bytes
+- Assets/Scripts/Lua/out/class.lua.bytes
+- Assets/Scripts/Lua/out/test.lua.bytes
+- Assets/Scripts/Lua/out/AudioManager.lua.bytes
+- Assets/Scripts/Lua/out/GlobalEnumDir.lua.bytes
+- Assets/Scripts/Lua/out/CharacterObject.lua.bytes
+- Assets/Scripts/Lua/out/MonsterObject.lua.bytes
+- Assets/Scripts/Lua/out/serialize.lua.bytes
+- Assets/Scripts/Lua/out/proto_test.lua.bytes
+- Assets/Scripts/Lua/out/PlayerObject.lua.bytes
+- Assets/Scripts/Lua/out/ResourcesManager.lua.bytes
+- Assets/Scripts/Lua/lib/protoc.lua.bytes
+- Assets/Scripts/Lua/out/BaseObject.lua.bytes
+Dependencies: []
