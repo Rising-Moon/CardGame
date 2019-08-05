@@ -1,3 +1,9 @@
+global.test ="global test";
+-------------------------引用------------------
+--引入全局枚举表
+--各个基类选择调用枚举表内的值
+require("GlobalEnumDir");
+--class基类
 local class =require("class");
 local Object =require("BaseObject");
 local CardObject=require("CardObject");
@@ -5,28 +11,34 @@ local ResourcesManager =require("ResourcesManager");
 local Player = require("PlayerObject");
 local Monster = require("MonsterObject");
 local SceneManager =require("SceneManager");
+--引入序列化函数，将table转化为字符串
 require("serialize");
-require("test");
+--require("test");
 --------------------------------------------
-local resourcesTable = {};
+
+
 local canvas =CS.UnityEngine.GameObject.Find("Canvas");
 
 
---local c =CardObject:new();
+local c =CardObject:new();
 --local p =Player:new();
 
 function start()
+    --ResourcesManager:LoadManifest();
 
-
-
-    --resourcesTable=ResourcesManager:init();
-    --local go =resourcesTable:syncInstantiate("Prefabs/Card",1,canvas);
-    --print(type(go));
+    --local go =ResourcesManager:syncInstantiate("Assets/AssetBundles/human.pic",21,canvas,CS.UnityEngine.Vector3.zero);
+    --print(go);
+    local go =ResourcesManager:instantiatePath("Assets/AssetBundles/human.pre",21,canvas,CS.UnityEngine.Vector3.zero);
     --将物体不在渲染台显示，无法调用，报错为在c#被弃用
     --go.renderer:enabled();
-    --将某个物体设置为不可用吧
+    --将某个物体设置为不可用
     --go:SetActive(false);
-    --c:init("water","fight",1,1,go);
+    --将物体的子物体也设置为不可用
+    --go:SetActiveRecursively(false);
+    c:init("water","fight",1,1,go);
+    ResourcesManager:pushInPool(go);
+    ResourcesManager:clear();
+    --ResourcesManager:clear();
     --c:useCard();
     --p:init("大都会的猫","effect",1,1,go);
     --p:handleCard();
