@@ -1,14 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using XLua;
 using System;
 using System.IO;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using XLua.LuaDLL;
-using Object = System.Object;
 
 namespace XLuaBehaviour{
 
@@ -21,6 +16,7 @@ namespace XLuaBehaviour{
 
     [System.Serializable]
     public class LuaScript{
+        public string luaFileName;
         public TextAsset luaScript;
         public Injection[] injections;
         internal LuaTable scriptEnv;
@@ -51,13 +47,11 @@ namespace XLuaBehaviour{
             //初始化scenstack
             //stacke只记录6个场景
             sceneList = new SceneStack<int>(6);
-            
             //mainApp  = GameObject.Find("mainApp");
             //Debug.Log(mainApp.name);
             //不销毁mainApp避免lua脚本失效
             DontDestroyOnLoad(this.gameObject);
-            Debug.Log(Application.dataPath);
-            
+
             //将luaBehaviour注册到消息列表监听
             MessageQueueManager.GetMessageQueue().RegisteredListener(this);
 
@@ -86,8 +80,10 @@ namespace XLuaBehaviour{
                 foreach (var injection in script.injections) {
                     script.scriptEnv.Set(injection.name,injection.value);
                 }
-
-                luaEnv.DoString(script.luaScript.text, script.luaScript.name, script.scriptEnv);
+                
+                WWW luaFile = new WWW("file:///"+ Application.dataPath + "/Scripts/Lua/" + script.luaFileName);
+                while (!luaFile.isDone) { }
+                luaEnv.DoString(luaFile.text,script.luaFileName, script.scriptEnv);
                 Action luaAwake = script.scriptEnv.Get<Action>("awake");
                 script.luaStart = script.scriptEnv.Get<Action>("start");
                 script.luaUpdate = script.scriptEnv.Get<Action>("update");
@@ -104,7 +100,7 @@ namespace XLuaBehaviour{
 
         //自定义Loader定位到Lua文件夹
         private byte[] LuaPathLoader(ref string path){
-            string p = "Assets/Scripts/Lua/" + path + ".lua.txt";
+            string p = "Assets/Scripts/Lua/" + path + ".lua";
             //Debug.Log(path);
             if (!File.Exists(p)) {
                 //Debug.Log("文件" + p + "不存在");

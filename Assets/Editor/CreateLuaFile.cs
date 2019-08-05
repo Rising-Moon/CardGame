@@ -9,7 +9,7 @@ public class CreateLuaFile
     [MenuItem("Assets/Create Lua File",false,1)]
     static void Createluafile(){
         string path = GetSelectedPathOrFallback();
-        File.Create(path + "/luaFile.lua.txt");
+        File.Create(path + "/luaFile.lua");
         AssetDatabase.Refresh();
     }
     

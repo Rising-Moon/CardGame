@@ -46,7 +46,7 @@ public class DownloadUtil : MonoBehaviour{
                 else {
                     while (!www.isDone) {
                         yield return null;
-                        Debug.Log("进度:" + www.downloadProgress);
+                        //Debug.Log("进度:" + www.downloadProgress);
                     }
 
                     if (www.isDone) {
@@ -66,6 +66,7 @@ public class DownloadUtil : MonoBehaviour{
                         if (!File.Exists(stringBuilder.ToString()))
                             File.Create(path).Dispose();
                         File.WriteAllBytes(path, www.downloadHandler.data);
+                        Debug.Log("下载完成:" + path);
                     }
                 }
             }
