@@ -13,7 +13,7 @@ local Monster = require("MonsterObject");
 local SceneManager =require("SceneManager");
 --引入序列化函数，将table转化为字符串
 require("serialize");
-require("test");
+--require("test");
 --------------------------------------------
 
 
@@ -24,11 +24,11 @@ local c =CardObject:new();
 --local p =Player:new();
 
 function start()
-    ResourcesManager:LoadManifest();
+    --ResourcesManager:LoadManifest();
 
     --local go =ResourcesManager:syncInstantiate("Assets/AssetBundles/human.pic",21,canvas,CS.UnityEngine.Vector3.zero);
     --print(go);
-    local go =ResourcesManager:syncInstantiate("Assets/AssetBundles/human.pre",21,canvas,CS.UnityEngine.Vector3.zero);
+    local go =ResourcesManager:instantiatePath("Assets/AssetBundles/human.pre",21,canvas,CS.UnityEngine.Vector3.zero);
     --将物体不在渲染台显示，无法调用，报错为在c#被弃用
     --go.renderer:enabled();
     --将某个物体设置为不可用

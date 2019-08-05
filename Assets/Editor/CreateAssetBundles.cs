@@ -8,7 +8,7 @@ public class CreateAssetBundles
 {
     [MenuItem("Assets/Build AssetBundle")]
     static void BuildBundles(){
-        string AssetBundleDirectory = "Assets/StreamingAssets";
+        string AssetBundleDirectory = "Assets/AssetBundles";
         if (!Directory.Exists(AssetBundleDirectory))
             Directory.CreateDirectory(AssetBundleDirectory);
         BuildPipeline.BuildAssetBundles(AssetBundleDirectory, BuildAssetBundleOptions.None,

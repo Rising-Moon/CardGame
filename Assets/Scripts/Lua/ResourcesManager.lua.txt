@@ -21,9 +21,10 @@ function ResourcesManager:init()
     --缓存了所有的AB本身，path = {assetBundle, refCount}
     self.assetBundleCacheMap = {};
 
-    --初始化解析主manifest后获得，记录所有AB之间的依赖
-    self.abAllDependenciesMap = {};
-
+    --初始化解析主manifest后获得
+    self.manifest = self:LoadManifest();
+    --记录ab间依赖
+    self.dependence ={};
     --资源池
     --{path = name,gameobj =gameobj}
     self.objPool ={};
@@ -31,33 +32,9 @@ end
 
 
 ---------------------------外部接口-------------------------
---同步实例化
---请求路径，类型，父物体，位置，角度
-function ResourcesManager:syncInstantiate(path,type,parent,position,rotation)
-    --path是否正确且资源是否能被加载
-    local objBool;
-    --加载resources资源
-    if type == 1 then
-        objBool = self:LoadResources(path);
-        --加载assetbundle资源
-    elseif type >= 2 then
-        objBool =self:LoadAssetBundle(type,path);
-    else
-        print("error type ");
-    end
-
-    --返回实例化的对象
-    if objBool then
-        return self:instantiate(path,parent,position,rotation);
-    else
-        print("load path error or resources wrong");
-        return nil
-    end
-
-end
 
 --只使用路径和类型加载
---下次想要使用资源的时候可以直接加载
+--下次想要使用资源的时候可以直接通过返回值实例话
 function ResourcesManager:LoadPath(path,type)
     --加载resources资源
     if type == 1 then
@@ -121,7 +98,7 @@ function ResourcesManager:DontDestroyOnLoad(obj)
 end
 
 
-
+--------------------路径查找-------------------
 --根据assetbundle路径查找ab资源信息(不含后缀）
 --例如 human
 function ResourcesManager:findName(path)
@@ -137,21 +114,62 @@ function ResourcesManager:findAllName(path)
     fullName =string.match(path,"/[%w]+%.[%w]+");
     return string.sub(fullName,2);
 end
+------------------------------------------------
+
+--同步实例化
+--请求路径，类型，父物体，位置，角度
+function ResourcesManager:syncInstantiate(path,type,parent,position,rotation)
+    --path是否正确且资源是否能被加载
+    local objBool;
+    --加载resources资源
+    if type == 1 then
+        objBool = self:LoadResources(path);
+        --加载assetbundle资源
+    elseif type >= 2 then
+        objBool =self:LoadAssetBundle(type,path);
+    else
+        print("error type ");
+    end
+
+    --返回实例化的对象
+    if objBool then
+        return self:instantiate(path,parent,position,rotation);
+    else
+        print("load path error or resources wrong");
+        return nil
+    end
+end
+
+--资源实例化
+function ResourcesManager:instantiate(path, parent, position, rotation)
+    local gameObj
+    if parent then
+        --self.object:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
+        if position then
+            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], position, rotation or CS.UnityEngine.Quaternion.identity);
+        else
+            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], parent.Transform, false);
+        end
+        gameObj:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
+    else
+        gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity);
+    end
+    --GameObject =CS.UnityEngine.Object.Instantiate(self.assetListenerMap[original]);
+    --self.object.transform.localPosition=location;
+    return gameObj
+end
 
 --加载asset资源包所依赖的资源包的名字
---manifest 文件在assetbundle下无法被读取
 function ResourcesManager:LoadManifest()
     --print("Assets/AssetBundles");
     print(CS.UnityEngine.Application.dataPath);
-    local manifestAb = CS.UnityEngine.AssetBundle.LoadFromFile(CS.UnityEngine.Application.streamingAssetsPath.."/StreamingAssets");
+    local manifestAb = CS.UnityEngine.AssetBundle.LoadFromFile(CS.UnityEngine.Application.dataPath.."/AssetBundles/AssetBundles");
     print(manifestAb);
     local manifest =manifestAb:LoadAsset("AssetBundleManifest");
-    print(manifest);
-    self.abAllDependenciesMap= manifest:GetAllDependencies("human");
-    for i ,v in pairs(self.abAllDependenciesMap) do
-        CS.UnityEngine.AssetBundle.LoadFromFile(CS.UnityEngine.Application.streamingAssetsPath.."/StreamingAssets"..v);
-    end
+    return manifest
 end
+
+
 
 --加载resources资源
 function ResourcesManager:LoadResources(path)
