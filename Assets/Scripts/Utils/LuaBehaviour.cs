@@ -113,6 +113,9 @@ namespace XLuaBehaviour{
         //自定义Loader可以从AssetsBundle包读出
         private byte[] LuaABLoader(ref string path){
             string bundlePath = Config.Get("asset_bundle_path");
+            if (!Directory.Exists(Application.streamingAssetsPath)) {
+                Directory.CreateDirectory(Application.streamingAssetsPath);
+            }
             return null;
         }
         
