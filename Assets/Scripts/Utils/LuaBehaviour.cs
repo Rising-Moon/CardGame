@@ -35,10 +35,6 @@ namespace XLuaBehaviour{
     [LuaCallCSharp]
     public class LuaBehaviour : MonoBehaviour,IMessageListener
     {
-        //注册一个scenestack
-        public static SceneStack<int> sceneList;
-        //获取脚本挂靠的组件
-        //public GameObject mainApp; 
 
         //lua脚本列表
         public LuaScript[] scripts;
@@ -48,12 +44,7 @@ namespace XLuaBehaviour{
         internal const float GCInterval = 1;//1 second 
         
         void Awake(){
-            //初始化scenstack
-            //stacke只记录6个场景
-            sceneList = new SceneStack<int>(6);
-            
-            //mainApp  = GameObject.Find("mainApp");
-            //Debug.Log(mainApp.name);
+
             //不销毁mainApp避免lua脚本失效
             DontDestroyOnLoad(this.gameObject);
             Debug.Log(Application.dataPath);
