@@ -310,7 +310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scripts:
-  - luaScript: {fileID: 4900000, guid: 7e6dcf7200de847d6b55c6590049fe2a, type: 3}
+  - luaFileName: App.lua
     injections: []
 --- !u!4 &2041171424
 Transform:
@@ -356,7 +356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scripts:
-  - luaScript: {fileID: 4900000, guid: d3a9c185597c44f2f93bad8d6922198c, type: 3}
+  - luaFileName: 
     injections: []
 --- !u!4 &2092690604
 Transform:
