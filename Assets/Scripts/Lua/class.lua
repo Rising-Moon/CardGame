@@ -34,7 +34,9 @@ function class(classname,super)
         function cls.new(...)
             local instance = cls.__create(...);
             -- copy fields from class to native object
-            for k,v in pairs(cls) do instance[k] = v end
+            for k,v in pairs(cls) do
+                instance[k] = v;
+            end
             instance.class = cls;
             instance:ctor(...);
             return instance

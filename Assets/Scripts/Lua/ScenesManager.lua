@@ -23,6 +23,20 @@ function ScenesManager:LoadScene(index)
     end
 end
 
+--异步加载场景
+function ScenesManager:AsyncLoadScene(index)
+    if  self.scenesStack then
+        --将要加载的场景编号押入栈中
+        --永远不会加载场景0
+        self.scenesStack:Push(index);
+        coroutine.resume(AsyncLoad,false,index);
+        coroutine.resume(AsyncLoad,true);
+    else
+        print("wrong happen in stack");
+    end
+
+end
+
 --场景返回
 function ScenesManager:BackScene()
     if self.scenesStack and self.scenesStack.Count > 1 then
@@ -32,9 +46,36 @@ function ScenesManager:BackScene()
         local lastScene = self.scenesStack:Peek();
         ScenesManagement.LoadScene(lastScene);
     else
-        print(" this is no last scene can be loaded ");
+        print(" there is no last scene which can be loaded ");
     end
 end
+
+--重启游戏进入主场景
+function ScenesManager:ReStart()
+    self.scenesStack:Clear();
+    ScenesManagement.LoadScene(2);
+end
+
+--退出游戏
+function ScenesManager:QuitGame()
+    print("game is quiting");
+    CS.UnityEngine.Application.Quit();
+end
+---------------------内部接口----------------------
+---异步加载场景
+AsyncLoad = coroutine.create(
+        function(bool ,index)
+            --异步加载场景
+            local operation = ScenesManagement.LoadSceneAsync(index);
+            print("do you run?");
+            --阻止当加载完成后自动切换
+            operation.allowSceneActivation =bool;
+            print(operation.allowSceneActivation);
+            yreturn =coroutine.yield();
+            operation.allowSceneActivation =yreturn;
+            print("do you run agine");
+            print(operation.allowSceneActivation);
+ end)
 
 ScenesManager:init();
 

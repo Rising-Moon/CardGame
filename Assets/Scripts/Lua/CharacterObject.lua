@@ -1,31 +1,29 @@
 class =require("class");
-local Object = require("BaseObject");
+local BaseObject = require("BaseObject");
 --------------------------------------------------
 --更改创建方法，避免全局混用
 -- 创建子类Child
-local Character =class("Character",Object);
+local Character =class("Character",BaseObject);
 
-Character.__index =Character;
 
 -------------------属性表-----------------------
---初始化状态
-Character.initStates =1;
---角色名
-Character.objName =nil;
---角色id
-Character.objId = nil;
---角色类型
-Character.objType =1;
---角色血条
-Character.lifeNumber = 10;
---角色对象引用
-Character.objInstantiate = nil;
---角色等级
-Character.lifeNumber =1;
+Character.data={
+
+    objName ="",
+    objId =0,
+    --角色血条
+    objBlood =10,
+    --角色蓝条
+    objMana =10,
+    level =1,
+    --gameobj
+    objInstantiate =nil
+};
 ---------------------------------------
 
 
 -------------属性更改接口-----------------
+--[[
 --character名
 function  Character:setName(objName)
     self.objName=objName;
@@ -57,14 +55,23 @@ function Character:setInstantiate(objInstantiate)
     self.objInstantiate=objInstantiate or "error";
     print(self.objInstantiate);
 end
-
+]]--
 
 --------------------------------------------------
 --构造函数
-function Character:ctor()
-    Character.super.ctor(self,"Character");
+function Character:ctor(fillthing,objName,objNumber,objMaNa,objInstantiate)
+    Character.super.ctor(self,"Character",objName);
+    print("character ctor run");
+    print(self.data.objName)
+    --属性设置
+    self.data.objName =objMaNa or 10;
+    self.data.objNumber=objNumber or 10;
+    self.objMaNa =objMaNa or 2;
+    self.objInstantiate=objInstantiate or nil;
+    self.level =1;
+    print("charcter ctor finish");
 end
-
+--[[
 --初始化
 function Character:init(objName,objType,objNumber,objInstantiate)
 
@@ -80,8 +87,8 @@ function Character:init(objName,objType,objNumber,objInstantiate)
     else
         print("不能重复赋值");
     end
-
 end
+]]--
 --------------------------------------------------------
 
 function Character:characterInformation()
@@ -93,9 +100,9 @@ function Character:useCharacter()
 
 end
 
-function Character:drop()
-    Character.super.drop(self);
-    print("character drop");
+function Character:clear()
+    Character.super.clear(self);
+    print("character clear");
 end
 
 return Character

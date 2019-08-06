@@ -2,38 +2,52 @@ class = require("class");
 -- 定义基类
 local BaseObject = class("BaseObject");
 
+--------------属性表------------------
+---------c[name]==c.name--------------
+--BaseObject.objId=0;
+--BaseObject.objName="";
+BaseObject.data={
+    objName="",
+    objId = 0
+}
+
 -- 构造函数
 --调用new会自动执行
-function BaseObject:ctor(baseName)
-    self.objName = baseName;
+function BaseObject:ctor(fillthing,objName)
+    --gameobject的名字
+    print("base run");
+    self.data.objName = objName or "base";
+    --从palyerfref获取固定ID
+    self.data.objId =CS.UnityEngine.PlayerPrefs.GetInt("objId",0);
+    self:updateId();
+    print("base finish");
 end
 
---随机数闪避几率
-function BaseObject:RandomIndex()
-    math.randomseed(tostring(os.time()):reverse():sub(1, 7)) --设置时间种子
-    local tb = math.random(1,100);
-    return tb
-end
 
-function BaseObject:setUniqueId()
+function BaseObject:updateId()
     --local id =config.id + 1;
+    CS.UnityEngine.PlayerPrefs.SetInt("objId",self.data.objId+1);
     --return id
 end
 
 --清除函数
-function BaseObject:drop()
-    for i,v in ipairs(self) do
-        self.remove(self,i);
-    end
-    for j,v in ipairs(self) do
-        print(j..v);
-    end
-    print("object drop");
-end
+--只需要对类变量进行清除即可
+function BaseObject:clear()
 
---gc时也调用清除
-function BaseObject:__gc()
-    self:drop();
+    print("clear now");
+    for i,v in pairs(self.data) do
+        --交给gc回收
+        --print(self.data[i]);
+        self.data[i]=nil;
+        --print(self.data[i]);
+        --self.remove(self,i);
+    end
+    for i,v in pairs(self.data) do
+       print(i..v);
+        --self.remove(self,i);
+    end
+    collectgarbage("collect");
+    print("object drop");
 end
 
 return BaseObject

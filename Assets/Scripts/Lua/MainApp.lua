@@ -22,13 +22,15 @@ local ResourcesManager = require("ResourcesManager");
 
 ---引入基类
 local BaseObject =require("BaseObject");
+local CardObeject =require("CardObject");
+local Character = require("CharacterObject");
+local PlayerObject = require("PlayerObject");
 
 local canvas =CS.UnityEngine.GameObject.Find("Canvas");
 
 function start()
 
     --[[
-    --需要改为异步加载
     -------------scenesmanager 测试-----------
     print("here is scenesmananger test");
     print("load 1");
@@ -37,7 +39,39 @@ function start()
     ScenesManager:LoadScene(2);
     print("back 1");
     ScenesManager:BackScene();
+    ScenesManager:AsyncLoadScene(3);
     ]]--
+    --[[
+    -------------BaseObject 测试----------------
+    local o =BaseObject:new("fire");
+    print(o.data.objId);
+    print(o.data.objName);
+    o:clear();
+    --print(o.data。objId);
+    print(o.data.objId);
+    local b =BaseObject:new("water");
+    print(b.data.objId);
+    --local b =BaseObject:new("water");
+    --print(b.data.objId);
+    ]]--
+    --[[
+    -------------card 测试----------------
+    print("card test");
+    local c =CardObeject:new("fire",{fire ="hit by fire",effect ="kill ememy"},10);
+    c:writeFile();
+    --c:clear();
+    for i,v in pairs(c.data) do
+        print(i.."\tis");
+        print(v);
+    end
+    ]]--
+    ---------------character test----------
+
+
+    --------------player test------------
+    --local p =PlayerObject:new();
+    --p:deleteAll();
+
     --[[
     -------------resourcesmanager 测试--------
     print("here is resourcesmanager");
@@ -48,6 +82,12 @@ function start()
     -- assetbundle 资源测试完毕
     --ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre",canvas);
     --ResourcesManager:clear();
+    local b =BaseObject:new("fire");
+    --    print(b.data.objId);
+    --    print(b.data.objName);
+    --    --o:clear();
+    --    print(b.data.objId);
+    --    print(b.data.objName);
     ]]--
     -----------------测试结束标示-------------
     print("test is down here");
