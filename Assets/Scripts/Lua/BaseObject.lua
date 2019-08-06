@@ -31,9 +31,4 @@ function BaseObject:drop()
     print("object drop");
 end
 
---gc时也调用清除
-function BaseObject:__gc()
-    self:drop();
-end
-
 return BaseObject

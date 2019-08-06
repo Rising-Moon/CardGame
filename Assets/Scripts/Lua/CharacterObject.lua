@@ -88,7 +88,6 @@ function Character:characterInformation()
     print("character information is here");
 end
 
-
 function Character:useCharacter()
 
 end
@@ -98,4 +97,4 @@ function Character:drop()
     print("character drop");
 end
 
-return Character
+return Character;
