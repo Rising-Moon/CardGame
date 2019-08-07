@@ -9,23 +9,8 @@ local serialize = require('serialize');
 local messageQueue = CS.MessageQueueManager.GetMessageQueue();
 
 function start()
-    local object = class("Object");
-    object.name = "obj";
-    function object:changeName(name)
-        self.name = name;
-    end
-    function object:ctor(name)
-        self.name = name;
-    end
-    local obj = object.new("object1111");
-    print(obj.name);
-    local obj2 = class("Obj2",object);
-    obj2.__index = obj2;
-    local obj22 = obj2.new("object22222");
-    obj22:changeName("object333333");
-    print(obj22.name);
-    print(serialize(obj22));
-    end
+
+end
 
 -- 处理响应服务器消息
 local responseHandle = {
@@ -58,7 +43,7 @@ local responseHandle = {
             end,
             -- 直接放入消息队列
             [2] = function()
-                local message = CS.Message(msg.head,msg.body);
+                local message = CS.Message(msg.head, msg.body);
                 messageQueue:SendMessage(message);
             end
         }
@@ -69,7 +54,6 @@ local responseHandle = {
         end
         f = nil;
     end,
-
     -- 发送消息给服务器
     SocketLuaPack = function()
 

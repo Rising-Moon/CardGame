@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7b20bd7c1d6bf0a4c9eb3ffdd7bd421f
+guid: f89ebf9ad5b3a40cbb1b40f5520d2cfe
 TextureImporter:
   fileIDToRecycleName: {}
   externalObjects: {}
@@ -36,7 +36,7 @@ TextureImporter:
     mipBias: -100
     wrapU: 1
     wrapV: 1
-    wrapW: -1
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -97,12 +97,12 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: d8e3387cb53014cc288ec31c103362bb
+    spriteID: 8a9a86bb6b34d4600bc93b95d3f10c6e
     vertices: []
     indices: 
     edges: []
     weights: []
-  spritePackingTag: card
+  spritePackingTag: CardImage
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
   userData: 
