@@ -13,22 +13,19 @@ local Card =class("Card",BaseObject);
 ---------------属性列表---------------
 Card.data={
     --卡牌名字
-    objName="",
+    --objName="",
     --卡牌id
-    objId = 0,
+    --objId = 0,
     --卡牌效果
     --{effectname1 =effect,effectname2 =effect}
     objEffect ={},
     --卡牌数值
     objNumber = 0;
-    --实例化的gameobject
-    objInstantiate =nil,
     --卡牌level
     level =1,
     --卡牌消耗
     objMaNa =2
 }
-
 
 -------------------------------------
 
@@ -93,9 +90,9 @@ function Card:ctor(fillthing,objName,objEffect,objNumber,objMaNa,objInstantiate)
     --属性设置
     self.data.objEffect=objEffect or {};
     self.data.objNumber=objNumber or 10;
-    self.objMaNa =objMaNa or 2;
+    self.data.objMaNa =objMaNa or 2;
     self.objInstantiate=objInstantiate or nil;
-    self.level =1;
+    self.data.level =1;
     print("card ctor finish");
 end
 
@@ -120,6 +117,7 @@ end
 
 
 ----------------------对卡牌进行操作的接口----------------------
+
 --返回卡牌信息
 function Card:cardInformation()
     print("Card information is here");

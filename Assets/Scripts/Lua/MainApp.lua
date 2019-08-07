@@ -25,6 +25,7 @@ local BaseObject =require("BaseObject");
 local CardObeject =require("CardObject");
 local Character = require("CharacterObject");
 local PlayerObject = require("PlayerObject");
+local MonsterObject = require("MonsterObject");
 
 local canvas =CS.UnityEngine.GameObject.Find("Canvas");
 
@@ -55,23 +56,48 @@ function start()
     --print(b.data.objId);
     ]]--
     --[[
-    -------------card 测试----------------
-    print("card test");
-    local c =CardObeject:new("fire",{fire ="hit by fire",effect ="kill ememy"},10);
-    c:writeFile();
-    --c:clear();
-    for i,v in pairs(c.data) do
+        -------------card 测试----------------
+        print("card test");
+        local c =CardObeject:new("fire",{fire ="hit by fire",effect ="kill ememy"},10);
+        c:writeFile();
+     -c:clear();
+        --[[
+        for i,v in pairs(c.data) do
+            print(i.."\tis");
+            print(v);
+        end
+        ]]--
+    --[[
+        ---------------character test----------
+        print("character test");
+        local ch =Character:new("小米",10,1,{fire ="hit with fire"});
+        ch:writeFile();
+          for i,v in pairs(ch.data) do
+               print(i.."\tis");
+               print(v);
+           end
+              ]]--
+    --[[
+    --------------player test------------
+    local r =ResourcesManager:instantiatePath("Prefabs/Card",canvas);
+    p =PlayerObject:new("小米",10,1,{fire ="hit with fire"},0,{card = 10},r);
+    for i,v in pairs(p.data) do
         print(i.."\tis");
         print(v);
     end
-    ]]--
-    ---------------character test----------
-
-
-    --------------player test------------
-    --local p =PlayerObject:new();
+    print(serialize(p.data));
+    p:clear();
     --p:deleteAll();
-
+    ]]--
+    --[[
+    ---------------monster test-----------
+    local r =ResourcesManager:instantiatePath("Prefabs/Card",canvas);
+    m =MonsterObject:new("小米",10,1,{fire ="hit with fire"},0,0,r);
+    print(serialize(m.data));
+    print(m:dropExperience());
+    print(m:dropMoney());
+    m:clear();
+    ]]--
     --[[
     -------------resourcesmanager 测试--------
     print("here is resourcesmanager");

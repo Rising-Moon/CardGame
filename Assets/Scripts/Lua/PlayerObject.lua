@@ -5,29 +5,33 @@ local Character = require("CharacterObject");
 --更改创建方法，避免全局混用
 -- 创建子类Child
 local Player =class("Player",Character);
-Player.__index =Player;
 
 ---------------------属性表------------------------
---初始化状态
-Player.initStates =1;
---玩家名
-Player.objName = nil;
---玩家实例对象的引用
-Player.objInstantiate =nil;
---玩家类型
-Player.objType =1;
---玩家血条
-Player.lifNumber = 10;
---玩家id
-Player.objId = 0;
---玩家等级
-Player.level = 1;
---玩家经验
-Player.experience =0;
---本地初始化状态
-Player.localinitStates =0;
-------------------------------------------------
+Player.data={
+    --玩家名
+    --objName = nil;
+    --玩家血条
+    --objBlood = 10;
+    --玩家id
+    --objId = 0;
+    --玩家等级
+    --level = 1;
+    --玩家attribute
+    --attribute
+    --玩家经验
+    Experience =0,
+    --角色拥有的卡牌组
+    holdCard ={}
+};
 
+--玩家实例对象的引用
+--Player.objInstantiate =nil;
+
+
+--本地初始化状态
+--Player.localinitStates =0;
+------------------------------------------------
+--[[
 --卡player名
 function  Player:setName(objName)
     self.objName=objName;
@@ -55,13 +59,17 @@ function Player:setInstantiate(objInstantiate)
     self.objInstantiate=objInstantiate or "error";
     print(self.objInstantiate);
 end
-
+]]--
 ------------------------------------------------------------
 --构造函数
-function Player:ctor()
-    Player.super.ctor(self,"player");
+function Player:ctor(fillthing,objName,objNumber,objMaNa,objAttrubute,objExperience,holdCard,objInstantiate)
+    Player.super.ctor(self,"player",objName,objNumber,objMaNa,objAttrubute,objInstantiate);
+    print("player ctor run");
+    self.data.Experience =objExperience or 0;
+    self.data.holdCard =holdCard or {};
+    print("player ctor finish");
 end
-
+--[[
 --初始化
 function Player:init(objName,objId,objInstantiate)
 
@@ -79,33 +87,33 @@ function Player:init(objName,objId,objInstantiate)
     end
 
 end
-
+]]--
 ---------------------------玩家升级相关逻辑-------------------
 --获得经验
 --获取经验的时候判断是否升级
 function Player:getExperience(experience)
     --先获取经验
-    self.experience =self.experience+experience;
-    self.experience =self:updateLevel();
+    self.data.experience =self.data.experience+experience;
+    self.data.experience =self:updateLevel();
 end
 
 --升级
 function Player:updateLevel()
     --玩家升级所需经验需要当前的两倍
-    local restExperience = self.experience % (self.level*2);
+    local restExperience = self.data.experience % (self.data.level*2);
     --玩家等级不能超过十级
-    if self.level<10 and restExperience >= 1 then
+    if self.data.level<10 and restExperience >= 1 then
         --升级标准
         --玩家升级时
         --floor 向下取整
-        self.level=self.level+math.floor(self.experience/(self.level*2));
+        self.data.level=self.data.level+math.floor(self.data.experience/(self.data.level*2));
         --升级增加血量
-        self:setNumber();
+        --
         return restExperience
     else
         print("不满足升级条件");
         --不满足升级经验的时候全额返还
-        return self.experience
+        return self.data.experience
     end
 end
 -----------------------------------------------------------
@@ -118,7 +126,7 @@ end
 -----------------------------------------------------------
 
 ---------------------玩家本地存档相关-----------------------
-
+--[[
 --储存玩家本身相关数据
 function Player:storeInfor()
     CS.UnityEngine.PlayerPrefs.SetString("playerName",self.objName);
@@ -149,6 +157,7 @@ function Player:readInit()
     self.experience =CS.UnityEngine.PlayerPrefs.GetInt("palerExper",0);
     self.localinitStates=0;
 end
+]]--
 ---------------------------------------------------------
 
 --
@@ -166,8 +175,8 @@ function Player:usePlayer()
 
 end
 
-function Player:drop()
-    Player.super.drop(self);
+function Player:clear()
+    Player.super.clear(self);
     print("Player  drop");
 end
 

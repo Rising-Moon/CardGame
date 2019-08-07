@@ -1,0 +1,22 @@
+{
+["objId"]=74,
+["objNumber"]=10,
+["objEffect"]={
+["effect"]="kill ememy",
+["fire"]="hit by fire",
+},
+["objMaNa"]=2,
+["level"]=1,
+["objName"]="fire",
+}
+{
+["objNumber"]=10,
+["level"]=1,
+["objId"]=75,
+["objEffect"]={
+["effect"]="kill ememy",
+["fire"]="hit by fire",
+},
+["objMaNa"]=2,
+["objName"]="fire",
+}

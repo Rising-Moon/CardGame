@@ -8,17 +8,21 @@ local Character =class("Character",BaseObject);
 
 -------------------属性表-----------------------
 Character.data={
+    --objName ="",
+    --objId =0,
 
-    objName ="",
-    objId =0,
     --角色血条
     objBlood =10,
+
     --角色蓝条
-    objMana =10,
+    objMana =2,
+    --角色等级
     level =1,
-    --gameobj
-    objInstantiate =nil
+    --角色attribute
+    attribute ={}
 };
+--角色实例话对象
+Character.objInstantiate =nil;
 ---------------------------------------
 
 
@@ -59,16 +63,16 @@ end
 
 --------------------------------------------------
 --构造函数
-function Character:ctor(fillthing,objName,objNumber,objMaNa,objInstantiate)
+function Character:ctor(fillthing,objName,objNumber,objMaNa,objAttrubute,objInstantiate)
     Character.super.ctor(self,"Character",objName);
     print("character ctor run");
-    print(self.data.objName)
+    --print(self.data.objName)
     --属性设置
-    self.data.objName =objMaNa or 10;
-    self.data.objNumber=objNumber or 10;
-    self.objMaNa =objMaNa or 2;
+    self.data.objBlood=objNumber or 10;
+    self.data.objMana =objMaNa or 2;
     self.objInstantiate=objInstantiate or nil;
-    self.level =1;
+    self.data.attribute =objAttrubute or {effect = "fignt"};
+    self.data.level =1;
     print("charcter ctor finish");
 end
 --[[
@@ -95,6 +99,21 @@ function Character:characterInformation()
     print("character information is here");
 end
 
+--[[
+--写txt文件
+--character 不封装相关方法，只是测试用
+function Character:writeFile()
+
+    --local file = io.open("Assets/Resources/Config/Card.txt","a+");
+    --将卡牌的临时复制序列化
+    local tempStr = serialize(self.data);
+    print("demo is here "..tempStr);
+    --file:write(tempStr);
+    --file:write("\n");
+    --file:close();
+
+end
+]]--
 
 function Character:useCharacter()
 
