@@ -1,6 +1,6 @@
 --------------参照---------------------------
-class =require("class");
-serialize = require("serialize");
+--class =require("class");
+--serialize = require("serialize");
 --require("json");
 local BaseObject = require("BaseObject");
 
@@ -13,7 +13,7 @@ local Card =class("Card",BaseObject);
 ---------------属性列表---------------
 Card.data={
     --卡牌名字
-    --objName="",
+    objName="",
     --卡牌id
     --objId = 0,
     --卡牌效果
@@ -26,51 +26,20 @@ Card.data={
     --卡牌消耗
     objMaNa =2
 }
-
+--实例化的物体
+Card.objInstantiate =nil;
 -------------------------------------
 
 ------------设置属性的接口------------
---[[
---卡牌名
-function Card:setName(objName)
-    self.objName=objName;
-end
 
---卡牌id
-function Card:setId()
-    --id唯一
-    self.objId=Card.super.setUniqueId();
-end
-
---卡牌类型
-function Card:setType(objType)
-    --1表示攻击
-    --2表示防御，护盾
-    --3表示治疗，回血
-    --4表示特殊效果
-    print(type(global.typeDir));
-    self.objType=global.typeDir[objType];
-end
-
---卡牌数值
-function Card:setNumber(objNumber)
-    self.objNumber=objNumber;
-end
-
---游戏对象
-function Card:setInstantiate(objInstantiate)
-    self.objInstantiate=objInstantiate or "error";
-    print(self.objInstantiate);
-end
-]]--
 --卡牌升级（可选）
 function Card:updateLevel()
-    if self.level<3 then
-        self.level=self.level+1;
+    if self.data.level<3 then
+        self.data.level=self.data.level+1;
         --留下更改地点，具体规则后期实现
-        self.objNumber =self.objNumber+1;
-        self.objMaNa =self.objMaNa+2;
-        print(self.level);
+        self.data.objNumber =self.data.objNumber+1;
+        self.data.objMaNa =self.data.objMaNa+2;
+        print(self.data.level);
         return true
     else
         print("不能重复升级");
@@ -82,12 +51,13 @@ end
 -------------------初始化卡牌----------------------
 --构造函数
 --调用new被自动调动
-function Card:ctor(fillthing,objName,objEffect,objNumber,objMaNa,objInstantiate)
-    Card.super.ctor(self,"Card",objName);
+function Card:ctor(objName,objEffect,objNumber,objMaNa,objInstantiate)
+    Card.super.ctor(self,"Card");
 
     print("card ctor run");
     --print(self.data.objName)
     --属性设置
+    self.data.objName =objName or "Card";
     self.data.objEffect=objEffect or {};
     self.data.objNumber=objNumber or 10;
     self.data.objMaNa =objMaNa or 2;
@@ -96,23 +66,6 @@ function Card:ctor(fillthing,objName,objEffect,objNumber,objMaNa,objInstantiate)
     print("card ctor finish");
 end
 
---[[
---初始化
-function Card:init(objName,objType,objNumber,objInstantiate)
-
-    if self.initStates ==1 then
-        self:setName(objName);
-        self:setId();
-        self:setType(objType);
-        self:setNumber(objNumber);
-        self:setInstantiate(objInstantiate);
-        self.level =1;
-        self.initStates=0;
-    else
-        print("不能重复赋值");
-    end
-end
-]]--
 -----------------------------------------------------------
 
 
@@ -122,17 +75,6 @@ end
 function Card:cardInformation()
     print("Card information is here");
     return self.data
-end
-
---移动卡牌（未完成）
-function Card:moveCard()
-    --self.objInstantiate:AddListener(function()
-    if CS.UnityEngine.Input.GetMouseButton(0) then
-        local h =CS.UnityEngine.Input.GetAxis("Mouse X");
-        local v =CS.UnityEngine.Input.GetAxis("Mouse Y");
-        self.data.objInstantiate.transform.position= self.data.objInstantiate.transform.position+CS.UnityEngine.Vector3(h*100,v*100,0);
-    end
-    --end)
 end
 
 --使用卡牌

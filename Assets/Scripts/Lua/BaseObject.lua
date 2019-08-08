@@ -5,19 +5,15 @@ local BaseObject = class("BaseObject");
 --------------属性表------------------
 ---------c[name]==c.name--------------
 --BaseObject.objId=0;
---BaseObject.objName="";
 BaseObject.data={
-    objName="",
     objId = 0
 }
 
 -- 构造函数
 --调用new会自动执行
-function BaseObject:ctor(fillthing,objName)
-    --gameobject的名字
-    print("base run");
-    self.data.objName = objName or "base";
+function BaseObject:ctor()
     --从palyerfref获取固定ID
+    print("base begin");
     self.data.objId =CS.UnityEngine.PlayerPrefs.GetInt("objId",0);
     self:updateId();
     print("base finish");

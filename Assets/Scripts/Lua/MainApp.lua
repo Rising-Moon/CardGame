@@ -14,6 +14,9 @@ local FileRead =require("FileRead");
 ---引入序列化函数
 require("serialize");
 
+---引入json处理
+local json =require("json");
+
 ---引入场景管理模块
 local ScenesManager =require("ScenesManager");
 
@@ -26,6 +29,8 @@ local CardObeject =require("CardObject");
 local Character = require("CharacterObject");
 local PlayerObject = require("PlayerObject");
 local MonsterObject = require("MonsterObject");
+local UserObject =require("UserObject");
+local CardList =require("CardList");
 
 local canvas =CS.UnityEngine.GameObject.Find("Canvas");
 
@@ -42,87 +47,87 @@ function start()
     ScenesManager:BackScene();
     ScenesManager:AsyncLoadScene(3);
     ]]--
+
+
     --[[
-    -------------BaseObject 测试----------------
-    local o =BaseObject:new("fire");
-    print(o.data.objId);
-    print(o.data.objName);
-    o:clear();
-    --print(o.data。objId);
-    print(o.data.objId);
-    local b =BaseObject:new("water");
-    print(b.data.objId);
-    --local b =BaseObject:new("water");
-    --print(b.data.objId);
+    -----------------user test----------------
+    local u =UserObject:new("小明",10,{1,1,2});
+    print(serialize(u.data));
+    u:clear();
     ]]--
+
+    ------------------CardList---------------
+    --CardList:RemoveIndex();
+    print(type(CardList));
+    --local dir = CS.System.Collections.Generic["Dictionary`1[System.Int32]`2[table]"]();
+    --print(dir);
+    --[[ ]]--
+
     --[[
-        -------------card 测试----------------
-        print("card test");
-        local c =CardObeject:new("fire",{fire ="hit by fire",effect ="kill ememy"},10);
-        c:writeFile();
-     -c:clear();
-        --[[
-        for i,v in pairs(c.data) do
-            print(i.."\tis");
-            print(v);
-        end
-        ]]--
-    --[[
-        ---------------character test----------
-        print("character test");
-        local ch =Character:new("小米",10,1,{fire ="hit with fire"});
-        ch:writeFile();
-          for i,v in pairs(ch.data) do
-               print(i.."\tis");
-               print(v);
-           end
-              ]]--
-    --[[
-    --------------player test------------
-    local r =ResourcesManager:instantiatePath("Prefabs/Card",canvas);
-    p =PlayerObject:new("小米",10,1,{fire ="hit with fire"},0,{card = 10},r);
-    for i,v in pairs(p.data) do
-        print(i.."\tis");
-        print(v);
-    end
-    print(serialize(p.data));
-    p:clear();
-    --p:deleteAll();
-    ]]--
-    --[[
-    ---------------monster test-----------
-    local r =ResourcesManager:instantiatePath("Prefabs/Card",canvas);
-    m =MonsterObject:new("小米",10,1,{fire ="hit with fire"},0,0,r);
-    print(serialize(m.data));
-    print(m:dropExperience());
-    print(m:dropMoney());
-    m:clear();
-    ]]--
-    --[[
-    -------------resourcesmanager 测试--------
-    print("here is resourcesmanager");
-    --资源加载只需要路径即可
-    --完整为 instantiatePath(path,parent,position,rotation)
-    --resources 资源测试完成
-    --ResourcesManager:instantiatePath("Prefabs/Card",canvas);
-    -- assetbundle 资源测试完毕
-    --ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre",canvas);
-    --ResourcesManager:clear();
-    local b =BaseObject:new("fire");
-    --    print(b.data.objId);
-    --    print(b.data.objName);
-    --    --o:clear();
-    --    print(b.data.objId);
-    --    print(b.data.objName);
-    ]]--
+           -------------resourcesmanager 测试--------
+           print("here is resourcesmanager");
+           --资源加载只需要路径即可
+           --完整为 instantiatePath(path,parent,position,rotation)
+           --resources 资源测试完成
+           --ResourcesManager:instantiatePath("Prefabs/Card",canvas);
+           -- assetbundle 资源测试完毕
+           --ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre",canvas);
+           --obj =ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre",canvas);
+           --ResourcesManager:clear();
+           --local b =BaseObject:new("fire");
+           --    print(b.data.objId);
+           --    print(b.data.objName);
+           --    --o:clear();
+           --    print(b.data.objId);
+           --    print(b.data.objName);
+             ]]--
+
+
     -----------------测试结束标示-------------
     print("test is down here");
 end
 
 function update()
 
+    --[[
+               if CS.UnityEngine.Input.GetMouseButtonDown(1) then
+                   local ray =CS.UnityEngine.Camera.main:ScreenPointToRay(CS.UnityEngine.Input.mousePosition);
+                   --在C#中 直接用个RaycastHit接收检测到的物体，但是在lua中没法用out关键字
+                   --xlua中对于out的解决办法是通过作为第二返回值（如果函数原本就有返回值的话）的方式
+                   --而Physics.Raycast(ray)恰好又是另一个重载函数，所以 Physics.Raycast(ray, out hit)就没法用了。
+                   print("ray vector is:\t");
+                   print(ray);
+                   if CS.UnityEngine.Physics.RaycastAll(ray)==false then
+                       print("null object");
+                   else
+                       --函数返回true，但是没有获取到想要的物体
+                       --CS.UnityEngine.Debug:DrawLine(ray,-ray,CS.UnityEngine.Color.red,10);
+                       print("drow");
+                       local hit=CS.UnityEngine.Physics.RaycastAll(ray);
+                       print(hit.Length);
+                       print(hit.collider.gameObject.name);
+                   end
+               end
+               ]]--
+    if CS.UnityEngine.Input.GetMouseButtonDown(0) then
+        local obj =CS.UnityEngine.GameObject();
+        local Hor =CS.UnityEngine.Input.GetAxis("Mouse X");
+        local Ver =CS.UnityEngine.Input.GetAxis("Mouse Y");
+        --gameObject应当通过射线来获取
+        MoveObjectByMouse(obj,Hor,Ver);
+    end
+
 end
 
 function fixedupdate()
 
+end
+
+
+
+--先设置为该文件中的全局变量，便于在文件中引用
+--通过鼠标点击选择物体进行移动
+--需要添加射线检测旋转需要移动的物体
+function MoveObjectByMouse(obj,Hor,Ver)
+    obj.transform.position =obj.transform.position+CS.UnityEngine.Vector3(Hor*100,Ver*100,0);
 end
