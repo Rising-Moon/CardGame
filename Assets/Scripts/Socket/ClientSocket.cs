@@ -29,7 +29,7 @@ public class ClientSocket : MonoBehaviour, IMessageListener{
             IPAddress ip = IPAddress.Parse(_ip);
             IPEndPoint point = new IPEndPoint(ip, port);
             socketSend.Connect(point);
-            Debug.Log("客户端连接成功!");
+            Debug.Log("服务器连接成功!");
             Thread c_thread = new Thread(Recieve);
             c_thread.IsBackground = true;
             c_thread.Start();

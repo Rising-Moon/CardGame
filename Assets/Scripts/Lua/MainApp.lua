@@ -21,13 +21,11 @@ local ScenesManager =require("ScenesManager");
 local ResourcesManager = require("ResourcesManager");
 
 ---引入基类
-local BaseObject =require("BaseObject");
 local CardObeject =require("CardObject");
-local Character = require("CharacterObject");
 local PlayerObject = require("PlayerObject");
 local MonsterObject = require("MonsterObject");
 
-local canvas =CS.UnityEngine.GameObject.Find("Canvas");
+-- local canvas = CS.UnityEngine.GameObject.Find("Canvas");
 
 function start()
 
@@ -116,7 +114,7 @@ function start()
     --    print(b.data.objName);
     ]]--
     -----------------测试结束标示-------------
-    print("test is down here");
+    -- print("test is down here");
 end
 
 function update()

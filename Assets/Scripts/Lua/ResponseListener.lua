@@ -5,10 +5,10 @@ local fileReader = require('FileRead');
 
 -- 初始化变量
 local messageQueue = CS.MessageQueueManager.GetMessageQueue();
+local messageCast = nil;
+local socketObject = CS.UnityEngine.GameObject("SocketClient");
 
-function start()
-
-end
+socketObject:AddComponent(typeof(CS.ClientSocket));
 
 -- 处理响应服务器消息
 local responseHandle = {
@@ -41,7 +41,7 @@ local responseHandle = {
             end,
             -- 直接放入消息队列
             [2] = function()
-                local message = CS.Message(msg.head,msg.body);
+                local message = CS.Message(msg.head, msg.body);
                 messageQueue:SendMessage(message);
             end
         }
@@ -52,15 +52,16 @@ local responseHandle = {
         end
         f = nil;
     end,
-
     -- 发送消息给服务器
     SocketLuaPack = function()
 
     end
 }
 
---对接收消息进行处理
-function response()
+ResponseListener = {};
+
+function ResponseListener.response(message)
+    messageCast = message;
     if (messageCast.message.head == CS.Message.MessageType.SocketResponse) then
         responseHandle.SocketResponse();
     elseif (messageCast.message.head == CS.Message.MessageType.SocketLuaPack) then
@@ -68,4 +69,4 @@ function response()
     end
 end
 
-
+return ResponseListener;
