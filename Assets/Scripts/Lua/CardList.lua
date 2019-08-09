@@ -41,14 +41,47 @@ local CardList ={};
 CardList.__index =CardList;
 
 function CardList:init()
-    self.userHave ={};
+    --key为int，value为luatable类型，便于存储信息，也可以改为纯gameobject
+    self.userHave =CS.System.Collections.Generic["Dictionary`2[System.Int32,XLua.LuaTable]"]();;
     self.notObtain =CS.System.Collections.Generic["List`1[System.Int32]"]();
+
     --print(self.notObtain);
+end
+
+--每个card都有单独的编号
+function CardList:GetNewCard(cardIndex,cardObject)
+
+    --不存在元素再添加
+    if not self.userHave:ContainsKey(cardIndex,cardObject) then
+        print("there is no "..cardIndex)
+        self.userHave:Add(cardIndex,cardObject);
+        self:RemoveIndex(cardIndex);
+        return true
+    else
+        print("you have own this card");
+        return false
+    end
+
+    --当访问不存在的的key时，抛出异常，
+    --添加元素
+    --    self.userHave:Add(1,{path = 0,card =1});
+    --    self.userHave:Add(2,{path = 1,card =2});
+    --    print(self.userHave[1]);
+    --    self.userHave:Remove(1);
+    --print(self.userHave[2]);
+    --[[通过pair来访问
+    for i,v in pairs(self.userHave) do
+        print(i);
+        print(v);
+    end
+    ]]--
+
 end
 
 --当有新卡获得时
 --新增userHave数据，并除去notObtain的值
-function CardList:RemoveIndex()
+function CardList:RemoveIndex(cardIndex)
+    --[[
     --添加元素
     self.notObtain:Add(10);
     print(self.notObtain[0]);
@@ -65,6 +98,15 @@ function CardList:RemoveIndex()
     for i = 0, 1 do
         print(self.notObtain[i]);
     end
+    ]]--
+    if self.notObtain:IndexOf(cardIndex) then
+        self.notObtain:RemoveAt(cardIndex);
+        return true
+    else
+
+        return false
+    end
+
 end
 
 CardList:init();

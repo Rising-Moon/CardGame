@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using XLua;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -98,7 +100,22 @@ namespace XLuaBehaviour{
 
         //自定义Loader定位到Lua文件夹
         private byte[] LuaPathLoader(ref string path){
+            string rootPath = "Assets/Scripts/Lua";
+            string fileName = path;
             string p = "Assets/Scripts/Lua/" + path + ".lua";
+            
+            Queue<string> directories = new Queue<string>();
+            directories.Enqueue(rootPath);
+            //遍历子文件夹
+            while (directories.Count != 0) {
+                string current = directories.Dequeue();
+                List<string> luaFiles = Directory.GetFiles(current).Where(i => i == current + "/" + fileName + ".lua").ToList();
+                if (luaFiles.Count != 0) {
+                    return File.ReadAllBytes(current + "/" + fileName + ".lua");
+                }
+                Directory.GetDirectories(current).ToList().ForEach(i => directories.Enqueue(i));
+            }
+            
             //Debug.Log(path);
             if (!File.Exists(p)) {
                 //Debug.Log("文件" + p + "不存在");

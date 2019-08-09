@@ -2,12 +2,27 @@
 local ScenesManager ={};
 ScenesManager.__index =ScenesManager;
 
+------------------------------------
+ScenesManager.scenesStack =nil;
+ScenesManager.uiRoot =nil;
+
 local ScenesManagement =CS.UnityEngine.SceneManagement.SceneManager;
 
 function ScenesManager:init()
+    if self.scenesStack then
+        return
+    end
     --存储场景的栈
     self.scenesStack =CS.System.Collections.Stack();
     --print(self.scenesStack);
+    self:initRoot();
+end
+
+function ScenesManager:initRoot()
+    if self.uiRoot then
+        return
+    end
+    self.uiRoot=CS.UnityEngine.GameObject.Find("Canvas");
 end
 
 --场景加载
@@ -23,6 +38,7 @@ function ScenesManager:LoadScene(index)
     end
 end
 
+
 --异步加载场景
 function ScenesManager:AsyncLoadScene(index)
     if  self.scenesStack then
@@ -34,7 +50,14 @@ function ScenesManager:AsyncLoadScene(index)
     else
         print("wrong happen in stack");
     end
-
+end
+--后期可能会加入进度条加载的修改，现在还未实现
+--重载场景加载的异步方法
+function ScenesManager:AsyncLoadScene1(index)
+    local loading =self.uiRoot.transform:Find("Loading");
+    print(loading);
+    --loading:SetActive(false);
+    --loading.enable = true;
 end
 
 --场景返回

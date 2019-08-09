@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3920205020
+CRC: 273041765
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 476356069f2c20f448fbb45486398610
+    Hash: 5ae0f6c7f214027c6f3b56cf35d9a055
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5ad585dd02dfb5016c0dad519eab8f49
@@ -20,13 +20,16 @@ Assets:
 - Assets/Scripts/Lua/out/class.lua.bytes
 - Assets/Scripts/Lua/out/test.lua.bytes
 - Assets/Scripts/Lua/out/AudioManager.lua.bytes
+- Assets/Scripts/Lua/out/ResponseListener.lua.bytes
 - Assets/Scripts/Lua/out/GlobalEnumDir.lua.bytes
 - Assets/Scripts/Lua/out/CharacterObject.lua.bytes
 - Assets/Scripts/Lua/out/MonsterObject.lua.bytes
 - Assets/Scripts/Lua/out/serialize.lua.bytes
+- Assets/Scripts/Lua/out/ScenesManager.lua.bytes
 - Assets/Scripts/Lua/out/proto_test.lua.bytes
 - Assets/Scripts/Lua/out/PlayerObject.lua.bytes
 - Assets/Scripts/Lua/out/ResourcesManager.lua.bytes
-- Assets/Scripts/Lua/lib/protoc.lua.bytes
+- Assets/Scripts/Lua/out/protoc.lua.bytes
 - Assets/Scripts/Lua/out/BaseObject.lua.bytes
+- Assets/Scripts/Lua/out/BattleController.lua.bytes
 Dependencies: []
