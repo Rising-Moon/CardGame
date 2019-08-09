@@ -51,7 +51,6 @@ public class MoveUtil : MonoBehaviour{
                 newPos = transform.position + Time.deltaTime * speed * Vector3.Normalize(target - transform.position);
             }
         }
-        Debug.Log(transform.position + ";" + newPos + ";" + target);
         transform.position = newPos;
     }
 

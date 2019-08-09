@@ -35,15 +35,19 @@ local canvas = CS.UnityEngine.GameObject.Find("Canvas");
 function start()
 
 
+    --[[
     -------------scenesmanager 测试-----------
-    --print("here is scenesmananger test");
-    --print("load 1");
-    --print(ScenesManager:LoadScene(1));
-    --print("load 2")
-    --ScenesManager:LoadScene(2);
-    --print("back 1");
-    --ScenesManager:BackScene();
-    --ScenesManager:AsyncLoadScene1(3);
+    print("here is scenesmananger test");
+    print("load 1");
+    print(ScenesManager:LoadScene(1));
+    print("load 3,4")
+    ScenesManager:AsyncLoadScene(3);
+    ScenesManager:LoadScene(4);
+    ScenesManager:AsyncLoadScene(5);
+
+    ScenesManager:ReStart();
+    --
+    ]]--
    --[[ ]]--
 
 
@@ -60,24 +64,6 @@ function start()
        CardList:GetNewCard();
        ]]--
 
-
-           -------------resourcesmanager 测试--------
-           print("here is resourcesmanager");
-           --资源加载只需要路径即可
-           --完整为 instantiatePath(path,parent,position,rotation)
-           --resources 资源测试完成
-           local c=ResourcesManager:instantiatePath("Prefabs/Card",canvas);
-           -- assetbundle 资源测试完毕
-           local a=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre",canvas);
-           --obj =ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre",canvas);
-           --ResourcesManager:clear();
-           --local b =BaseObject:new("fire");
-           --    print(b.data.objId);
-           --    print(b.data.objName);
-           --    --o:clear();
-           --    print(b.data.objId);
-           --    print(b.data.objName);
-         --[[      ]]--
 
 
 end

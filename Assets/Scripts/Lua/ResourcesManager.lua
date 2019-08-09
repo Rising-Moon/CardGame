@@ -54,25 +54,32 @@ end
 --提供给外部调用
 function ResourcesManager:clear()
     print("destroy objmap");
-    for i, obj in pairs(self.objMap) do
-        --print(obj);
-        self.objMap[i] =nil;
+    if self.objMap then
+        for i, obj in pairs(self.objMap) do
+            --print(obj);
+            self.objMap[i] =nil;
+        end
+        --不设置为nil，避免在游戏未结束时进行clear
+        --后期逻辑完成后在将该部分设置为nil
+        self.objMap = {};
+        print("destroy objpool");
+        for i,obj in pairs(self.objPool) do
+            --print(obj);
+            CS.UnityEngine.Object.Destroy(obj);
+        end
+        self.objPool = {};
+        print("destroy AssetBundle");
+        print(self.AssetBundleCacheMap["Assets/StreamingAssets/AssetBundles/human.pre"].assetBundle);
+        for k,obj in pairs(self.AssetBundleCacheMap) do
+            print("path is "..k);
+            obj.assetBundle:Unload(false);
+        end
+        self.AssetBundleCacheMap ={};
+        self.AssetCacheMap ={};
+    else
+        print("不要重复清除缓存");
     end
-    self.objMap = nil;
-    print("destroy objpool");
-    for i,obj in pairs(self.objPool) do
-        --print(obj);
-        CS.UnityEngine.Object.Destroy(obj);
-    end
-    self.objPool = nil;
-    print("destroy AssetBundle");
-    print(self.AssetBundleCacheMap["Assets/StreamingAssets/AssetBundles/human.pre"].assetBundle);
-    for k,obj in pairs(self.AssetBundleCacheMap) do
-        print("path is "..k);
-        obj.assetBundle:Unload(false);
-    end
-    self.AssetBundleCacheMap ={};
-    self.AssetCacheMap ={};
+
 end
 
 ---------------------------不推荐使用的外部接口---------------------------------
@@ -100,20 +107,23 @@ end
 ---------------------对象池处理---------------------------
 --向对象池中存对象
 function ResourcesManager:pushInPool(path,obj)
-    table.insert(self.objPool[path],obj);
+    self.objPool[path]=obj;
+    --table.insert(self.objPool,obj);
     obj:SetActive(false);
 end
 
 --从对象池中取对象
---存在index错误的可能，发生在对象池中不存在对象的情况下
-function ResourcesManager:popPool()
-    if #self.objPool then
-        local obj =self.objPool[1];
+
+function ResourcesManager:popPool(path)
+    if self.objPool[path] then
+        local obj =self.objPool[path];
         obj:SetActive(true);
-        table.remove(self.objPool,1);
+        self.objPool[path]=nil;
+        --table.remove(self.objPool,1);
         return obj
     else
         print("this is no obj");
+        return nil
     end
 end
 

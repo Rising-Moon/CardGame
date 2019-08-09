@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TestScript : MonoBehaviour{
     // Start is called before the first frame update
@@ -10,9 +11,8 @@ public class TestScript : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
-        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0;
-        gameObject.transform.position = mousePosition;
-        gameObject.transform.SetAsLastSibling();
+        if (Input.GetKeyDown(KeyCode.S)) {
+            SceneManager.LoadScene(0);
+        }
     }
 }

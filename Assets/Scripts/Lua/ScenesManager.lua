@@ -23,6 +23,7 @@ function ScenesManager:initRoot()
         return
     end
     self.uiRoot=CS.UnityEngine.GameObject.Find("Canvas");
+    --print(self.uiRoot);
 end
 
 --场景加载
@@ -31,7 +32,10 @@ function ScenesManager:LoadScene(index)
     if  self.scenesStack then
         --将要加载的场景编号押入栈中
         --永远不会加载场景0
-        self.scenesStack:Push(index);
+        --不允许回退到2，3界面，进行抽卡和战斗
+        if index ~=2 and index ~= 3then
+            self.scenesStack:Push(index);
+        end
         ScenesManagement.LoadScene(index);
     else
         print("wrong happen in stack");
@@ -44,7 +48,10 @@ function ScenesManager:AsyncLoadScene(index)
     if  self.scenesStack then
         --将要加载的场景编号押入栈中
         --永远不会加载场景0
-        self.scenesStack:Push(index);
+        if index ~=2 and index ~= 3then
+            self.scenesStack:Push(index);
+        end
+
         coroutine.resume(AsyncLoad,false,index);
         coroutine.resume(AsyncLoad,true);
     else
@@ -67,6 +74,8 @@ function ScenesManager:BackScene()
         self.scenesStack:Pop();
         --获取上一级对象
         local lastScene = self.scenesStack:Peek();
+        print("now back to");
+        print(lastScene);
         ScenesManagement.LoadScene(lastScene);
     else
         print(" there is no last scene which can be loaded ");
@@ -76,7 +85,7 @@ end
 --重启游戏进入主场景
 function ScenesManager:ReStart()
     self.scenesStack:Clear();
-    ScenesManagement.LoadScene(2);
+    ScenesManagement.LoadScene(1);
 end
 
 --退出游戏
