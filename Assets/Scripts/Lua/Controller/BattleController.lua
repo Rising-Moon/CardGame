@@ -11,6 +11,7 @@ function callback.UseCard(card)
     print("使用了卡牌"..card);
 end
 
+-- 初始化
 function BattleController:init()
 
 end

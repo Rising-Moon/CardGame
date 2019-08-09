@@ -45,8 +45,8 @@ namespace XLuaBehaviour{
         internal const float GCInterval = 1; //1 second 
 
         void Awake(){
-            //初始化scenstack
-            //stacke只记录6个场景
+            //初始化scenestack
+            //stack只记录6个场景
             sceneList = new SceneStack<int>(6);
             //不销毁mainApp避免lua脚本失效
             DontDestroyOnLoad(gameObject);
