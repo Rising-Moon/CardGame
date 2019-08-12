@@ -2,11 +2,12 @@
 local ScenesManager ={};
 ScenesManager.__index =ScenesManager;
 
+local UE =CS.UnityEngine;
 ------------------------------------
 ScenesManager.scenesStack =nil;
 ScenesManager.uiRoot =nil;
 
-local ScenesManagement =CS.UnityEngine.SceneManagement.SceneManager;
+local ScenesManagement =UE.SceneManagement.SceneManager;
 
 function ScenesManager:init()
     if self.scenesStack then
@@ -20,10 +21,15 @@ end
 
 function ScenesManager:initRoot()
     if self.uiRoot then
-        return
+        return self.uiRoot
     end
-    self.uiRoot=CS.UnityEngine.GameObject.Find("Canvas");
+    self.uiRoot=UE.GameObject.Find("Canvas");
     --print(self.uiRoot);
+    return self.uiRoot
+end
+
+function ScenesManager:GetIndex()
+    return ScenesManagement.GetActiveScene().buildIndex
 end
 
 --场景加载

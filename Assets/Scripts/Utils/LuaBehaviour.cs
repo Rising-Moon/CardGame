@@ -24,6 +24,7 @@ namespace XLuaBehaviour{
         internal Action luaUpdate;
 
         internal Action luaOnDestory;
+        internal Action luaOnGUI;
 
         //监听消息列表
         internal Action luaMessageCast;
@@ -90,7 +91,8 @@ namespace XLuaBehaviour{
                 script.luaOnDestory = script.scriptEnv.Get<Action>("ondestroy");
                 script.luaFixedUpdate = script.scriptEnv.Get<Action>("fixedupdate");
                 script.luaMessageCast = script.scriptEnv.Get<Action>("response");
-
+                script.luaOnGUI = script.scriptEnv.Get<Action>("ongui");
+                
                 if (luaAwake != null)
                     luaAwake();
             }
@@ -167,6 +169,17 @@ namespace XLuaBehaviour{
             foreach (var script in scripts) {
                 if (script.luaFixedUpdate != null) {
                     script.luaFixedUpdate();
+                }
+            }
+        }
+        
+        private void OnGUI()
+        {
+            foreach (var script in scripts)
+            {
+                if (script.luaOnGUI !=null)
+                {
+                    script.luaOnGUI();
                 }
             }
         }

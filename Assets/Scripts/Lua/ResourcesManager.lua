@@ -95,7 +95,7 @@ function ResourcesManager:LoadPath(path)
         --加载assetbundle资源
         self:LoadResources(path);
     end
-    return self.objMap[path];
+    return self.objMap[path] or self.AssetCacheMap[path];
 end
 
 --删除单个物体

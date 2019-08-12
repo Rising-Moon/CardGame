@@ -17,10 +17,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/pomkingScene.unity
     guid: c936599b885884e70b72dad6c91ced76
-  - enabled: 1
-    path: Assets/Scenes/TestScene.unity
-    guid: d0e59234275b9416abd877730109ee2b
-  - enabled: 1
-    path: Assets/Scenes/SocketScene.unity
-    guid: 78016aaf69bd746d2a5084fa3e2083c2
   m_configObjects: {}
