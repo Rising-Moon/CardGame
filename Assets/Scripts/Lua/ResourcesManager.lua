@@ -3,6 +3,7 @@ local ResourcesManager ={};
 
 ResourcesManager.__index =ResourcesManager;
 
+local PM =require("PathManager");
 ----------------资源表---------------
 function ResourcesManager:init()
     --resources路径加载后获取的资源
@@ -37,15 +38,16 @@ end
 function ResourcesManager:instantiatePath(path,parent,position,rotation)
     --如果资源被缓存下来，直接进行初始化
     print("from instantiatePath is :");
+    local newPath =PM:GetTruePath(path);
     --print(self.objMap[path]);
-    if self.objMap[path] == nil and self.AssetCacheMap[path] == nil then
+    if self.objMap[newPath] == nil and self.AssetCacheMap[newPath] == nil then
         print("run syncInstantiate");
-        return self:syncInstantiate(path,parent,position,rotation);
+        return self:syncInstantiate(newPath,parent,position,rotation);
         --加载资源
     else
         print("run instantiate");
         --直接实例化
-        return self:instantiate(path,parent,position,rotation);
+        return self:instantiate(newPath,parent,position,rotation);
     end
 end
 
@@ -54,7 +56,8 @@ end
 --提供给外部调用
 function ResourcesManager:clear()
     print("destroy objmap");
-    if self.objMap then
+    if self.objMap or self.AssetCacheMap then
+
         for i, obj in pairs(self.objMap) do
             --print(obj);
             self.objMap[i] =nil;
@@ -69,7 +72,6 @@ function ResourcesManager:clear()
         end
         self.objPool = {};
         print("destroy AssetBundle");
-        print(self.AssetBundleCacheMap["Assets/StreamingAssets/AssetBundles/human.pre"].assetBundle);
         for k,obj in pairs(self.AssetBundleCacheMap) do
             print("path is "..k);
             obj.assetBundle:Unload(false);
@@ -86,7 +88,8 @@ end
 --只使用路径和类型加载
 --下次想要使用资源的时候可以直接通过返回值实例话
 function ResourcesManager:LoadPath(path)
-    local boolAsset =self:BoolAsset(path);
+    path=PM:GetTruePath(path);
+    local boolAsset =PM:BoolAsset(path);
 
     if boolAsset then
         --加载assetbundle资源
@@ -107,7 +110,11 @@ end
 ---------------------对象池处理---------------------------
 --向对象池中存对象
 function ResourcesManager:pushInPool(path,obj)
-    self.objPool[path]=obj;
+    local newPath =PM:GetTruePath(path);
+    if self.objPool[newPath] then
+        return
+    end
+    self.objPool[newPath]=obj;
     --table.insert(self.objPool,obj);
     obj:SetActive(false);
 end
@@ -115,8 +122,9 @@ end
 --从对象池中取对象
 
 function ResourcesManager:popPool(path)
-    if self.objPool[path] then
-        local obj =self.objPool[path];
+    local newPath =PM:GetTruePath(path);
+    if self.objPool[newPath] then
+        local obj =self.objPool[newPath];
         obj:SetActive(true);
         self.objPool[path]=nil;
         --table.remove(self.objPool,1);
@@ -129,30 +137,6 @@ end
 
 --------------------------------------------------------
 
-------------------正则处理路径相关------------------------
---根据路径判断从何处加载资源
-function ResourcesManager:BoolAsset(path)
-    local boolAsset = string.find(path,"%.");
-    --print("from path boolAsset");
-    --print(boolAsset);
-    return boolAsset
-end
-
---根据assetbundle路径查找ab资源信息(不含后缀）
---例如 human
-function ResourcesManager:findName(path)
-    local objPath = nil;
-    objPath =string.match(path,"/[%w]+%.");
-    return string.sub(objPath,2,#objPath-1)
-end
-
---根据assetbundle路径查找ab资源信息（含后缀）
---例如 human.pre
-function ResourcesManager:findAllName(path)
-    local fullName =nil;
-    fullName =string.match(path,"/[%w]+%.[%w]+");
-    return string.sub(fullName,2);
-end
 
 -------------------资源加载相关---------------------
 --加载manifest
@@ -189,13 +173,13 @@ function ResourcesManager:LoadAsset(ab, path)
     local asset = self.AssetCacheMap[path];
     --asset不存在的时候
     if not asset then
-        asset = ab.assetBundle:LoadAsset(self:findName(path));
+        asset = ab.assetBundle:LoadAsset(PM:findName(path));
         self.AssetCacheMap[path] = asset;
         local dependences = self.AssetBundleIndependenceMap[path]
         --加载依赖
         --这里没有考虑到如果两个asset都依赖同一项而这一项在第二个加载时没有重内存中移除，而被重新加载出错
         if not dependences then
-            dependences = self.manifest:GetAllDependencies(self:findAllName(path));
+            dependences = self.manifest:GetAllDependencies(PM:findAllName(path));
             self.AssetBundleIndependenceMap[path] = dependences;
         end
         --加载所有依赖
@@ -233,7 +217,7 @@ end
 --同步实例化
 --请求路径，类型，父物体，位置，角度
 function ResourcesManager:syncInstantiate(path,parent,position,rotation)
-    local boolAsset =self:BoolAsset(path);
+    local boolAsset =PM:BoolAsset(path);
     --path是否正确且资源是否能被加载
     local boolright =nil;
     if boolAsset then
@@ -256,7 +240,7 @@ end
 --资源实例化
 function ResourcesManager:instantiate(path, parent, position, rotation)
     local gameObj;
-    print(self.objMap[path]);
+    print(self.objMap[path] or self.AssetCacheMap[path]);
     if parent then
         --self.object:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
         if position then
@@ -264,12 +248,15 @@ function ResourcesManager:instantiate(path, parent, position, rotation)
         else
             gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path] or self.AssetCacheMap[path], parent.Transform, false);
         end
-        gameObj:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
+        --gameObj:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
+        gameObj.transform.parent =parent.transform;
     else
         gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path] or self.AssetCacheMap[path], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity);
     end
     --GameObject =CS.UnityEngine.Object.Instantiate(self.assetListenerMap[original]);
     --self.object.transform.localPosition=location;
+    --缩放为正常大小
+    gameObj.transform.localScale=CS.UnityEngine.Vector3(1,1,1);
     return gameObj
 end
 

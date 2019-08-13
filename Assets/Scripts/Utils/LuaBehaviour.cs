@@ -181,6 +181,7 @@ namespace XLuaBehaviour{
                 {
                     script.luaOnGUI();
                 }
+                
             }
         }
 

@@ -1,3 +1,5 @@
+local Resou
+
 local ScenesManager=require("ScenesManager");
 local dailyController = {};
 

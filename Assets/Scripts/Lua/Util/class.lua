@@ -33,7 +33,7 @@ function class(classname,super)
         cls.__ctype = 2;
         --构造对象
         --构造时，默认传self
-        function cls:new(...)
+        function cls.new(...)
             local instance = cls.__create(...);
             -- copy fields from class to native object
             for k,v in pairs(cls) do
@@ -62,7 +62,7 @@ function class(classname,super)
         cls.__ctype = 1; -- lua
         cls.__index = cls;
         --实例化
-        function cls:new(...)
+        function cls.new(...)
             local instance = setmetatable({}, cls);
             instance.class = cls;
             instance:ctor(...);
