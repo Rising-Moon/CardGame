@@ -1,19 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-public class TestScript : MonoBehaviour{
+public class test : MonoBehaviour
+{
+
     // Start is called before the first frame update
     void Start()
     {
-       
+
     }
 
     // Update is called once per frame
-    void Update(){
-        
+    void Update()
+    {
+        string a = "a";
     }
 }

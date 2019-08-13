@@ -1,13 +1,13 @@
-class =require("class");
+--class =require("class");
 local Character = require("CharacterObject");
 
 --------------------------------------
 --更改创建方法，避免全局混用
 -- 创建子类Child
-local Player =class("Player",Character);
+local PlayerObject =class("PlayerObject",Character);
 
 ---------------------属性表------------------------
-Player.data={
+PlayerObject.data={
     --玩家名
     --objName = nil;
     --玩家血条
@@ -30,96 +30,57 @@ Player.data={
 
 --本地初始化状态
 --Player.localinitStates =0;
-------------------------------------------------
---[[
---卡player名
-function  Player:setName(objName)
-    self.objName=objName;
-end
 
---player id
-function Player:setId()
-    --id唯一
-    Player.super.setId(self);
-end
-
---player类型
-function Player:setType()
-    --1表示玩家
-    self.objType=1;
-end
---player数值
-function Player:setNumber()
-    --血条
-    --每次升级后获得等级*2的血量上限
-    self.lifNumber=10+self.level*2;
-end
---player对象
-function Player:setInstantiate(objInstantiate)
-    self.objInstantiate=objInstantiate or "error";
-    print(self.objInstantiate);
-end
-]]--
 ------------------------------------------------------------
 --构造函数
-function Player:ctor(fillthing,objName,objNumber,objMaNa,objAttrubute,objExperience,holdCard,objInstantiate)
-    Player.super.ctor(self,"player",objName,objNumber,objMaNa,objAttrubute,objInstantiate);
+function PlayerObject:ctor(objName,objNumber,objMaNa,objAttrubute,objExperience,holdCard,objInstantiate)
+    --使用.传值，需要将左边第一个参数设置为self
+    PlayerObject.super.ctor(self,objName,objNumber,objMaNa,objAttrubute,objInstantiate);
     print("player ctor run");
     self.data.Experience =objExperience or 0;
     self.data.holdCard =holdCard or {};
     print("player ctor finish");
 end
---[[
---初始化
-function Player:init(objName,objId,objInstantiate)
 
-    if self.initStates ==1 then
-        self.level =1;
-        self:setName(objName);
-        self:setId(objId);
-        self:setType();
-        self:setNumber();
-        self:setInstantiate(objInstantiate);
-        self.experience =0;
-        self.initStates=0;
-    else
-        print("不能重复赋值");
-    end
-
-end
-]]--
 ---------------------------玩家升级相关逻辑-------------------
 --获得经验
 --获取经验的时候判断是否升级
-function Player:getExperience(experience)
+function PlayerObject:getExperience(experience)
     --先获取经验
-    self.data.experience =self.data.experience+experience;
-    self.data.experience =self:updateLevel();
+    self.data.Experience =self.data.Experience+experience;
+    self.data.Experience =self:updateLevel();
 end
 
 --升级
-function Player:updateLevel()
+function PlayerObject:updateLevel()
     --玩家升级所需经验需要当前的两倍
-    local restExperience = self.data.experience % (self.data.level*2);
+    local restExperience = self.data.Experience / (self.data.level*2);
     --玩家等级不能超过十级
+    print(self.data.level);
+    print(self.data.Experience);
+    print(restExperience);
     if self.data.level<10 and restExperience >= 1 then
         --升级标准
         --玩家升级时
         --floor 向下取整
-        self.data.level=self.data.level+math.floor(self.data.experience/(self.data.level*2));
+
+        self.data.level=self.data.level+math.floor(self.data.Experience/(self.data.level*2));
+        if self.data.level >10 then
+            self.data.level =10;
+        end
         --升级增加血量
         --
         return restExperience
     else
         print("不满足升级条件");
         --不满足升级经验的时候全额返还
-        return self.data.experience
+        return self.data.Experience
     end
 end
 -----------------------------------------------------------
 
 --------------------玩家战斗相关----------------------------
-function Player:handleCard(mss)
+function PlayerObject:handleCard(mss)
     print("from player:"..mss);
 end
 
@@ -161,23 +122,23 @@ end
 ---------------------------------------------------------
 
 --
-function Player:playerInformation()
+function PlayerObject:playerInformation()
     print("Player information is here");
     return 1
 end
 
 --
-function Player:movePlayer()
+function PlayerObject:movePlayer()
 
 end
 
-function Player:usePlayer()
+function PlayerObject:usePlayer()
 
 end
 
-function Player:clear()
-    Player.super.clear(self);
+function PlayerObject:clear()
+    PlayerObject.super.clear(self);
     print("Player  drop");
 end
 
-return Player
+return PlayerObject

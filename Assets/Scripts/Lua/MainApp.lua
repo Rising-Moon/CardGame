@@ -14,113 +14,81 @@ local FileRead =require("FileRead");
 ---引入序列化函数
 require("serialize");
 
+---引入json处理
+local json =require("json");
+
 ---引入场景管理模块
 local ScenesManager =require("ScenesManager");
 
 ---引入资源管理模块
 local ResourcesManager = require("ResourcesManager");
 
+---引入音频管理模块
+local AudioManager =require("AudioManager");
+
 ---引入基类
 local CardObeject =require("CardObject");
 local PlayerObject = require("PlayerObject");
 local MonsterObject = require("MonsterObject");
+local UserObject =require("UserObject");
+local CardList =require("CardList");
 
--- local canvas = CS.UnityEngine.GameObject.Find("Canvas");
+
+
+--引入logincontroller
+local loginInController =require("loginInController");
+--
+local dailyController =require("dailyController");
+
+
+local currentController =nil;
 
 function start()
-
-    --[[
-    -------------scenesmanager 测试-----------
-    print("here is scenesmananger test");
-    print("load 1");
-    print(ScenesManager:LoadScene(1));
-    print("load 2")
-    ScenesManager:LoadScene(2);
-    print("back 1");
-    ScenesManager:BackScene();
-    ScenesManager:AsyncLoadScene(3);
-    ]]--
-    --[[
-    -------------BaseObject 测试----------------
-    local o =BaseObject:new("fire");
-    print(o.data.objId);
-    print(o.data.objName);
-    o:clear();
-    --print(o.data。objId);
-    print(o.data.objId);
-    local b =BaseObject:new("water");
-    print(b.data.objId);
-    --local b =BaseObject:new("water");
-    --print(b.data.objId);
-    ]]--
-    --[[
-        -------------card 测试----------------
-        print("card test");
-        local c =CardObeject:new("fire",{fire ="hit by fire",effect ="kill ememy"},10);
-        c:writeFile();
-     -c:clear();
-        --[[
-        for i,v in pairs(c.data) do
-            print(i.."\tis");
-            print(v);
-        end
-        ]]--
-    --[[
-        ---------------character test----------
-        print("character test");
-        local ch =Character:new("小米",10,1,{fire ="hit with fire"});
-        ch:writeFile();
-          for i,v in pairs(ch.data) do
-               print(i.."\tis");
-               print(v);
-           end
-              ]]--
-    --[[
-    --------------player test------------
-    local r =ResourcesManager:instantiatePath("Prefabs/Card",canvas);
-    p =PlayerObject:new("小米",10,1,{fire ="hit with fire"},0,{card = 10},r);
-    for i,v in pairs(p.data) do
-        print(i.."\tis");
-        print(v);
+    --可以直接使用audio的加载也可以ResouresManager:LoadPath()
+    --该音乐前面有很长一段空白
+    local music =AudioManager:LoadAudio("music/backGroundMusic");
+    --local music =ResourcesManager:LoadPath("music/backGroundMusic");
+    AudioManager:PlayBacKGroundMusic(music);
+    controllerList={
+        loginInController,
+        dailyController
+    }
+    currentController = loginInController;
+    if (currentController ~= nil and currentController.start ~= nil) then
+        currentController.start();
     end
-    print(serialize(p.data));
-    p:clear();
-    --p:deleteAll();
-    ]]--
-    --[[
-    ---------------monster test-----------
-    local r =ResourcesManager:instantiatePath("Prefabs/Card",canvas);
-    m =MonsterObject:new("小米",10,1,{fire ="hit with fire"},0,0,r);
-    print(serialize(m.data));
-    print(m:dropExperience());
-    print(m:dropMoney());
-    m:clear();
-    ]]--
-    --[[
-    -------------resourcesmanager 测试--------
-    print("here is resourcesmanager");
-    --资源加载只需要路径即可
-    --完整为 instantiatePath(path,parent,position,rotation)
-    --resources 资源测试完成
-    --ResourcesManager:instantiatePath("Prefabs/Card",canvas);
-    -- assetbundle 资源测试完毕
-    --ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre",canvas);
-    --ResourcesManager:clear();
-    local b =BaseObject:new("fire");
-    --    print(b.data.objId);
-    --    print(b.data.objName);
-    --    --o:clear();
-    --    print(b.data.objId);
-    --    print(b.data.objName);
-    ]]--
-    -----------------测试结束标示-------------
-    -- print("test is down here");
+    --print(ScenesManager:GetIndex());
 end
 
 function update()
+
+    currentController=controllerList[ScenesManager:GetIndex()+1];
+    if (currentController ~= nil and currentController.update ~= nil) then
+        currentController.update();
+    end
 
 end
 
 function fixedupdate()
 
+    if (currentController ~= nil and currentController.fixedupdate ~= nil) then
+        currentController.fixedupdate();
+    end
+end
+
+function ondestroy()
+    if (currentController ~= nil and currentController.ondestroy ~= nil) then
+        currentController.ondestroy();
+    end
+end
+
+--将一些一直会存在的ui放在这里
+--例如 音乐的播放
+function ongui()
+    --先只设置暂停播放
+    if CS.UnityEngine.GUI.Button(CS.UnityEngine.Rect(10,10,80,30),"Pause") then
+        AudioManager:Pause();
+        --设置宽高比的demo
+        --CS.UnityEngine.Camera.main.aspect =2.0;
+    end
 end

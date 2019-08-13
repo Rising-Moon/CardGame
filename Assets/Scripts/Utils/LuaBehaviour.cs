@@ -13,7 +13,7 @@ namespace XLuaBehaviour{
         public string name;
         public GameObject value;
     }
-
+    
     [System.Serializable]
     public class LuaScript{
         public string luaFileName;
@@ -24,6 +24,7 @@ namespace XLuaBehaviour{
         internal Action luaUpdate;
 
         internal Action luaOnDestory;
+        internal Action luaOnGUI;
 
         //监听消息列表
         internal Action luaMessageCast;
@@ -31,15 +32,13 @@ namespace XLuaBehaviour{
 
     [LuaCallCSharp]
     public class LuaBehaviour : MonoBehaviour, IMessageListener{
-        //注册一个scenestack
-        public static SceneStack<int> sceneList;
-
+        
         //lua路径列表
         private List<string> luaPathList;
 
         //lua AB包
         private AssetBundle luaAB;
-
+        
         //lua脚本列表
         public LuaScript[] scripts;
 
@@ -48,9 +47,6 @@ namespace XLuaBehaviour{
         internal const float GCInterval = 1; //1 second 
 
         void Awake(){
-            //初始化scenestack,stack只记录6个场景
-            sceneList = new SceneStack<int>(6);
-
 
             //不销毁mainApp避免lua脚本失效
             DontDestroyOnLoad(gameObject);
@@ -110,7 +106,8 @@ namespace XLuaBehaviour{
                 script.luaOnDestory = script.scriptEnv.Get<Action>("ondestroy");
                 script.luaFixedUpdate = script.scriptEnv.Get<Action>("fixedupdate");
                 script.luaMessageCast = script.scriptEnv.Get<Action>("response");
-
+                script.luaOnGUI = script.scriptEnv.Get<Action>("ongui");
+                
                 if (luaAwake != null)
                     luaAwake();
             }
@@ -181,6 +178,7 @@ namespace XLuaBehaviour{
 
         void OnDestroy(){
             foreach (var script in scripts) {
+                
                 if (script.luaOnDestory != null) {
                     script.luaOnDestory();
                 }
@@ -190,6 +188,7 @@ namespace XLuaBehaviour{
                 script.luaStart = null;
                 script.scriptEnv.Dispose();
                 script.injections = null;
+
             }
         }
 
