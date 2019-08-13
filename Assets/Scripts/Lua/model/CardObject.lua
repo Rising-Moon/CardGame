@@ -9,15 +9,15 @@ local Card =class("Card",BaseObject);
 
 ----属性列表
 --id
-Card.cardId = nil;
+Card.cardId = 0;
 --卡牌名字
-Card.name = nil;
+Card.name = "card";
 --卡牌消耗
-Card.cost = nil;
+Card.cost = 0;
 --卡牌等级
-Card.level = nil;
+Card.level = 0;
 --属性表
-Card.valueMap = nil;
+Card.valueMap = {};
 
 
 --构造函数
@@ -34,27 +34,27 @@ end
 ----存储相关
 
 --读取文件
-function Card:readLastFile()
-    local file =io.open("Assets/Resources/Config/Card.txt","r");
-    --local num = 9;
-    for i in file:lines() do
-        print(i);
-    end
-    --print(file:read());
-    file:close();
-end
+--function Card:readLastFile()
+--    local file =io.open("Assets/Resources/Config/Card.txt","r");
+--    --local num = 9;
+--    for i in file:lines() do
+--        print(i);
+--    end
+--    --print(file:read());
+--    file:close();
+--end
 
 --写txt文件
-function Card:writeFile()
-
-    local file = io.open("Assets/Resources/Config/Card.txt","a+");
-    --将卡牌的临时复制序列化
-    local tempStr = serialize(self.data);
-    print("demo is here "..tempStr);
-    file:write(tempStr);
-    file:write("\n");
-    file:close();
-
-end
+--function Card:writeFile()
+--
+--    local file = io.open("Assets/Resources/Config/Card.txt","a+");
+--    --将卡牌的临时复制序列化
+--    local tempStr = serialize(self.data);
+--    print("demo is here "..tempStr);
+--    file:write(tempStr);
+--    file:write("\n");
+--    file:close();
+--
+--end
 
 return Card

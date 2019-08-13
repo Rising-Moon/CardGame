@@ -1,17 +1,14 @@
 -- 导入包
 local responseListener = require('ResponseListener');
 local battleController = require('BattleController');
-local BaseObject = require('BaseObject');
-local CardObject = require('CardObject');
-
-----全局控制器
-
+local cardManager = require('CardListManager');
 
 ----声明变量
 -- 当前控制器
 local currentController = nil;
 
 function start()
+    cardManager.saveCards();
     currentController = battleController;
     if (currentController ~= nil and currentController.start ~= nil) then
         currentController.start();

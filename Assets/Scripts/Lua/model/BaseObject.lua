@@ -4,7 +4,7 @@ local BaseObject = class("BaseObject");
 
 --------------属性表------------------
 --object ID
-BaseObject.objId = nil;
+BaseObject.objId = 0;
 
 -- 构造函数
 function BaseObject:ctor()
