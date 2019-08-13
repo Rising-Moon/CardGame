@@ -32,8 +32,10 @@ namespace XLuaBehaviour{
 
     [LuaCallCSharp]
     public class LuaBehaviour : MonoBehaviour, IMessageListener{
-
         
+        //lua路径列表
+        private List<string> luaPathList;
+
         //lua AB包
         private AssetBundle luaAB;
         
@@ -45,27 +47,33 @@ namespace XLuaBehaviour{
         internal const float GCInterval = 1; //1 second 
 
         void Awake(){
-            
-            
-            
+
             //不销毁mainApp避免lua脚本失效
             DontDestroyOnLoad(gameObject);
+
+
+            luaPathList = new List<string>();
+            //添加lua文件路径
+            addLuaPath("Assets.Scripts.Lua");
+            addLuaPath("Assets.Scripts.Lua.lib");
+            addLuaPath("Assets.Scripts.Lua.Model");
+            addLuaPath("Assets.Scripts.Lua.Controller");
+            addLuaPath("Assets.Scripts.Lua.Util");
+
 
             //将luaBehaviour注册到消息列表监听
             MessageQueueManager.GetMessageQueue().RegisteredListener(this);
 
-            Thread.Sleep(1000);
-
             LuaTable meta = luaEnv.NewTable();
 
-            ////////////////////导入Lua依赖///////////////////////
+            //导入lua依赖
             luaEnv.AddBuildin("pb", XLua.LuaDLL.Lua.LoadLuaProfobuf);
-            ////////////////////////////////////////////////////
 
             //添加自定义Loader
             luaEnv.AddLoader(LuaPathLoader);
             luaEnv.AddLoader(LuaABLoader);
 
+            //使lua中可以操作全局变量（慎用）
             luaEnv.Global.Set("global", luaEnv.Global);
 
             meta.Set("__index", luaEnv.Global);
@@ -79,11 +87,18 @@ namespace XLuaBehaviour{
                 foreach (var injection in script.injections) {
                     script.scriptEnv.Set(injection.name, injection.value);
                 }
+            }
 
+            runLuaFile();
+
+            meta.Dispose();
+        }
+
+        //开始执行
+        private void runLuaFile(){
+            foreach (var script in scripts) {
+                //加载主lua文件
                 WWW luaFile = new WWW("file:///" + Application.dataPath + "/Scripts/Lua/" + script.luaFileName);
-                while (!luaFile.isDone) {
-                }
-
                 luaEnv.DoString(luaFile.text, script.luaFileName, script.scriptEnv);
                 Action luaAwake = script.scriptEnv.Get<Action>("awake");
                 script.luaStart = script.scriptEnv.Get<Action>("start");
@@ -96,40 +111,21 @@ namespace XLuaBehaviour{
                 if (luaAwake != null)
                     luaAwake();
             }
-
-            meta.Dispose();
         }
 
         //自定义Loader定位到Lua文件夹
-        private byte[] LuaPathLoader(ref string path){
-            string rootPath = "Assets/Scripts/Lua";
-            string fileName = path;
-            string p = "Assets/Scripts/Lua/" + path + ".lua";
-            
-            Queue<string> directories = new Queue<string>();
-            directories.Enqueue(rootPath);
-            //遍历子文件夹
-            while (directories.Count != 0) {
-                string current = directories.Dequeue();
-                List<string> luaFiles = Directory.GetFiles(current).Where(i => i == current + "/" + fileName + ".lua").ToList();
-                if (luaFiles.Count != 0) {
-                    return File.ReadAllBytes(current + "/" + fileName + ".lua");
-                }
-                Directory.GetDirectories(current).ToList().ForEach(i => directories.Enqueue(i));
-            }
-            
-            //Debug.Log(path);
-            if (!File.Exists(p)) {
-                //Debug.Log("文件" + p + "不存在");
-                return null;
+        private byte[] LuaPathLoader(ref string filename){
+            foreach (var path in luaPathList) {
+                string luafile = path + filename + ".lua";
+                if (File.Exists(luafile))
+                    return Encoding.UTF8.GetBytes(File.ReadAllText(luafile));
             }
 
-            //return null;
-            return Encoding.UTF8.GetBytes(File.ReadAllText(p));
+            return null;
         }
 
         //自定义Loader可以从AssetsBundle包读出
-        private byte[] LuaABLoader(ref string path){
+        private byte[] LuaABLoader(ref string filename){
             string luaABPath = Application.streamingAssetsPath + "/AssetBundles/" + "lua.lua";
             if (!File.Exists(luaABPath)) {
                 Debug.Log("LUA_AB文件不存在");
@@ -138,11 +134,18 @@ namespace XLuaBehaviour{
 
             if (luaAB == null)
                 luaAB = AssetBundle.LoadFromFile(luaABPath);
-            TextAsset luaFile = luaAB.LoadAsset<TextAsset>(path + ".lua.bytes");
+            TextAsset luaFile = luaAB.LoadAsset<TextAsset>(filename + ".lua.bytes");
             if (luaFile == null) {
                 return null;
             }
+
             return luaFile.bytes;
+        }
+
+        //添加路径
+        private void addLuaPath(string path){
+            path = path.Replace(".", "/") + "/";
+            luaPathList.Add(path);
         }
 
         void Start(){
@@ -170,18 +173,6 @@ namespace XLuaBehaviour{
                 if (script.luaFixedUpdate != null) {
                     script.luaFixedUpdate();
                 }
-            }
-        }
-        
-        private void OnGUI()
-        {
-            foreach (var script in scripts)
-            {
-                if (script.luaOnGUI !=null)
-                {
-                    script.luaOnGUI();
-                }
-                
             }
         }
 

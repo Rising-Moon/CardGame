@@ -1,11 +1,7 @@
 -- 导入包
 local responseListener = require('ResponseListener');
 local battleController = require('BattleController');
-local BaseObject = require('BaseObject');
-local CardObject = require('CardObject');
-
-----全局控制器
-
+local cardManager = require('CardListManager');
 
 ----声明变量
 -- 当前控制器
