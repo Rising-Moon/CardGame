@@ -8,7 +8,6 @@ local cardManager = require('CardListManager');
 local currentController = nil;
 
 function start()
-    cardManager.saveCards();
     currentController = battleController;
     if (currentController ~= nil and currentController.start ~= nil) then
         currentController.start();
