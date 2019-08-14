@@ -34,7 +34,7 @@ function CardListManager.loadCards()
                         userHaveCardId = "";
                     end
                     --创建一个空的卡牌对象，以卡牌的id为键值存入相应表中
-                    cardList.user_have[id] = CardObject.new(tonumber(id));
+                    cardList.user_have[tonumber(id)] = CardObject.new(tonumber(id));
                 end
                 --玩家未拥有卡牌
                 --逻辑同上
@@ -49,11 +49,11 @@ function CardListManager.loadCards()
                         id = string.sub(userHaveCardId, 1, string.find(userHaveCardId, "\n"));
                         userHaveCardId = "";
                     end
-                    cardList.not_obtain[id] = CardObject.new(id);
+                    cardList.not_obtain[tonumber(id)] = CardObject.new(id);
                 end
                 --分割卡牌信息
-            elseif (string.find(line, "Card:") == 1) then
-                local id = string.sub(line, 6, #line);
+            elseif (string.find(line, "----Card:") == 1) then
+                local id = tonumber(string.sub(line, 10, #line));
                 local card = nil;
 
                 --判读卡牌是否存在与游戏中
@@ -98,12 +98,10 @@ function CardListManager.loadCards()
     cardsFile:close();
 end
 
-CardListManager.loadCards();
-
 function CardListManager.saveCards()
     local cardsFile = io.open(filePath, "w");
     local content = "";
-    --更新拥有和为拥有卡片id
+    --更新拥有和未拥有卡片id
     content = content .. "user_have:";
     for k, _ in pairs(cardList.user_have) do
         content = content .. k .. ",";
@@ -116,20 +114,34 @@ function CardListManager.saveCards()
 
     --遍历卡牌列表
     for k, v in pairs(cardList.user_have) do
-        if (v.name ~= "") then
-            content = content .. "Card:" .. k .. "\n" .. serialize.encodeCard(v);
+        if (v.name ~= "name") then
+            content = content .. "----Card:" .. k .. "\n" .. serialize.encodeCard(v);
         end
     end
     for k, v in pairs(cardList.not_obtain) do
-        if (v.name ~= "") then
-            content = content .. "Card:" .. k .. "\n" .. serialize.encodeCard(v);
+        if (v.name ~= "name") then
+            content = content .. "----Card:" .. k .. "\n" .. serialize.encodeCard(v);
         end
     end
 
     cardsFile:write(content);
-    cardsFile:flush();
     cardsFile:close();
 end
 
+--处理玩家获得卡片
+function CardListManager.userGet(cardId)
+    local card = cardList.not_obtain[cardId];
+    if (card and card.name ~= "") then
+        cardList.user_have[cardId] = card;
+        cardList.not_obtain[cardId] = nil;
+    else
+        print("这张卡不存在或者已经获得");
+    end
+end
+
+--第一次被导入时加载卡片到卡片列表
+CardListManager.loadCards();
+
 CardListManager.saveCards();
+
 return CardListManager;
