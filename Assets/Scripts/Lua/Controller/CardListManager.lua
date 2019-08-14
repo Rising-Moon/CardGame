@@ -2,6 +2,7 @@
 local CardObject = require('CardObject');
 local serialize = require('serialize');
 local cardList = require('CardList');
+local dataProxy = require('DataProxy');
 
 CardListManager = {}
 
@@ -34,7 +35,7 @@ function CardListManager.loadCards()
                         userHaveCardId = "";
                     end
                     --创建一个空的卡牌对象，以卡牌的id为键值存入相应表中
-                    cardList.user_have[tonumber(id)] = CardObject.new(tonumber(id));
+                    cardList.user_have[tonumber(id)] = dataProxy:createProxy(CardObject.new(tonumber(id)),{});
                 end
                 --玩家未拥有卡牌
                 --逻辑同上
