@@ -31,6 +31,10 @@ function Card:ctor(cardId,name,cost,level,valueMap)
     self.valueMap = valueMap or {};
 end
 
+
+--toString方法
+Card.__tostring =Card.super.__tostring;
+
 ----存储相关
 
 --读取文件
