@@ -26,6 +26,9 @@ local ResourcesManager = require("ResourcesManager");
 ---引入音频管理模块
 local AudioManager =require("AudioManager");
 
+---引入路径管理模块
+local PathManager =require("PathManager");
+
 ---引入基类
 local CardObeject =require("CardObject");
 local PlayerObject = require("PlayerObject");
@@ -44,11 +47,13 @@ local dailyController =require("dailyController");
 local currentController =nil;
 
 function start()
+
     --可以直接使用audio的加载也可以ResouresManager:LoadPath()
     --该音乐前面有很长一段空白
-    local music =AudioManager:LoadAudio("music/backGroundMusic");
-    --local music =ResourcesManager:LoadPath("music/backGroundMusic");
-    AudioManager:PlayBacKGroundMusic(music);
+    --local music =AudioManager:LoadAudio("music/backGroundMusic");
+    --local music =ResourcesManager:LoadPath("Assets/Resources/music/backGroundMusic.mp3");
+
+    --AudioManager:PlayBacKGroundMusic(music,1);
     controllerList={
         loginInController,
         dailyController
@@ -82,13 +87,11 @@ function ondestroy()
     end
 end
 
+--[[
 --将一些一直会存在的ui放在这里
 --例如 音乐的播放
 function ongui()
-    --先只设置暂停播放
-    if CS.UnityEngine.GUI.Button(CS.UnityEngine.Rect(10,10,80,30),"Pause") then
-        AudioManager:Pause();
-        --设置宽高比的demo
-        --CS.UnityEngine.Camera.main.aspect =2.0;
-    end
+   AudioManager:OnGUI();
+
 end
+]]--

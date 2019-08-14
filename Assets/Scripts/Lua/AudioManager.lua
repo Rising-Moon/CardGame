@@ -5,6 +5,8 @@ local AudioManager ={};
 
 local UE =CS.UnityEngine;
 
+local isPlayMusic = false;
+
 AudioManager.cmRoot =nil;
 
 --Unity中控制声音播放所需三个必要组件，分别是AudioSource、AudioClip、AudioListener

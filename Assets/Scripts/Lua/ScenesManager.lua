@@ -43,6 +43,7 @@ function ScenesManager:LoadScene(index)
             self.scenesStack:Push(index);
         end
         ScenesManagement.LoadScene(index);
+        self.uiRoot =nil;
     else
         print("wrong happen in stack");
     end
@@ -83,6 +84,7 @@ function ScenesManager:BackScene()
         print("now back to");
         print(lastScene);
         ScenesManagement.LoadScene(lastScene);
+        self.uiRoot =nil;
     else
         print(" there is no last scene which can be loaded ");
     end
@@ -113,6 +115,7 @@ AsyncLoad = coroutine.create(
             operation.allowSceneActivation =yreturn;
             print("do you run agine");
             print(operation.allowSceneActivation);
+            self.uiRoot =nil;
  end)
 
 ScenesManager:init();
