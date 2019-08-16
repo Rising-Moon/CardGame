@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class Timer
 {
@@ -80,8 +81,8 @@ public class Timer
         lastTime = Time.time;
         lastUpdateFrame = Time.frameCount;
     }
-        
 
+    
     // 开始计时，取消暂停状态
     public void Start()
     { 
