@@ -35,8 +35,6 @@ local MonsterObject = require("MonsterObject");
 local UserObject =require("UserObject");
 local CardList =require("CardList");
 
-
-
 --引入logincontroller
 local loginInController =require("LoginInController");
 --
@@ -93,6 +91,8 @@ function update()
     if tTest and tTest.IsTimeUp then
         print("down");
         tTest =nil;
+        --coroutine.waitforframes(1);
+        --print("bagin");
     end
     --切换场景
     currentController=controllerList[ScenesManager:GetIndex()+1];

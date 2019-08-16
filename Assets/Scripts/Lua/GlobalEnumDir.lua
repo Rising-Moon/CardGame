@@ -1,3 +1,10 @@
+--抽卡的时候指定的card的实例话属性
+--由于测试预制体数量较少，将healthbar也加上，后期删除
+CardPrefabsPathDir={
+    {name ="Card",ResourcesPath ="Assets/Resources/Prefabs/Card.prefab",AssetBundlePath="Assets/StreamingAssets/AssetBundles/Card.pre"},
+    {name ="HealthBar",ResourcesPath ="Assets/Resources/Prefabs/HealthBar.prefab"}
+}
+
 ----------------------卡牌属性表-------------------
 --卡牌类型
 global.typeDir ={

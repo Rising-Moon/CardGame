@@ -1,5 +1,5 @@
 CardView = {}
 
-function CardView:createView(card,)
+function CardView:createView(card,...)
 
 end

@@ -5,13 +5,24 @@ local SM =require("ScenesManager");
 local GateButtonEvent = {};
 
 local fightFlag =0;
+local BagFlag =0;
 local pomkFlag =0;
 local quitFlag =0;
+
 local uiRoot =nil;
 local fightButton =nil;
 local pomkButton =nil;
 local closeButton =nil;
+local bagButton =nil;
+
+local cardBag =nil;
+local cardIma =nil
+
 local initState =1;
+
+local function imgFunction()
+      print("img name");
+end
 
 function GateButtonEvent.listenEvent(callback)
     --print(SM:GetIndex());
@@ -29,25 +40,59 @@ function GateButtonEvent.listenEvent(callback)
         closeButton =uiRoot.transform:Find("quit");
         assert(closeButton,"didnt get closeButton");
 
+        bagButton =uiRoot.transform:Find("bag");
+        assert(bagButton,"dont get bagButton");
+
+        cardBag =CS.UnityEngine.GameObject.Find("Canvas/CardBag");
+        --cardBag =uiRoot.transform:Find("CardBag");
+        assert(cardBag,"dont get card bag");
+
+        --cardIma =uiRoot.transform:FindChild("Canvas/CardBug");
+        --assert(cardIma,"dont get cardIma");
+        local Tri = CS.TriggersListener();
+        for i=0,cardBag.transform.childCount-1,1 do
+            local img =cardBag.transform:GetChild(i);
+            print(img.name);
+            
+            print(type(CS.UnityEngine.EventSystems.EventTriggerType.PointerClick));
+            Tri:AddTriggersListener(img.gameObject,CS.UnityEngine.EventSystems.EventTriggerType.PointerClick,imgFunction);
+        end
+
+        cardBag.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
 
         fightButton:GetComponent("Button").onClick:AddListener(function()
-            fightFlag =1;
-            local btn =  fightButton:GetComponent("Button");
-            btn.interactable = false;
+        fightFlag =1;
+        local btn =  fightButton:GetComponent("Button");
+        btn.interactable = false;
         end);
 
         pomkButton:GetComponent("Button").onClick:AddListener(function()
-            pomkFlag =1;
-            local btn =  pomkButton:GetComponent("Button");
-            btn.interactable = false;
+        pomkFlag =1;
+        local btn =  pomkButton:GetComponent("Button");
+        btn.interactable = false;
         end);
+
         closeButton:GetComponent("Button").onClick:AddListener(function()
-            quitFlag =1;
-            local btn =  closeButton:GetComponent("Button");
-            btn.interactable = false;
-        end);
-        initState =callback.initListener(initState);
+    quitFlag =1;
+    local btn =  closeButton:GetComponent("Button");
+    btn.interactable = false;
+    end);
+
+    bagButton:GetComponent("Button").onClick:AddListener(function ()
+    if BagFlag ==0 then
+    cardBag.transform.localScale=CS.UnityEngine.Vector3(1,1,1);
+    BagFlag =1;
+    return
     end
+    if BagFlag ==1 then
+    cardBag.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
+    BagFlag =0;
+    return
+    end
+
+    end);
+    initState =callback.initListener(initState);
+        end
 
     if fightFlag ==1 then
         fightButton:GetComponent("Button").onClick:RemoveAllListeners();

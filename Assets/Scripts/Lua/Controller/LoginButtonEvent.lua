@@ -22,16 +22,21 @@ function LoginButtonController.listenLogin(callback)
 
         uiRoot =CS.UnityEngine.GameObject.Find("Canvas");
         button =uiRoot.transform:Find("logIn");
-        username =uiRoot.transform:Find("username");
-        password =uiRoot.transform:Find("password");
-        errorText =uiRoot.transform:Find("errorText");
-        errorText.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
-        canvasGroup =uiRoot:GetComponent("CanvasGroup");
-
-        assert(username,"didnt get username");
-        assert(password,"didnt get password");
         assert(button,"dont get button");
+
+        username =uiRoot.transform:Find("username");
+        assert(username,"didnt get username");
+
+        password =uiRoot.transform:Find("password");
+        assert(password,"didnt get password");
+
+        errorText =uiRoot.transform:Find("errorText");
         assert(errorText,"dont get errorText");
+
+        errorText.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
+
+        canvasGroup =uiRoot:GetComponent("CanvasGroup");
+        assert(canvasGroup,"dont get canvasGroup");
 
         local btn =  button:GetComponent("Button");
 
@@ -63,9 +68,7 @@ function LoginButtonController.listenLogin(callback)
         initState =1;
         flag=0;
     end
-    if not canvasGroup then
-        print("can't from Login UI");
-    end
+
     if UI_Alpha ~=canvasGroup.alpha then
         canvasGroup.alpha =CS.UnityEngine.Mathf.Lerp(canvasGroup.alpha, UI_Alpha, alphaSpeed * CS.UnityEngine.Time.deltaTime);
         if CS.UnityEngine.Mathf.Abs(UI_Alpha - canvasGroup.alpha) <= 0.01 then

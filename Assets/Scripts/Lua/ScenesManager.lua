@@ -51,7 +51,7 @@ function ScenesManager:LoadScene(index)
     end
 end
 
-
+--此处协程有误
 --异步加载场景
 function ScenesManager:AsyncLoadScene(index)
     if  self.scenesStack then
@@ -62,6 +62,7 @@ function ScenesManager:AsyncLoadScene(index)
         end
 
         coroutine.resume(AsyncLoad,false,index);
+        --local Timer= CS.Timer(1,true,true);
         coroutine.resume(AsyncLoad,true);
 
     else
@@ -120,6 +121,11 @@ AsyncLoad = coroutine.create(
             --阻止当加载完成后自动切换
             operation.allowSceneActivation =bool;
             --print(operation.allowSceneActivation);
+            while (not operation.isDone) do
+                print("please wait");
+                coroutine.yield();
+            end
+
             local yreturn =coroutine.yield();
             operation.allowSceneActivation =yreturn;
             --print("do you run agine");
