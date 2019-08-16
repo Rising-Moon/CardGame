@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3568490096
+CRC: 1642941401
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c349e9b58ff97a9659a31b3ead55ab90
+    Hash: 6fbaa5ac4a98a05c8a3a1d6bc0717edd
   TypeTreeHash:
     serializedVersion: 2
     Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
@@ -12,5 +12,5 @@ ClassTypes:
 - Class: 83
   Script: {instanceID: 0}
 Assets:
-- "Assets/Resources/music/\u79BB\u5C9B\u4E4B\u6B4C.mp3"
+- Assets/Resources/music/backGroundMusic.mp3
 Dependencies: []

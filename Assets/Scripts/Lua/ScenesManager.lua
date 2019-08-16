@@ -20,7 +20,7 @@ function ScenesManager:init()
     --self:initRoot();
 end
 
---[[
+
 function ScenesManager:initRoot()
     if self.uiRoot then
         return self.uiRoot
@@ -29,7 +29,7 @@ function ScenesManager:initRoot()
     --print(self.uiRoot);
     return self.uiRoot
 end
-]]--
+
 
 function ScenesManager:GetIndex()
     return ScenesManagement.GetActiveScene().buildIndex
@@ -60,8 +60,10 @@ function ScenesManager:AsyncLoadScene(index)
         if index ~=2 and index ~= 3then
             self.scenesStack:Push(index);
         end
+
         coroutine.resume(AsyncLoad,false,index);
         coroutine.resume(AsyncLoad,true);
+
     else
         print("wrong happen in stack");
     end
@@ -123,7 +125,7 @@ AsyncLoad = coroutine.create(
             --print("do you run agine");
             --print(operation.allowSceneActivation);
  end)
-
+-----------------------------------------------------
 ScenesManager:init();
 
 return ScenesManager

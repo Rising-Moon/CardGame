@@ -1,4 +1,4 @@
-
+local RM =require("ResourcesManager");
 local LoginButtonController =require("LoginButtonEvent");
 
 local loginInController = {};
@@ -22,13 +22,17 @@ function callback.initListener(num)
     return num
 end
 
-
+--只会运行一次
+--添加一次淡入淡出
 function loginInController.start()
+    --local pic =RM:LoadPath("Assets/Resources/picture/ad.jpg");
+    --print(pic);
 
 end
 
 function loginInController.update()
-    LoginButtonController.listenLogin(callback);
+
+  LoginButtonController.listenLogin(callback);
 end
 
 return loginInController

@@ -12,7 +12,6 @@ local fightButton =nil;
 local pomkButton =nil;
 local closeButton =nil;
 local initState =1;
-local AsyIsDone =1;
 
 function GateButtonEvent.listenEvent(callback)
     --print(SM:GetIndex());
@@ -33,39 +32,41 @@ function GateButtonEvent.listenEvent(callback)
 
         fightButton:GetComponent("Button").onClick:AddListener(function()
             fightFlag =1;
-            print(fightFlag);
+            local btn =  fightButton:GetComponent("Button");
+            btn.interactable = false;
         end);
 
         pomkButton:GetComponent("Button").onClick:AddListener(function()
             pomkFlag =1;
+            local btn =  pomkButton:GetComponent("Button");
+            btn.interactable = false;
         end);
         closeButton:GetComponent("Button").onClick:AddListener(function()
             quitFlag =1;
+            local btn =  closeButton:GetComponent("Button");
+            btn.interactable = false;
         end);
         initState =callback.initListener(initState);
     end
 
-    if fightFlag ==1 and AsyIsDone then
+    if fightFlag ==1 then
         fightButton:GetComponent("Button").onClick:RemoveAllListeners();
-        AsyIsDone =nil;
         SM:LoadScene(2);
         --加载后将initState置回1，当下次重新加载入该场景后可以重现绑定事件
-        fightFlag =0;
+        --fightFlag =0;
         initState =1;
     end
 
-    if pomkFlag ==1 and AsyIsDone then
+    if pomkFlag ==1 then
         pomkButton:GetComponent("Button").onClick:RemoveAllListeners();
-        AsyIsDone =nil;
         SM:LoadScene(3);
         initState =1;
         pomkFlag =0;
 
     end
 
-    if quitFlag ==1 and AsyIsDone then
+    if quitFlag ==1  then
         closeButton:GetComponent("Button").onClick:RemoveAllListeners();
-        AsyIsDone =nil;
         --application 在 调试时无法显示效果
         SM:QuitGame();
         initState =1;

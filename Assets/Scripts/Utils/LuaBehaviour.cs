@@ -187,10 +187,11 @@ namespace XLuaBehaviour{
                 script.luaStart = null;
                 script.scriptEnv.Dispose();
                 script.injections = null;
-
             }
-        }
 
+           
+        }
+        
         //接收消息处理后映射到lua中，消息内容在lua的messageCast变量中
         public bool Response(Message msg){
             foreach (var script in scripts) {

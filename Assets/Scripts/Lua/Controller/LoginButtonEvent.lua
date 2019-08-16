@@ -9,7 +9,10 @@ local username=nil;
 local button =nil;
 local errorText =nil;
 
+
+
 local initState =1;
+
 
 function LoginButtonController.listenLogin(callback)
 
@@ -26,10 +29,17 @@ function LoginButtonController.listenLogin(callback)
         assert(password,"didnt get password");
         assert(button,"dont get button");
         assert(errorText,"dont get errorText");
-        print(button);
 
-        button:GetComponent("Button").onClick:AddListener(function()
-            if #username:GetComponent("InputField").text > 0 and #password:GetComponent("InputField").text >0  then
+        local btn =  button:GetComponent("Button");
+
+        btn.onClick:AddListener(function()
+            --验证成功后为按钮设置防抖
+            local usernameText=nil;
+            local passwordText=nil;
+            usernameText =username:GetComponent("InputField").text;
+            passwordText =password:GetComponent("InputField").text;
+            if #usernameText > 0 and #passwordText >0  then
+                btn.interactable = false;
                 flag =1;
                 errorText.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
             else
@@ -39,16 +49,19 @@ function LoginButtonController.listenLogin(callback)
         end);
 
         initState =callback.initListener(initState);
+
     end
 
     if flag ==1 then
-        button:GetComponent("Button").onClick:RemoveAllListeners();
-        --先别使用协程，不能保证在一枕之内加载完成
+        --button:GetComponent("Button").onClick:RemoveAllListeners();
+        --先别使用协程
         --ScenesManager:AsyncLoadScene(1);
         ScenesManager:LoadScene(1);
         initState =1;
         flag=0;
     end
+
+
 
 end
 
