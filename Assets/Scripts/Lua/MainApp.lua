@@ -1,5 +1,3 @@
-
-
 -------------------------引用------------------
 ---引用全局枚举表
 ---各个基类可以调用枚举表的值
@@ -30,6 +28,7 @@ local AudioManager =require("AudioManager");
 local PathManager =require("PathManager");
 
 ---引入基类
+local BaseObject = require("BaseObject");
 local CardObeject =require("CardObject");
 local PlayerObject = require("PlayerObject");
 local MonsterObject = require("MonsterObject");
@@ -39,12 +38,17 @@ local CardList =require("CardList");
 
 
 --引入logincontroller
-local loginInController =require("loginInController");
+local loginInController =require("LoginInController");
 --
-local dailyController =require("dailyController");
-
+local dailyController =require("GatesController");
+--
+local BattleController = require("BattleController");
+--
+local PomkController = require("PomkController");
 
 local currentController =nil;
+
+
 
 function start()
 
@@ -52,12 +56,30 @@ function start()
     --该音乐前面有很长一段空白
     --local music =AudioManager:LoadAudio("music/backGroundMusic");
     --local music =ResourcesManager:LoadPath("Assets/Resources/music/backGroundMusic.mp3");
+    --[[
+    local function callback()
+        print("nil");
+    end
 
+    ScenesManager:AsyncLoadSceneCallBack(1,callback);
+    ]]--
     --AudioManager:PlayBacKGroundMusic(music,1);
+    --local d=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/picture.pic","daily",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
+    --local a =ResourcesManager:instantiatePath("Assets/Resources/Prefabs/healthBar.prefab","healthBar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
+    --local d=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre","healthbar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
+     print("this is test area");
+    tTest=CS.Timer(1);
+    tTest:Start();
+
+    print("test area is down");
+
     controllerList={
         loginInController,
-        dailyController
-    }
+        dailyController,
+        BattleController,
+        PomkController
+    };
+
     currentController = loginInController;
     if (currentController ~= nil and currentController.start ~= nil) then
         currentController.start();
@@ -67,9 +89,18 @@ end
 
 function update()
 
+
+    if tTest and tTest.IsTimeUp then
+        print("down");
+        tTest =nil;
+    end
+    --切换场景
     currentController=controllerList[ScenesManager:GetIndex()+1];
+
     if (currentController ~= nil and currentController.update ~= nil) then
         currentController.update();
+    else
+        print("error to load in a scene without controller");
     end
 
 end
@@ -87,11 +118,3 @@ function ondestroy()
     end
 end
 
---[[
---将一些一直会存在的ui放在这里
---例如 音乐的播放
-function ongui()
-   AudioManager:OnGUI();
-
-end
-]]--

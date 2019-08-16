@@ -1,5 +1,5 @@
-
-local LoginButtonController =require("LoginButtonController");
+local RM =require("ResourcesManager");
+local LoginButtonController =require("LoginButtonEvent");
 
 local loginInController = {};
 
@@ -14,29 +14,23 @@ local callback = loginInController.Callback;
 
 -- 初始化
 function loginInController:init()
-    --[[
-    function handler(obj, method)
-    return function(...)
-        return method(obj, ...)
-    end
-    end
-    ]]--
+
 end
 
 function callback.initListener(num)
-    num =nil
+    num =nil;
     return num
 end
 
-
+--只会运行一次
+--添加一次淡入淡出
 function loginInController.start()
 
 end
 
 function loginInController.update()
-    print("login run");
-    LoginButtonController.listenLogin(callback);
-    print("LoginButton run");
+
+  LoginButtonController.listenLogin(callback);
 end
 
 return loginInController

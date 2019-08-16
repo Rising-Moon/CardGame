@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 372173206
+CRC: 1296338232
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 448edc60a2727d1020d9e7710ac75307
+    Hash: 2bd5163558602d2d606aa3ef9320745a
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 9eebe1fdbef4362c2d76f506a4c61790
+    Hash: 657efc5f35dccf22404920f2b71d64b9
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -17,12 +17,18 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
+- Class: 61
+  Script: {instanceID: 0}
 - Class: 114
   Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
-  Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-- Class: 114
   Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8337969da91544d539a90d8c2ab6a249, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -34,6 +40,5 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Resources/Prefabs/HealthBar.prefab
-Dependencies:
-- /Users/guojinlong/Desktop/learndemo/CardGame/Assets/StreamingAssets/AssetBundles/picture.pic
+- Assets/Resources/Prefabs/Card.prefab
+Dependencies: []

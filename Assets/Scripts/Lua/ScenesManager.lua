@@ -5,6 +5,7 @@ ScenesManager.__index =ScenesManager;
 local UE =CS.UnityEngine;
 ------------------------------------
 ScenesManager.scenesStack =nil;
+--切换场景后要重新加载
 ScenesManager.uiRoot =nil;
 
 local ScenesManagement =UE.SceneManagement.SceneManager;
@@ -16,8 +17,9 @@ function ScenesManager:init()
     --存储场景的栈
     self.scenesStack =CS.System.Collections.Stack();
     --print(self.scenesStack);
-    self:initRoot();
+    --self:initRoot();
 end
+
 
 function ScenesManager:initRoot()
     if self.uiRoot then
@@ -27,6 +29,7 @@ function ScenesManager:initRoot()
     --print(self.uiRoot);
     return self.uiRoot
 end
+
 
 function ScenesManager:GetIndex()
     return ScenesManagement.GetActiveScene().buildIndex
@@ -43,7 +46,6 @@ function ScenesManager:LoadScene(index)
             self.scenesStack:Push(index);
         end
         ScenesManagement.LoadScene(index);
-        self.uiRoot =nil;
     else
         print("wrong happen in stack");
     end
@@ -61,17 +63,25 @@ function ScenesManager:AsyncLoadScene(index)
 
         coroutine.resume(AsyncLoad,false,index);
         coroutine.resume(AsyncLoad,true);
+
     else
         print("wrong happen in stack");
     end
 end
+
 --后期可能会加入进度条加载的修改，现在还未实现
 --重载场景加载的异步方法
-function ScenesManager:AsyncLoadScene1(index)
-    local loading =self.uiRoot.transform:Find("Loading");
-    print(loading);
-    --loading:SetActive(false);
-    --loading.enable = true;
+function ScenesManager:AsyncLoadSceneCallBack(index,callback)
+    print("do you scene load run");
+    local operation =ScenesManagement.LoadSceneAsync(index);
+    operation.allowSceneActivation =false;
+    if operation.isDone then
+        callback();
+        operation.allowSceneActivation =true;
+    else
+        print("Asy is not finish");
+    end
+
 end
 
 --场景返回
@@ -84,7 +94,6 @@ function ScenesManager:BackScene()
         print("now back to");
         print(lastScene);
         ScenesManagement.LoadScene(lastScene);
-        self.uiRoot =nil;
     else
         print(" there is no last scene which can be loaded ");
     end
@@ -107,17 +116,16 @@ AsyncLoad = coroutine.create(
         function(bool ,index)
             --异步加载场景
             local operation = ScenesManagement.LoadSceneAsync(index);
-            print("do you run?");
+            --print("do you run?");
             --阻止当加载完成后自动切换
             operation.allowSceneActivation =bool;
-            print(operation.allowSceneActivation);
-            yreturn =coroutine.yield();
+            --print(operation.allowSceneActivation);
+            local yreturn =coroutine.yield();
             operation.allowSceneActivation =yreturn;
-            print("do you run agine");
-            print(operation.allowSceneActivation);
-            self.uiRoot =nil;
+            --print("do you run agine");
+            --print(operation.allowSceneActivation);
  end)
-
+-----------------------------------------------------
 ScenesManager:init();
 
 return ScenesManager

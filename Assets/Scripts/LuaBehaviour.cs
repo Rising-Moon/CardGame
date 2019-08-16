@@ -24,7 +24,6 @@ namespace XLuaBehaviour{
         internal Action luaUpdate;
 
         internal Action luaOnDestory;
-        internal Action luaOnGUI;
 
         //监听消息列表
         internal Action luaMessageCast;
@@ -107,8 +106,7 @@ namespace XLuaBehaviour{
                 script.luaOnDestory = script.scriptEnv.Get<Action>("ondestroy");
                 script.luaFixedUpdate = script.scriptEnv.Get<Action>("fixedupdate");
                 script.luaMessageCast = script.scriptEnv.Get<Action>("response");
-                script.luaOnGUI = script.scriptEnv.Get<Action>("ongui");
-                
+
                 if (luaAwake != null)
                     luaAwake();
             }
@@ -189,10 +187,11 @@ namespace XLuaBehaviour{
                 script.luaStart = null;
                 script.scriptEnv.Dispose();
                 script.injections = null;
-
             }
-        }
 
+           
+        }
+        
         //接收消息处理后映射到lua中，消息内容在lua的messageCast变量中
         public bool Response(Message msg){
             foreach (var script in scripts) {

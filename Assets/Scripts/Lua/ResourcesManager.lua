@@ -22,11 +22,15 @@ function ResourcesManager:init()
     --{assetBundle ,refCount}
     self.AssetBundleCacheMap ={};
 
-    --Asset缓存 path - asset
+    --Asset缓存 path.abName - asset
     self.AssetCacheMap={};
 
     --Assets依赖关系
     self.AssetBundleIndependenceMap ={};
+
+    self.tempAbName =nil;
+
+
 
 
 end
@@ -35,17 +39,18 @@ end
 ---------------------------主要使用的外部接口-------------------------
 --外部获取游戏对象的接口
 --返回为实例好的gameobject
-function ResourcesManager:instantiatePath(path,parent,position,rotation)
+function ResourcesManager:instantiatePath(path,abName,parent,position,rotation)
     --如果资源被缓存下来，直接进行初始化
     print("from instantiatePath is :");
     local newPath =PM:GetTruePath(path);
+    self.tempAbName =abName;
     --print(self.objMap[path]);
-    if self.objMap[newPath] == nil and self.AssetCacheMap[newPath] == nil then
-        print("run syncInstantiate");
+    if self.objMap[newPath] == nil and self.AssetCacheMap[newPath..abName] == nil then
+        print("From RM run syncInstantiate");
         return self:syncInstantiate(newPath,parent,position,rotation);
         --加载资源
     else
-        print("run instantiate");
+        print("From RM run instantiate");
         --直接实例化
         return self:instantiate(newPath,parent,position,rotation);
     end
@@ -87,7 +92,9 @@ end
 ---------------------------不推荐使用的外部接口---------------------------------
 --只使用路径和类型加载
 --下次想要使用资源的时候可以直接通过返回值实例话
-function ResourcesManager:LoadPath(path)
+function ResourcesManager:LoadPath(path,abName)
+    print("from RM LoadPath:");
+    self.tempAbName =abName;
     path=PM:GetTruePath(path);
     local boolAsset =PM:BoolAsset(path);
 
@@ -98,7 +105,7 @@ function ResourcesManager:LoadPath(path)
         --加载assetbundle资源
         self:LoadResources(path);
     end
-    return self.objMap[path] or self.AssetCacheMap[path];
+    return self.objMap[path] or self.AssetCacheMap[path..self.tempAbName];
 end
 
 --删除单个物体
@@ -109,28 +116,28 @@ end
 
 ---------------------对象池处理---------------------------
 --向对象池中存对象
-function ResourcesManager:pushInPool(path,obj)
+function ResourcesManager:pushInPool(path,abName,obj)
     local newPath =PM:GetTruePath(path);
-    if self.objPool[newPath] then
+    if self.objPool[newPath..abName] then
         return
     end
-    self.objPool[newPath]=obj;
+    self.objPool[newPath..abName]=obj;
     --table.insert(self.objPool,obj);
     obj:SetActive(false);
 end
 
 --从对象池中取对象
 
-function ResourcesManager:popPool(path)
+function ResourcesManager:popPool(path,abName)
     local newPath =PM:GetTruePath(path);
-    if self.objPool[newPath] then
-        local obj =self.objPool[newPath];
+    if self.objPool[newPath..abName] then
+        local obj =self.objPool[newPath..abName];
         obj:SetActive(true);
-        self.objPool[path]=nil;
+        self.objPool[newPath..abName]=nil;
         --table.remove(self.objPool,1);
         return obj
     else
-        print("this is no obj");
+        print(" From RM popPool there is no obj");
         return nil
     end
 end
@@ -153,47 +160,57 @@ end
 function ResourcesManager:LoadAssetBundle(path)
 
     local assetBundle = self.AssetBundleCacheMap[path];
+
     if assetBundle then
         assetBundle.refCount = assetBundle.refCount + 1;
     else
+        print("From RM find AssetBundel path is "..path);
         local cache = CS.UnityEngine.AssetBundle.LoadFromFile(path);
+        print("From RM find AssetBundel asset is");
+        print(cache);
         --print("assetbundle has be down");
         self.AssetBundleCacheMap[path] = {assetBundle = cache , refCount=1};
-        print(path);
+        print("From RM LoadAssetBundle the path of AssetBundleCacheMap is :"..path);
+        print("From RM LoadAssetBundle the AssetBundle is:");
         print(self.AssetBundleCacheMap[path].assetBundle);
-        assetBundle =self.AssetBundleCacheMap[path];
-    end
 
-    return assetBundle
+    end
+    --返回一个ab包cache
+    return self.AssetBundleCacheMap[path]
 end
 
 --加载asset
 function ResourcesManager:LoadAsset(ab, path)
 
-    local asset = self.AssetCacheMap[path];
+    local asset = self.AssetCacheMap[path..self.tempAbName];
     --asset不存在的时候
     if not asset then
-        asset = ab.assetBundle:LoadAsset(PM:findName(path));
-        self.AssetCacheMap[path] = asset;
+
         local dependences = self.AssetBundleIndependenceMap[path]
         --加载依赖
         --这里没有考虑到如果两个asset都依赖同一项而这一项在第二个加载时没有重内存中移除，而被重新加载出错
         if not dependences then
             dependences = self.manifest:GetAllDependencies(PM:findAllName(path));
             self.AssetBundleIndependenceMap[path] = dependences;
+            print("From RM LoadAsset the dependence size is "..dependences.Length);
         end
         --加载所有依赖
         for i=0, dependences.Length-1, 1 do
-            self:LoadAssetBundle(dependences[i]);
+            self:LoadAssetBundle(CS.UnityEngine.Application.dataPath.."/StreamingAssets/AssetBundles/"..dependences[i]);
         end
+        asset = ab.assetBundle:LoadAsset(self.tempAbName);
+        self.AssetCacheMap[path..self.tempAbName] = asset;
     end
-    print("LoadAsset: "..path);
+    print("from RM LoadAsset the asset path is : "..path);
+    print("From RM LoadAsset the asset is:");
+    print(asset);
     return asset
 end
 
 --加载resources资源
 function ResourcesManager:LoadResources(path)
     self.objMap[path] = CS.UnityEngine.Resources.Load(path);
+    print("from RM resources path is :"..path);
     --print(self.objMap[path]);
     if self.objMap[path] then
         return true
@@ -205,8 +222,8 @@ end
 --加载assetbundle资源
 function ResourcesManager:LoadAssetBundleResources(path)
     --先加载assetbundle，再加载asset
-    self.AssetCacheMap[path] =self:LoadAsset(self:LoadAssetBundle(path),path);
-    if self.AssetCacheMap[path] then
+    self.AssetCacheMap[path..self.tempAbName] =self:LoadAsset(self:LoadAssetBundle(path),path);
+    if self.AssetCacheMap[path..self.tempAbName] then
         return true
     else
         return false
@@ -232,7 +249,7 @@ function ResourcesManager:syncInstantiate(path,parent,position,rotation)
     if boolright then
         return self:instantiate(path,parent,position,rotation);
     else
-        print("load path error or resources wrong");
+        print(" from RM  synceInstantiate load path error or resources wrong");
         return nil
     end
 end
@@ -240,23 +257,26 @@ end
 --资源实例化
 function ResourcesManager:instantiate(path, parent, position, rotation)
     local gameObj;
-    print(self.objMap[path] or self.AssetCacheMap[path]);
+    print("From RM instantiate the uninstantiate object is ");
+    print(self.objMap[path] or self.AssetCacheMap[path..self.tempAbName]);
     if parent then
         --self.object:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
         if position then
-            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path] or self.AssetCacheMap[path], position, rotation or CS.UnityEngine.Quaternion.identity);
+            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path] or self.AssetCacheMap[path..self.tempAbName], position, rotation or CS.UnityEngine.Quaternion.identity);
         else
-            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path] or self.AssetCacheMap[path], parent.Transform, false);
+            gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path] or self.AssetCacheMap[path..self.tempAbName], parent.Transform, false);
         end
         --gameObj:GetComponent("Transform"):SetParent(parent:GetComponent("Transform"));
         gameObj.transform.parent =parent.transform;
     else
-        gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path] or self.AssetCacheMap[path], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity);
+        gameObj = CS.UnityEngine.Object.Instantiate(self.objMap[path] or self.AssetCacheMap[path..self.tempAbName], position or CS.UnityEngine.Vector3.zero, rotation or CS.UnityEngine.Quaternion.identity);
     end
     --GameObject =CS.UnityEngine.Object.Instantiate(self.assetListenerMap[original]);
     --self.object.transform.localPosition=location;
     --缩放为正常大小
     gameObj.transform.localScale=CS.UnityEngine.Vector3(1,1,1);
+    print("from RM abName is clear");
+    self.tempAbName =nil;
     return gameObj
 end
 

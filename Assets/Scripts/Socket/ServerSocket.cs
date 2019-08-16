@@ -13,7 +13,9 @@ public class ServerSocket : MonoBehaviour
         ServerStart();
     }
 
-    private void ServerStart(){
+    private void ServerStart()
+    {
+        
         try {
             int port = 8082;
             string ip = "10.0.8.193";

@@ -40,7 +40,7 @@ function serialize.encode(obj)
 
         --如果传入的数据中混入function ， 避免终止
     elseif t == "function" then
-        lua = lua .. "function,\n";
+        lua = lua;
     else
         error("can not serialize a " .. t .. " type.")
     end
