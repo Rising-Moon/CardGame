@@ -1,3 +1,4 @@
+local PomkEventController =require("PomkEventController");
 
 local PomkController ={};
 
@@ -5,6 +6,10 @@ local PomkController ={};
 PomkController.Callback = {};
 local callback = PomkController.Callback;
 
+function callback.initListener(num)
+    num =nil;
+    return num
+end
 
 function PomkController:init()
 
@@ -15,7 +20,7 @@ function PomkController.start()
 end
 
 function PomkController.update()
-
+    PomkEventController.listenEvent(callback);
 end
 
 return PomkController

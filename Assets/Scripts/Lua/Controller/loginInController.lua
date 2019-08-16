@@ -25,8 +25,6 @@ end
 --只会运行一次
 --添加一次淡入淡出
 function loginInController.start()
-    --local pic =RM:LoadPath("Assets/Resources/picture/ad.jpg");
-    --print(pic);
 
 end
 

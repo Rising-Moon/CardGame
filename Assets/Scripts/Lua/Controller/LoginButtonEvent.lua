@@ -8,8 +8,10 @@ local password=nil;
 local username=nil;
 local button =nil;
 local errorText =nil;
+local UI_Alpha =1;
+local alphaSpeed =2;
 
-
+local canvasGroup;
 
 local initState =1;
 
@@ -24,6 +26,7 @@ function LoginButtonController.listenLogin(callback)
         password =uiRoot.transform:Find("password");
         errorText =uiRoot.transform:Find("errorText");
         errorText.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
+        canvasGroup =uiRoot:GetComponent("CanvasGroup");
 
         assert(username,"didnt get username");
         assert(password,"didnt get password");
@@ -60,7 +63,15 @@ function LoginButtonController.listenLogin(callback)
         initState =1;
         flag=0;
     end
-
+    if not canvasGroup then
+        print("can't from Login UI");
+    end
+    if UI_Alpha ~=canvasGroup.alpha then
+        canvasGroup.alpha =CS.UnityEngine.Mathf.Lerp(canvasGroup.alpha, UI_Alpha, alphaSpeed * CS.UnityEngine.Time.deltaTime);
+        if CS.UnityEngine.Mathf.Abs(UI_Alpha - canvasGroup.alpha) <= 0.01 then
+            canvasGroup.alpha = UI_Alpha;
+        end
+    end
 
 
 end
