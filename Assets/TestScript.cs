@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class TestScript : MonoBehaviour{
-    public GameObject image;
+    public GameObject enemy;
 
     // Start is called before the first frame update
     void Start(){
@@ -16,8 +16,9 @@ public class TestScript : MonoBehaviour{
     // Update is called once per frame
     void Update(){
         if (Input.GetKeyDown("d")) {
-            Destroy(gameObject);
-            
+            var animator = enemy.GetComponent<Animator>();
+            animator.SetTrigger("injured");
+            Slider slider;
         }
     }
 }

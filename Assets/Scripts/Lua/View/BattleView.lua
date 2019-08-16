@@ -1,5 +1,7 @@
 local ScenesManager = require("ScenesManager");
 local UIUtil = require("UIUtil");
+local CardView = require("CardView");
+local EnemyView = require("EnemyView");
 
 BattleView = {};
 
@@ -21,6 +23,14 @@ local screen2world = function(pos)
     return CS.UnityEngine.Camera.main:ScreenToWorldPoint(pos);
 end
 
+----
+--- 怪物
+----
+
+-- 加载怪物（提供给controller使用）
+function BattleView:createEnemy(enemy)
+    local enemyObject = EnemyView:createView(enemy, canvas);
+end
 
 ----
 --- 设置手牌布局 界面中的所有用到卡牌的都在这部分中
@@ -46,6 +56,8 @@ local cardPile = uiMap["CardPile"];
 
 -- 调整手牌位置
 function adjustHandsCard()
+    -- 卡牌位置调整速度
+    local moveSpeed = 15;
     -- 排序一次手牌
     table.sort(handCards, function(a, b)
         print(a.card.objId);
@@ -54,14 +66,14 @@ function adjustHandsCard()
     -- 调整卡牌位置
     if (handCardCount == 1) then
         for _, v in pairs(handCards) do
-            v.moveUtil:SmoothMove(screen2world(handPosition), 50);
+            v.moveUtil:SmoothMove(screen2world(handPosition), moveSpeed,1);
             v.moveUtil:SetOriginPoint(screen2world(handPosition));
         end
     elseif ((handCardCount - 1) * maxInterval < offset * 2) then
         local off = -handCardCount / 2;
         for _,v in pairs(handCards) do
             local pos = screen2world(handPosition + CS.UnityEngine.Vector3(maxInterval * off, 0, 0));
-            v.moveUtil:SmoothMove(pos,20,1);
+            v.moveUtil:SmoothMove(pos,moveSpeed,1);
             v.object.transform:SetAsLastSibling();
             v.moveUtil:SetOriginPoint(pos);
             off = off + 1;
@@ -73,7 +85,7 @@ function adjustHandsCard()
             table.insert(pos, left + CS.UnityEngine.Vector3(offset * 2 / (handCardCount - 1), 0, 0) * (i - 1));
         end
         for _, v in pairs(handCards) do
-            v.moveUtil:SmoothMove(screen2world(pos[index]), 20, 1);
+            v.moveUtil:SmoothMove(screen2world(pos[index]), moveSpeed, 1);
             v.object.transform:SetAsLastSibling();
             v.moveUtil:SetOriginPoint(screen2world(pos[index]));
             index = index + 1;
@@ -200,6 +212,7 @@ function cardInteraction()
                 selectCard.transform:SetAsLastSibling();
 
                 --调试
+                print(handCards[hitObject:GetHashCode()]);
                 print(handCards[hitObject:GetHashCode()].card.objId);
             elseif(hitObject == nil) then
                 originSize = nil;
@@ -211,6 +224,7 @@ function cardInteraction()
         if (CS.UnityEngine.Input.GetMouseButtonDown(0)) then
             if (hitObject and hitObject.tag == 'Card') then
                 card = removeFromHand(hitObject);
+                selectCard.transform:SetAsLastSibling();
                 offset = hitObject.transform.position - mousePosition;
                 originPosition = hitObject.transform.position;
                 moveUtil = card.moveUtil;

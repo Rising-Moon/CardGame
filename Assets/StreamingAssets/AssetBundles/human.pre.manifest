@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 372173206
+CRC: 834770868
 Hashes:
   AssetFileHash:
     serializedVersion: 2
@@ -36,4 +36,4 @@ ClassTypes:
 Assets:
 - Assets/Resources/Prefabs/HealthBar.prefab
 Dependencies:
-- /Users/guojinlong/Desktop/learndemo/CardGame/Assets/StreamingAssets/AssetBundles/picture.pic
+- /Users/mengyucheng/Desktop/UnityTestProgram/CompanyProject/CardGame/Assets/StreamingAssets/AssetBundles/picture.pic

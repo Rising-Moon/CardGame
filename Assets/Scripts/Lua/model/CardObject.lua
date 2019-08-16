@@ -1,6 +1,5 @@
 ----导包
-class =require("class");
-serialize = require("serialize");
+local class =require("class");
 local BaseObject = require("BaseObject");
 
 --继承
@@ -27,11 +26,11 @@ function Card:ctor(cardId,name,cost,img,introduction,valueMap)
     Card.super.ctor(self);
     --属性设置
     self.cardId = cardId;
-    self.name = name or "name";
-    self.cost = cost or 0;
-    self.valueMap = valueMap or {};
-    self.img = img or "img";
-    self.introduction = introduction or "introduction";
+    self.name = name
+    self.cost = cost
+    self.valueMap = valueMap
+    self.img = img
+    self.introduction = introduction
 end
 
 --toString方法

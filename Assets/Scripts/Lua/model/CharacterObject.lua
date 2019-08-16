@@ -1,60 +1,36 @@
-class =require("class");
+---- 导包
+local class = require("class");
 local BaseObject = require("BaseObject");
---------------------------------------------------
---更改创建方法，避免全局混用
--- 创建子类Child
+-- 继承
 local Character =class("Character",BaseObject);
 
 
--------------------属性表-----------------------
-Character.data={
-    objName ="",
-    --objId =0,
+----属性列表
+--人物名字
+Character.name = "";
+--人物最大生命
+Character.maxLife = 0.0;
+--人物生命值
+Character.life = 0.0;
+--人物等级
+Character.level = 0;
+--人物最大法力值
+Character.maxMana = 0.0;
+--人物法力值
+Character.mana = 0;
+--额外属性
+Character.attributeList ={};
 
-    --角色血条
-    objBlood =10,
-
-    --角色蓝条
-    objMana =2,
-    --角色等级
-    level =1,
-    --角色attribute
-    attribute ={}
-};
---角色实例话对象
-Character.objInstantiate =nil;
----------------------------------------
-
-
---------------------------------------------------
 --构造函数
-function Character:ctor(objName,objNumber,objMaNa,objAttrubute,objInstantiate)
-    Character.super.ctor(self,"Character");
-    print("character ctor run");
-    --print(self.data.objName)
+function Character:ctor(name,maxLife,level,maxMana)
+    Character.super.ctor(self);
     --属性设置
-    self.data.objName =objName or "Character";
-    self.data.objBlood=objNumber or 10;
-    self.data.objMana =objMaNa or 2;
-    self.objInstantiate=objInstantiate or nil;
-    self.data.attribute =objAttrubute or {effect = "fight"};
-    self.data.level =1;
-    print("charcter ctor finish");
-end
-
---------------------------------------------------------
-
-function Character:characterInformation()
-    print("character information is here");
-end
-
-function Character:useCharacter()
-
-end
-
-function Character:clear()
-    Character.super.clear(self);
-    print("character clear");
+    self.name = name;
+    self.maxLife = maxLife;
+    self.life = maxLife;
+    self.level = level;
+    self.maxMana = maxMana;
+    self.mana = maxMana;
 end
 
 return Character

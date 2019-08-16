@@ -55,6 +55,9 @@ function serialize.encodeCard(card)
         if (type(v) ~= "table" and type(v) ~= "function") then
             if (k ~= "objId") then
                 --print(k..":"..v);
+                if (type(v) == "string") then
+                    v = string.gsub(v,"\n","\\n");
+                end
                 lua = lua .. k .. "=" .. v .. "\n";
             end
         else

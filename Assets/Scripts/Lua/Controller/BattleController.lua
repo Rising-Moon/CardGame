@@ -1,5 +1,7 @@
 local CardListManager = require("CardListManager");
 local cardView = require("CardView");
+local EnemyObject = require("EnemyObject");
+local DataProxy = require("DataProxy");
 
 ----
 --- 初始化数据和方法
@@ -15,9 +17,12 @@ local licensing = function()
     if (#unUsedCards == 0) then
         print("卡池已空");
     else
-        math.randomseed(tostring(os.time()):reverse():sub(1,6));
-        local id = math.random(1,#unUsedCards);
-        return unUsedCards[id];
+        math.randomseed(tostring(os.time()):reverse():sub(1, 6));
+        local id = math.random(1, #unUsedCards);
+        table.insert(usingCards, unUsedCards[id]);
+        local cardId = unUsedCards[id];
+        table.remove(unUsedCards, id);
+        return cardId;
     end
     return nil;
 end
@@ -59,8 +64,18 @@ function BattleController:update()
     end
     if (CS.UnityEngine.Input.GetKeyDown("a")) then
         local cardid = licensing();
-        print(cardid);
-        BattleView:addCardToHand(CardListManager.getCard(cardid));
+        if (cardid) then
+            print("创建卡牌" .. cardid);
+            BattleView:addCardToHand(CardListManager.getCard(cardid));
+        end
+    end
+    local enemy = EnemyObject.new("123",20,20,20,20,2,2);
+    enemy = DataProxy.createProxy(enemy,{});
+    if (CS.UnityEngine.Input.GetKeyDown("m")) then
+        BattleView:createEnemy(enemy);
+    end
+    if (CS.UnityEngine.Input.GetKeyDown("n")) then
+        enemy.life = enemy.life - 2;
     end
 end
 

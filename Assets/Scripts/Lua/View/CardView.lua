@@ -1,6 +1,5 @@
 --导包
 local resourcesManager = require('ResourcesManager');
-local scenesManager = require('ScenesManager');
 local uiUtil = require('UIUtil');
 
 CardView = {}
@@ -8,10 +7,10 @@ CardView = {}
 function CardView:createView(card, parent)
     -- 实例化出来的卡牌gameobject
     local view = nil;
-    view = resourcesManager:instantiatePath("Assets/Resources/Prefabs/Card", parent);
+    view = resourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/card.pre","Card", parent);
     view.transform.localScale = view.transform.localScale * 0.73;
     -- 获取卡牌UI上的一些主要元素
-    local uiMap = uiUtil.genAllChildNameMap(view.gameObject);
+    local uiMap = uiUtil.genAllChildNameMap(view);
     -- 卡牌图片
     local cardImage = uiMap["Image"];
     -- 卡牌名字
