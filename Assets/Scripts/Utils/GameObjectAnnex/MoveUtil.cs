@@ -54,6 +54,10 @@ public class MoveUtil : MonoBehaviour{
         transform.position = newPos;
     }
 
+    public void SetOriginPoint(Vector3 point){
+        originPoint = point;
+    }
+
     public void SmoothMoveBack(float speed,int type){
         SmoothMove(originPoint,speed,type);
     }

@@ -8,12 +8,12 @@ BaseObject.objId = 0;
 
 -- 构造函数
 function BaseObject:ctor()
-    if (global.object_max_id) then
-        self.objId = global.object_max_id + 1;
+    if (BaseObject.objId) then
+        self.objId = BaseObject.objId + 1;
     else
         self.objId = 0;
     end
-    global.object_max_id = self.objId;
+    BaseObject.objId = self.objId;
 end
 
 --清除函数

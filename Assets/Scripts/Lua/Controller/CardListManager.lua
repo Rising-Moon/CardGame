@@ -34,8 +34,8 @@ function CardListManager.loadCards()
                         id = string.sub(userHaveCardId, 1, string.find(userHaveCardId, "\n"));
                         userHaveCardId = "";
                     end
-                    --创建一个空的卡牌对象，以卡牌的id为键值存入相应表中
-                    cardList.user_have[tonumber(id)] = dataProxy:createProxy(CardObject.new(tonumber(id)),{});
+                    --创建一个空的卡牌对象的代理，以卡牌的id为键值存入相应表中
+                    cardList.user_have[tonumber(id)] = dataProxy.createProxy(CardObject.new(tonumber(id)),{});
                 end
                 --玩家未拥有卡牌
                 --逻辑同上
@@ -97,6 +97,10 @@ function CardListManager.loadCards()
     end
 
     cardsFile:close();
+
+    --for k,v in pairs(cardList.user_have) do
+    --    print(k..":"..CardObject.toString(v));
+    --end
 end
 
 function CardListManager.saveCards()
@@ -127,6 +131,8 @@ function CardListManager.saveCards()
 
     cardsFile:write(content);
     cardsFile:close();
+
+
 end
 
 --处理玩家获得卡片
@@ -140,9 +146,24 @@ function CardListManager.userGet(cardId)
     end
 end
 
---第一次被导入时加载卡片到卡片列表
-CardListManager.loadCards();
+-- 获取卡片
+function CardListManager.getCard(cardId)
+    return CardList.user_have[cardId];
+end
 
-CardListManager.saveCards();
+-- 获取可用卡片列表
+function CardListManager.getUserHaveCards()
+    local haveCards = {};
+    for k,_ in pairs(CardList.user_have) do
+        table.insert(haveCards,k);
+    end
+    return haveCards;
+end
+
+--初始化
+function CardListManager.init()
+    CardListManager.loadCards();
+end
+
 
 return CardListManager;

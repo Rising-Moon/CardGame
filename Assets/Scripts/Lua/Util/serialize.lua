@@ -53,8 +53,10 @@ function serialize.encodeCard(card)
 
     for k, v in pairs(card) do
         if (type(v) ~= "table" and type(v) ~= "function") then
-            --print(k..":"..v);
-            lua = lua .. k .. "=" .. v .. "\n";
+            if (k ~= "objId") then
+                --print(k..":"..v);
+                lua = lua .. k .. "=" .. v .. "\n";
+            end
         else
             if (type(v) == "table" and k == "valueMap") then
                 lua = lua .. k .. "={\n" .. serialize.encodeCard(v) .. "}\n";
@@ -126,7 +128,7 @@ function setValue(card, key, value)
                 card[key] = false;
             end
         elseif (t == "string" or t == "nil") then
-            card[key] = value;
+            card[key] = string.gsub(value, "\\n", "\n");
         end
     else
         card[key] = value;

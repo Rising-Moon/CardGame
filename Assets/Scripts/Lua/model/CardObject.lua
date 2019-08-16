@@ -14,8 +14,6 @@ Card.cardId = 0;
 Card.name = "card";
 --卡牌消耗
 Card.cost = 0;
---卡牌等级
-Card.level = 0;
 --卡牌图片
 Card.img = "";
 --卡牌介绍
@@ -25,22 +23,21 @@ Card.valueMap = {};
 
 
 --构造函数
-function Card:ctor(cardId,name,cost,level,img,introduction,valueMap)
+function Card:ctor(cardId,name,cost,img,introduction,valueMap)
     Card.super.ctor(self);
     --属性设置
     self.cardId = cardId;
     self.name = name or "name";
     self.cost = cost or 0;
-    self.level = level or 1;
     self.valueMap = valueMap or {};
     self.img = img or "img";
     self.introduction = introduction or "introduction";
 end
 
 --toString方法
-function Card:toString()
-    local context = self.__cname .. "[";
-    for k, v in pairs(self) do
+function Card.toString(card)
+    local context = card.__cname .. "[";
+    for k, v in pairs(card) do
         context = context .. k .. "(" .. type(v) .. ")";
         if (type(v) ~= "function" and type(v) ~= "table") then
             context = context .. ":" .. v;
