@@ -1,4 +1,8 @@
 -------------------------引用------------------
+---
+
+
+
 ---引用全局枚举表
 ---各个基类可以调用枚举表的值
 require("GlobalEnumDir");
@@ -15,6 +19,7 @@ require("serialize");
 ---引入json处理
 local json =require("json");
 
+
 ---引入场景管理模块
 local ScenesManager =require("ScenesManager");
 
@@ -28,19 +33,14 @@ local AudioManager =require("AudioManager");
 local PathManager =require("PathManager");
 
 ---引入基类
-local BaseObject = require("BaseObject");
-local CardObeject =require("CardObject");
-local PlayerObject = require("PlayerObject");
-local MonsterObject = require("MonsterObject");
-local UserObject =require("UserObject");
-local CardList =require("CardList");
+
 
 --引入logincontroller
 local loginInController =require("LoginInController");
 --
 local dailyController =require("GatesController");
 --
-local BattleController = require("BattleController");
+--local BattleController = require("BattleController");
 --
 local PomkController = require("PomkController");
 
@@ -66,15 +66,13 @@ function start()
     --local a =ResourcesManager:instantiatePath("Assets/Resources/Prefabs/healthBar.prefab","healthBar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
     --local d=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre","healthbar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
      print("this is test area");
-    tTest=CS.Timer(1);
-    tTest:Start();
 
     print("test area is down");
 
     controllerList={
         loginInController,
         dailyController,
-        BattleController,
+        --BattleController,
         PomkController
     };
 
@@ -88,12 +86,7 @@ end
 function update()
 
 
-    if tTest and tTest.IsTimeUp then
-        print("down");
-        tTest =nil;
-        --coroutine.waitforframes(1);
-        --print("bagin");
-    end
+
     --切换场景
     currentController=controllerList[ScenesManager:GetIndex()+1];
 

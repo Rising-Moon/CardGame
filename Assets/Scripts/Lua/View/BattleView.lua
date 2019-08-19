@@ -10,6 +10,7 @@ BattleView = {};
 ----
 -- 画布
 local canvas = ScenesManager:initRoot();
+
 -- 按ui节点名存储的map
 local uiMap = UIUtil.genAllChildNameMap(canvas);
 

@@ -30,5 +30,5 @@ public class TriggersListener
         entry.callback.AddListener(callback);
         trigger.triggers.Add(entry);
     }
-
+    
 }

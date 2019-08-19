@@ -1,6 +1,6 @@
 local ScenesManager=require("ScenesManager");
 local RM=require("ResourcesManager");
-local CController=require("CardController");
+
 
 local PomkEventController ={};
 
