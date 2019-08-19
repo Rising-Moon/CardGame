@@ -16,9 +16,8 @@ public class TestScript : MonoBehaviour{
     // Update is called once per frame
     void Update(){
         if (Input.GetKeyDown("d")) {
-            var animator = enemy.GetComponent<Animator>();
-            animator.SetTrigger("injured");
-            Slider slider;
+            Image image;
+            //image.fillAmount
         }
     }
 }

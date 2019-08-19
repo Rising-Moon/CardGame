@@ -1,0 +1,52 @@
+ManifestFileVersion: 0
+CRC: 4287342398
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 097976ec834c284532960d2448b60ce0
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/Scripts/Lua/out/Timer.lua.bytes
+- Assets/Scripts/Lua/out/PlayerVIew.lua.bytes
+- Assets/Scripts/Lua/out/ScenesManager.lua.bytes
+- Assets/Scripts/Lua/out/class.lua.bytes
+- Assets/Scripts/Lua/out/ResourcesManager.lua.bytes
+- Assets/Scripts/Lua/out/CharacterObject.lua.bytes
+- Assets/Scripts/Lua/out/json.lua.bytes
+- Assets/Scripts/Lua/out/EnemyObject.lua.bytes
+- Assets/Scripts/Lua/out/BaseObject.lua.bytes
+- Assets/Scripts/Lua/out/UIUtil.lua.bytes
+- Assets/Scripts/Lua/out/protoc.lua.bytes
+- Assets/Scripts/Lua/out/PomkController.lua.bytes
+- Assets/Scripts/Lua/out/UserObject.lua.bytes
+- Assets/Scripts/Lua/out/DataProxy.lua.bytes
+- Assets/Scripts/Lua/out/BattleController.lua.bytes
+- Assets/Scripts/Lua/out/FileRead.lua.bytes
+- Assets/Scripts/Lua/out/EnemyView.lua.bytes
+- Assets/Scripts/Lua/out/serialize.lua.bytes
+- Assets/Scripts/Lua/out/GatesController.lua.bytes
+- Assets/Scripts/Lua/out/App.lua.bytes
+- Assets/Scripts/Lua/out/CardObject.lua.bytes
+- Assets/Scripts/Lua/out/PathManager.lua.bytes
+- Assets/Scripts/Lua/out/GateButtonEvent.lua.bytes
+- Assets/Scripts/Lua/out/loginInController.lua.bytes
+- Assets/Scripts/Lua/out/MainApp.lua.bytes
+- Assets/Scripts/Lua/out/GlobalEnumDir.lua.bytes
+- Assets/Scripts/Lua/out/CardList.lua.bytes
+- Assets/Scripts/Lua/out/PomkEventController.lua.bytes
+- Assets/Scripts/Lua/out/AudioManager.lua.bytes
+- Assets/Scripts/Lua/out/proto_test.lua.bytes
+- Assets/Scripts/Lua/out/ResponseListener.lua.bytes
+- Assets/Scripts/Lua/out/CardView.lua.bytes
+- Assets/Scripts/Lua/out/BattleView.lua.bytes
+- Assets/Scripts/Lua/out/PlayerObject.lua.bytes
+- Assets/Scripts/Lua/out/CardListManager.lua.bytes
+- Assets/Scripts/Lua/out/Coroutine.lua.bytes
+- Assets/Scripts/Lua/out/LoginButtonEvent.lua.bytes
+Dependencies: []

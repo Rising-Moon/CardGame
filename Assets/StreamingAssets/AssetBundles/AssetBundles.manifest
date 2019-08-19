@@ -1,20 +1,27 @@
 ManifestFileVersion: 0
-CRC: 3167538311
+CRC: 244330797
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: loadingmusic.music
       Dependencies: {}
     Info_1:
-      Name: cardimage.pic
+      Name: lua.lua
       Dependencies: {}
     Info_2:
-      Name: picture.pic
+      Name: cardimage.pic
       Dependencies: {}
     Info_3:
-      Name: card.pre
+      Name: picture.pic
       Dependencies: {}
     Info_4:
+      Name: card.pre
+      Dependencies: {}
+    Info_5:
       Name: enemy.pre
+      Dependencies:
+        Dependency_0: picture.pic
+    Info_6:
+      Name: playerinfo.pre
       Dependencies:
         Dependency_0: picture.pic

@@ -12,6 +12,7 @@ local currentController = nil;
 
 -- 初始化
 function init()
+    --CS.UnityEngine.Threading.Thread.Sleep(1000);
     -- 控制器设置
     currentController = battleController;
     -- 卡牌列表初始化
