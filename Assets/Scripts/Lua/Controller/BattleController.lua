@@ -17,6 +17,7 @@ local usingCards = {};
 local unUsedCards = {};
 -- 弃牌池
 local abandonedCards = {};
+
 -- 随机获取卡牌
 local licensing = function()
     if (#unUsedCards == 0) then

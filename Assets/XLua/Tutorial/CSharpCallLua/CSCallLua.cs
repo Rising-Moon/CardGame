@@ -120,6 +120,7 @@ namespace Tutorial
                 luaenv.Tick();
             }
         }
+        
 
         void OnDestroy()
         {

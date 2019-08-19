@@ -10,11 +10,14 @@ local button =nil;
 local errorText =nil;
 local UI_Alpha =1;
 local alphaSpeed =2;
+local remUP =nil;
 
 local canvasGroup;
 
 local initState =1;
 
+local UPTimer =nil;
+local isON =nil;
 
 function LoginButtonController.listenLogin(callback)
 
@@ -38,6 +41,9 @@ function LoginButtonController.listenLogin(callback)
         canvasGroup =uiRoot:GetComponent("CanvasGroup");
         assert(canvasGroup,"dont get canvasGroup");
 
+        remUP =uiRoot.transform:Find("remUP");
+        assert(remUP,"dont get remUP");
+
         local btn =  button:GetComponent("Button");
 
         btn.onClick:AddListener(function()
@@ -50,6 +56,12 @@ function LoginButtonController.listenLogin(callback)
                 btn.interactable = false;
                 flag =1;
                 errorText.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
+                isON =remUP.gameObject:GetComponent(typeof(CS.UnityEngine.UI.Toggle)).isOn;
+                print(isON);
+                if isON then
+                    CS.UnityEngine.PlayerPrefs.SetString("username",usernameText);
+                    CS.UnityEngine.PlayerPrefs.SetString("password",passwordText);
+                end
             else
                 errorText.transform.localScale=CS.UnityEngine.Vector3(1,1,1);
             end
@@ -57,7 +69,9 @@ function LoginButtonController.listenLogin(callback)
         end);
 
         initState =callback.initListener(initState);
-
+        --声明定时器
+        UPTimer=CS.Timer(3);
+        UPTimer:Start();
     end
 
     if flag ==1 then
@@ -73,6 +87,16 @@ function LoginButtonController.listenLogin(callback)
         canvasGroup.alpha =CS.UnityEngine.Mathf.Lerp(canvasGroup.alpha, UI_Alpha, alphaSpeed * CS.UnityEngine.Time.deltaTime);
         if CS.UnityEngine.Mathf.Abs(UI_Alpha - canvasGroup.alpha) <= 0.01 then
             canvasGroup.alpha = UI_Alpha;
+        end
+    end
+
+    if UPTimer and UPTimer.IsTimeUp then
+        UPTimer =nil;
+        if CS.UnityEngine.PlayerPrefs:HasKey("username") then
+            print("local username and password is on");
+            username:GetComponent("InputField").text =CS.UnityEngine.PlayerPrefs.GetString("username","demo");
+            password:GetComponent("InputField").text =CS.UnityEngine.PlayerPrefs.GetString("password","12345");
+
         end
     end
 

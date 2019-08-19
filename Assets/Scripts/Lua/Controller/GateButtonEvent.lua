@@ -20,8 +20,12 @@ local cardIma =nil
 
 local initState =1;
 
-local function imgFunction()
-      print("img name");
+local function imgOnClick(gameObject)
+    print(gameObject.name);
+end
+
+local function imgPointEnter(gameObject)
+    gameObject.transform.localScale=CS.UnityEngine.Vector3(1.5,1.5,1.5);
 end
 
 function GateButtonEvent.listenEvent(callback)
@@ -47,15 +51,13 @@ function GateButtonEvent.listenEvent(callback)
         --cardBag =uiRoot.transform:Find("CardBag");
         assert(cardBag,"dont get card bag");
 
-        --cardIma =uiRoot.transform:FindChild("Canvas/CardBug");
-        --assert(cardIma,"dont get cardIma");
-        local Tri = CS.TriggersListener();
+
         for i=0,cardBag.transform.childCount-1,1 do
             local img =cardBag.transform:GetChild(i);
-            print(img.name);
-            
-            print(type(CS.UnityEngine.EventSystems.EventTriggerType.PointerClick));
-            Tri:AddTriggersListener(img.gameObject,CS.UnityEngine.EventSystems.EventTriggerType.PointerClick,imgFunction);
+            --点击背包的图片后，打印ui组件名字
+            CS.UGUIEventListener.Get(img.gameObject).onClick =imgOnClick;
+            --CS.UGUIEventListener.Get(img.gameObject).PointEnter =imgPointEnter;
+            --CS.UGUIEventListener.Get(img.gameObject).OnMouseEnter =imgPointEnter;
         end
 
         cardBag.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
