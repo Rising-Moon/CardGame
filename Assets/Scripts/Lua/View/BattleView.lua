@@ -51,10 +51,24 @@ local enemyObject = nil;
 -- 怪物位置
 local enemyPos = uiMap["EnemyPos"];
 
+-- 怪物动画
+local enemyAnim = nil;
+
 -- 加载怪物（提供给controller使用）
 function createEnemy(enemy)
     enemyObject = EnemyView:createView(enemy, enemyPos, "Enemy");
     enemyObject.transform.position = enemyPos.transform.position;
+    enemyAnim = enemyObject:GetComponent("Animator");
+end
+
+-- 播发怪物动画
+function BattleView:playEnemyAnim(name)
+    local anims = {
+        injured = function()
+            enemyAnim:SetTrigger("injured");
+        end
+    }
+    anims[name]();
 end
 
 ----

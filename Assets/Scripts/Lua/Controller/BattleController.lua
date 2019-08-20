@@ -55,6 +55,7 @@ function useCard(card)
             -- atk 攻击
             atk = function()
                 enemy.life = enemy.life - v;
+                BattleView:playEnemyAnim("injured");
             end,
             -- def 防御
             def = function()

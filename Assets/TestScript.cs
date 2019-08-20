@@ -18,6 +18,7 @@ public class TestScript : MonoBehaviour{
         if (Input.GetKeyDown("d")) {
             Image image;
             //image.fillAmount
+            Animator anim = null;
         }
     }
 }
