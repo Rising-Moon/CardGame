@@ -1,6 +1,7 @@
 -------------------------引用------------------
----
-
+---为全局添加调用
+--获取一个c#脚本调用
+--local myClass =CS.UnityEngine.GameObject.Find("mainApp"):GetComponent("LuaBehaviour");
 
 
 ---引用全局枚举表
@@ -53,7 +54,7 @@ function start()
     --可以直接使用audio的加载也可以ResouresManager:LoadPath()
     --该音乐前面有很长一段空白
     --local music =AudioManager:LoadAudio("music/backGroundMusic");
-    --local music =ResourcesManager:LoadPath("Assets/Resources/music/backGroundMusic.mp3");
+    --
     --[[
     local function callback()
         print("nil");
@@ -65,10 +66,8 @@ function start()
     --local d=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/picture.pic","daily",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
     --local a =ResourcesManager:instantiatePath("Assets/Resources/Prefabs/healthBar.prefab","healthBar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
     --local d=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre","healthbar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
-     print("this is test area");
-
-    print("test area is down");
-
+    local music =ResourcesManager:LoadPath("Assets/Resources/music/backGroundMusic.mp3","backGroundMusic");
+    AudioManager:PlayBacKGroundMusic(music);
     controllerList={
         loginInController,
         dailyController,

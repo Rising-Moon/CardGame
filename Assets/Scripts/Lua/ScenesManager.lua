@@ -7,9 +7,8 @@ ScenesManager.__index =ScenesManager;
 
 local UE =CS.UnityEngine;
 
+--获取一个c#脚本调用startCoroutine
 local myClass =UE.GameObject.Find("mainApp"):GetComponent("LuaBehaviour");
-print("class is  :");
-print(myClass);
 ------------------------------------
 
 ScenesManager.scenesStack =nil;
@@ -62,6 +61,7 @@ end
 
 --此处协程有误
 --异步加载场景
+--[[
 function ScenesManager:AsyncLoadScene(index)
     if  self.scenesStack then
         --将要加载的场景编号押入栈中
@@ -71,40 +71,94 @@ function ScenesManager:AsyncLoadScene(index)
         end
 
         coroutine.resume(AsyncLoad,false,index);
-        --local Timer= CS.Timer(1,true,true);
         coroutine.resume(AsyncLoad,true);
 
     else
         print("wrong happen in stack");
     end
 end
+]]--
 
 
 
---后期可能会加入进度条加载的修改，现在还未实现
 --重载场景加载的异步方法
 function ScenesManager:AsyncLoadSceneCall(index)
     --异步加载
     local LoadSceneAsync_Fun = util.cs_generator(function()
-        local LoadPre =RM:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre","healthBar",UE.GameObject.Find("Canvas"));
-        local Slider =LoadPre.transform:Find("Slider"):GetComponent(typeof(UE.UI.Slider));
+        local LoadPre =RM:instantiatePath("Assets/StreamingAssets/AssetBundles/Load.pre","LoadSlider",UE.GameObject.Find("Canvas"),UE.Vector3(0,0,0));
+        local slider=LoadPre.gameObject:GetComponent("Slider").value;
+        slider =0;
         local Text =LoadPre.transform:Find("Text"):GetComponent(typeof(UE.UI.Text));
+        assert(Text,"dont get Text");
+        Text.text = "Loading:"
 
-        Text.text = "Loading: 0%"
-
-        -- 预加载场景资源,90%的进度条用于显示资源加载，剩余10%为场景加载
+        -- 预加载场景资源,90%的进度条用于显示资源加载，剩余10%为场景加载？
         local async = ScenesManagement.LoadSceneAsync(index);
 
         print("the next scene is: "..index);
 
         while not async.isDone do
-            if async.progress <= 0.85 then
-              Slider.value = async.progress;
+            if async.progress <= 0.95 then
+                slider = async.progress;
+                print("loading>>>"..slider);
             else
-              Slider.value = 1;
+                slider = 1;
+                print("finish》》》"..slider);
             end
-            Text.text = "Loading: ".. math.ceil(Slider.value * 100) .."%";
-            coroutine.yield(UE.WaitForEndOfFrame)
+            --显示输出：但是加载太快看不到变化
+            Text.text = "Loading: ".. math.ceil(slider * 100) .."%";
+            coroutine.yield(UE.WaitForEndOfFrame);
+        end
+    end);
+
+    if  self.scenesStack then
+        --将要加载的场景编号押入栈中
+        --永远不会加载场景0
+        --不允许回退到2，3界面，进行抽卡和战斗
+        if index ~=2 and index ~= 3then
+            self.scenesStack:Push(index);
+        end
+        --local LoadSceneAsync = CS.XLua.Cast.IEnumerator(LoadSceneAsync_Fun)
+        myClass:StartCoroutine(LoadSceneAsync_Fun);
+        --myClass:StartCoroutine(LoadSceneAsync);
+        self.uiRoot =nil;
+    else
+        print("wrong happen in stack");
+    end
+
+end
+
+--重载场景加载的异步方法
+function ScenesManager:AsyncLoadSceneBack(index)
+    --异步加载
+    local LoadSceneAsync_Fun = util.cs_generator(function()
+
+        local UI_Alpha =0;
+        local uiRoot =self:initRoot();
+        assert(uiRoot,"dont get uiRoot");
+        --只有场景0的添加来canvasGroup
+        local canvasGroup =uiRoot:GetComponent("CanvasGroup");
+        assert(canvasGroup,"dont get canvasGroup");
+
+
+        -- 预加载场景资源,90%的进度条用于显示资源加载，剩余10%为场景加载？
+        local async = ScenesManagement.LoadSceneAsync(index);
+
+        print("the next scene is: "..index);
+
+        while not async.isDone do
+            if async.progress <= 0.95 then
+                if UI_Alpha ~=canvasGroup.alpha then
+                    canvasGroup.alpha =CS.UnityEngine.Mathf.Lerp(canvasGroup.alpha, 0, 2 * CS.UnityEngine.Time.deltaTime);
+                    if CS.UnityEngine.Mathf.Abs(0 - canvasGroup.alpha) <= 0.01 then
+                        canvasGroup.alpha = 0;
+                    else
+                        canvasGroup.alpha=1-async.progress;
+                    end
+                end
+            end
+
+            coroutine.yield(UE.WaitForEndOfFrame);
         end
     end)
 
@@ -153,6 +207,25 @@ function ScenesManager:QuitGame()
     print("game is quiting");
     CS.UnityEngine.Application.Quit();
 end
+
+--应该在ui中单独使用，但是还没有完整的写uimanange，所以先放在scenesmanage里面
+--可以用对象池复用
+function ScenesManager:createDes(sprite,name,descri)
+    local info =RM:popPool("Assets/Resources/Prefabs/informa.prefab","informa");
+    if not info then
+        --ab打包的时候新出问题，先用resources加载测试
+        info =RM:instantiatePath("Assets/Resources/Prefabs/informa.prefab","informa",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
+    end
+    info.transform:Find("Image"):GetComponent(typeof(CS.UnityEngine.UI.Image)).sprite =sprite;
+    --设置预制体的时候text较小，使用后就尽量为一行描述
+    info.transform:Find("info"):GetComponent("Text").text =name.."\t"..descri;
+    info.transform:Find("close"):GetComponent("Button").onClick:AddListener(function ()
+        RM:pushInPool("Assets/Resources/Prefabs/informa.prefab","informa",info);
+    end);
+
+end
+
+--[[
 ---------------------内部接口----------------------
 ---异步加载场景
 ---lua中的协程实际上是暂停，与unity'中使用update来辅助协程不同，不能使用这样的方式
@@ -176,6 +249,7 @@ AsyncLoad = coroutine.create(
             --print(operation.allowSceneActivation);
  end)
 -----------------------------------------------------
+]]--
 ScenesManager:init();
 
 return ScenesManager

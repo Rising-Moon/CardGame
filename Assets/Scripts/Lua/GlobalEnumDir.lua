@@ -5,6 +5,19 @@ CardPrefabsPathDir={
     {name ="HealthBar",ResourcesPath ="Assets/Resources/Prefabs/HealthBar.prefab"}
 }
 
+CardImageDir={
+    {name ="Close_2"},
+    {name ="Pikes_2"},
+    {name ="Lunge_2"},
+    {name ="Jeer_2"},
+    {name ="Adrenalin_2"},
+    {name ="SIH_01"},
+    {name ="SIH_02"},
+    {name ="SIH_07"},
+    {name ="ToFace_2"}
+
+}
+
 ----------------------卡牌属性表-------------------
 --卡牌类型
 global.typeDir ={

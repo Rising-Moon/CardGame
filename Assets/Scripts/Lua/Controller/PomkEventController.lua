@@ -1,8 +1,15 @@
 local ScenesManager=require("ScenesManager");
 local RM=require("ResourcesManager");
 
+--抽卡后使用
+local CardList =require("CardList");
+local CardListManager = require("CardListManager");
+
+--获取一个c#脚本调用startCoroutine
+--local myClass =UE.GameObject.Find("mainApp"):GetComponent("LuaBehaviour");
 
 local PomkEventController ={};
+
 
 PomkEventController.callback ={};
 local callback =PomkEventController.callback;
@@ -122,10 +129,14 @@ function PomkEventController.listenEvent(callback)
         bun.onClick:AddListener(function ()
             bun.interactable =false;
             CardFlag =1;
-            print("do you");
+            --num需要为卡牌的id，通过卡牌id来处理实例化
             local num=math.random(1,1);
             print("Card number is:"..num);
             RM:instantiatePath(CardPrefabsPathDir[num].ResourcesPath,CardPrefabsPathDir[num].name,uiRoot,CS.UnityEngine.Vector3(0,0,0));
+            --cardListmananger???没有实例话出卡牌信息
+            print(CardList.user_have[1]);
+            --暂时先使用cardlistmanager的接口
+            CardListManager:userGet(num);
         end);
 
         initState =callback.initListener(initState);

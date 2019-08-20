@@ -25,6 +25,7 @@ function AudioManager:init()
     --记录当前播放的音乐
     --在战斗场景和其他场景，背景乐应当不一样
     self.currentMusic =nil;
+    self.battleMusic = self.cmRoot.gameObject:AddComponent(typeof(UE.AudioSource));
 
 end
 
@@ -67,9 +68,37 @@ function AudioManager:PlayBacKGroundMusic(audio,delay)
     end
 
     if delay then
-        self.backGroundMusic:PlayDelayed(delay)
+        self.backGroundMusic:PlayDelayed(delay);
     else
-        self.backGroundMusic:Play()
+        self.backGroundMusic:Play();
+    end
+end
+--两个audio有些重复了，可以直接设置为两段音乐，然后在切换不同场景的时候切换，可用current作为temp，但是这样好像不太符合模块的定义？
+function AudioManager:PlayBattleMusic(audio,delay)
+    if not self.backGroundMusic then
+        return
+    end
+    if audio  then
+        if audio ==self.currentMusic then
+            if self.currentMusic.isPlaying then
+                return
+            end
+        else
+            --当前背景切换到战斗音乐
+            self.currentMusic =self.backGroundMusic.clip;
+            self.backGroundMusic.clip =audio;
+        end
+
+    else
+        if not self.currentMusic then
+            return
+        end
+    end
+
+    if delay then
+        self.backGroundMusic:PlayDelayed(delay);
+    else
+        self.backGroundMusic:Play();
     end
 end
 

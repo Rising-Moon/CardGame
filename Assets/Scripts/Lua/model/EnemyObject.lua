@@ -11,7 +11,6 @@ Enemy.dropExperience = 0;
 -- 掉落金钱
 Enemy.dropMoney = 0;
 
-
 --构造函数
 function Enemy:ctor(name,maxLife,level,maxMana,dropExp,dropMoney)
     Enemy.super.ctor(self,name,maxLife,level,maxMana);

@@ -76,9 +76,7 @@ function LoginButtonController.listenLogin(callback)
 
     if flag ==1 then
         --button:GetComponent("Button").onClick:RemoveAllListeners();
-        --先别使用协程
-        --ScenesManager:AsyncLoadScene(1);
-        ScenesManager:LoadScene(1);
+        ScenesManager:AsyncLoadSceneBack(1);
         initState =1;
         flag=0;
     end
@@ -92,11 +90,12 @@ function LoginButtonController.listenLogin(callback)
 
     if UPTimer and UPTimer.IsTimeUp then
         UPTimer =nil;
-        if CS.UnityEngine.PlayerPrefs:HasKey("username") then
+        if CS.UnityEngine.PlayerPrefs:HasKey("username") and #username:GetComponent("InputField").text==0 then
             print("local username and password is on");
             username:GetComponent("InputField").text =CS.UnityEngine.PlayerPrefs.GetString("username","demo");
             password:GetComponent("InputField").text =CS.UnityEngine.PlayerPrefs.GetString("password","12345");
-
+        else
+            print("please input");
         end
     end
 
