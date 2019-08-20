@@ -1,15 +1,17 @@
 ManifestFileVersion: 0
-CRC: 1237910247
+CRC: 3816115293
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 53878da00c882c7b15d2ed87a773de4c
+    Hash: a83dfbc06129a2a8747e1dd6bd494896
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 13c9caf0bbb29e470fd341b43505b2f9
+    Hash: 49a73577202eedeed46752f113e5768a
 HashAppended: 0
 ClassTypes:
 - Class: 1
+  Script: {instanceID: 0}
+- Class: 4
   Script: {instanceID: 0}
 - Class: 21
   Script: {instanceID: 0}
@@ -41,5 +43,4 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Resources/Prefabs/Enemy.prefab
-Dependencies:
-- /Users/mengyucheng/Desktop/UnityTestProgram/CompanyProject/CardGame/Assets/StreamingAssets/AssetBundles/picture.pic
+Dependencies: []
