@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 3943788128
+CRC: 225904801
 Hashes:
   AssetFileHash:
     serializedVersion: 2
@@ -14,7 +14,7 @@ ClassTypes:
 - Class: 213
   Script: {instanceID: 0}
 Assets:
-- Assets/Pictures/ad.jpg
-- Assets/Pictures/StateBar/heart.png
-- Assets/Pictures/daily.jpg
+- Assets/Resources/picture/ad.jpg
+- Assets/UsedImports/HealthBar/heart.png
+- Assets/Resources/picture/daily.jpg
 Dependencies: []

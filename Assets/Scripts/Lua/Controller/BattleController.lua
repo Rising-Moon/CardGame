@@ -2,6 +2,9 @@ local CardListManager = require("CardListManager");
 local EnemyObject = require("EnemyObject");
 local PlayerObject = require("PlayerObject");
 local DataProxy = require("DataProxy");
+local UpdateUtil = require("HotUpdate");
+--对应的view
+local BattleView = require("BattleView");
 
 ----
 --- 初始化数据和方法
@@ -37,9 +40,6 @@ end
 --- Battle场景的控制器，对场景中的逻辑进行控制，从view获取输入，对model进行修改
 ----
 
---对应的view
-local BattleView = require("BattleView");
-
 BattleController = {};
 
 -- 检查当前场景的状态
@@ -70,19 +70,39 @@ end
 
 -- 初始化(由app.lua调用，可接收参数)
 -- 调试用
-function BattleController:init(ene)
-    -- 初始化view
-    player = DataProxy.createProxy(PlayerObject.new("Knight",100,1,20,100),{});
-    BattleView:init(player);
+function BattleController:init(p, e)
 
-    if (ene) then
-        enemy = ene;
+    -- 调试数据，实际上应该由外部传入
+    defalutP = DataProxy.createProxy(PlayerObject.new("Knight", 100, 1, 20, 100), {});
+    defaultE = DataProxy.createProxy(EnemyObject.new("树人", 100, 20, 76, 20, 2, 2), {});
+
+    -- 初始化数据
+    if (p) then
+        player = p;
+    else
+        player = defalutP;
     end
+    if (e) then
+        enemy = e;
+    else
+        enemy = defaultE;
+    end
+
+    -- 初始化view
+    BattleView:init(player, enemy);
+
     -- 初始化usingCards和unusedCards
     unUsedCards = CardListManager.getUserHaveCards();
 
     -- 设置卡牌使用的回调
     BattleView:setUseCardListener(useCard);
+end
+
+function BattleController:reload()
+    BattleView:reload(player,enemy);
+    for _,v in pairs(usingCards) do
+        BattleView:addCardToHand(CardListManager.getCard(v));
+    end
 end
 
 function BattleController:start()
@@ -106,18 +126,20 @@ function BattleController:update()
             BattleView:addCardToHand(CardListManager.getCard(cardid));
         end
     end
-
-    -- 模拟初始化怪物
-    if (CS.UnityEngine.Input.GetKeyDown("m")) then
-        if (not enemy) then
-            enemy = DataProxy.createProxy(EnemyObject.new("树人", 100, 20, 76, 20, 2, 2), {});
-            BattleView:createEnemy(enemy);
-        end
-    end
     -- 修改怪物数据
     if (CS.UnityEngine.Input.GetKeyDown("n")) then
         enemy.life = enemy.life - 2;
         enemy.mana = enemy.mana - 2;
+    end
+
+    -- 发起热更请求
+    if (CS.UnityEngine.Input.GetKeyDown("u")) then
+        UpdateUtil:update();
+    end
+
+    -- 重载场景
+    if (CS.UnityEngine.Input.GetKeyDown("t")) then
+        BattleController:reload();
     end
 end
 

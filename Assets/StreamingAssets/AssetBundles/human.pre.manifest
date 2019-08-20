@@ -1,17 +1,15 @@
 ManifestFileVersion: 0
-CRC: 776100981
+CRC: 834770868
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 679b720b1fc854f5266ca3fedf347aa9
+    Hash: 448edc60a2727d1020d9e7710ac75307
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 8e5daebe60154eac2caf4269b9e44f8a
+    Hash: 9eebe1fdbef4362c2d76f506a4c61790
 HashAppended: 0
 ClassTypes:
 - Class: 1
-  Script: {instanceID: 0}
-- Class: 4
   Script: {instanceID: 0}
 - Class: 21
   Script: {instanceID: 0}
@@ -25,10 +23,6 @@ ClassTypes:
   Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-- Class: 114
-  Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-- Class: 114
-  Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -40,6 +34,6 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Resources/Prefabs/PlayerInfos.prefab
+- Assets/Resources/Prefabs/HealthBar.prefab
 Dependencies:
 - /Users/mengyucheng/Desktop/UnityTestProgram/CompanyProject/CardGame/Assets/StreamingAssets/AssetBundles/picture.pic

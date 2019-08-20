@@ -6,8 +6,6 @@ local ScenesManager ={};
 ScenesManager.__index =ScenesManager;
 
 local UE =CS.UnityEngine;
-
-local myClass =UE.GameObject.Find("mainApp"):GetComponent("LuaBehaviour");
 print("class is  :");
 print(myClass);
 ------------------------------------
