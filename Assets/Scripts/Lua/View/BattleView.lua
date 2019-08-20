@@ -3,7 +3,6 @@ local UIUtil = require("UIUtil");
 local CardView = require("CardView");
 local EnemyView = require("EnemyView");
 local PlayerView = require("PlayerView");
-local ResourcesManager = require("ResourcesManager");
 
 BattleView = {};
 
@@ -29,15 +28,13 @@ end
 ----
 --- 玩家
 ----
---  玩家实例
-local playerObject = nil;
 
 -- 玩家位置
 local playerInfoPos = uiMap["PlayerInfoPos"];
 
 -- 加载玩家信息
 function createPlayerInfo(player)
-    playerObject = PlayerView:createView(player, playerInfoPos);
+    local playerObject = PlayerView:createView(player,playerInfoPos);
     playerObject.transform.position = playerInfoPos.transform.position;
 end
 
@@ -45,15 +42,13 @@ end
 ----
 --- 怪物
 ----
--- 怪物实例
-local enemyObject = nil;
 
 -- 怪物位置
 local enemyPos = uiMap["EnemyPos"];
 
 -- 加载怪物（提供给controller使用）
-function createEnemy(enemy)
-    enemyObject = EnemyView:createView(enemy, enemyPos, "Enemy");
+function BattleView:createEnemy(enemy)
+    local enemyObject = EnemyView:createView(enemy, enemyPos,"Enemy");
     enemyObject.transform.position = enemyPos.transform.position;
 end
 
@@ -92,14 +87,14 @@ function adjustHandsCard()
     -- 调整卡牌位置
     if (handCardCount == 1) then
         for _, v in pairs(handCards) do
-            v.moveUtil:SmoothMove(screen2world(handPosition), moveSpeed, 1);
+            v.moveUtil:SmoothMove(screen2world(handPosition), moveSpeed,1);
             v.moveUtil:SetOriginPoint(screen2world(handPosition));
         end
     elseif ((handCardCount - 1) * maxInterval < offset * 2) then
         local off = -handCardCount / 2;
-        for _, v in pairs(handCards) do
+        for _,v in pairs(handCards) do
             local pos = screen2world(handPosition + CS.UnityEngine.Vector3(maxInterval * off, 0, 0));
-            v.moveUtil:SmoothMove(pos, moveSpeed, 1);
+            v.moveUtil:SmoothMove(pos,moveSpeed,1);
             v.object.transform:SetAsLastSibling();
             v.moveUtil:SetOriginPoint(pos);
             off = off + 1;
@@ -240,7 +235,7 @@ function cardInteraction()
                 --调试
                 print(handCards[hitObject:GetHashCode()]);
                 print(handCards[hitObject:GetHashCode()].card.objId);
-            elseif (hitObject == nil) then
+            elseif(hitObject == nil) then
                 originSize = nil;
                 originSibling = nil;
                 selectCard = nil;
@@ -260,39 +255,9 @@ function cardInteraction()
 end
 
 -- view 初始化
-function BattleView:init(player,enemy)
+function BattleView:init(player)
     -- 创建玩家信息界面
     createPlayerInfo(player);
-    -- 加载怪物
-    createEnemy(enemy);
-end
-
--- 重载界面
-function BattleView:reload(player, enemy,hand)
-    -- 卸载场景中的界面
-    for k, v in pairs(handCards) do
-        CardView:destroy(v.card, v.object);
-    end
-    handCards = {};
-    handCardCount = 0;
-    if (playerObject) then
-        PlayerView:destroy(player, playerObject);
-    end
-    if (enemyObject) then
-        EnemyView:destroy(enemy, enemyObject);
-    end
-    -- 重载界面
-    package.loaded["PlayerView"] = nil;
-    package.loaded["EnemyView"] = nil;
-    package.loaded["CardView"] = nil;
-    CardView = require("CardView");
-    EnemyView = require("EnemyView");
-    PlayerView = require("PlayerView");
-    ResourcesManager:clear();
-
-    -- 初始化场景
-    BattleView:init(player,enemy);
-
 end
 
 function BattleView:update()

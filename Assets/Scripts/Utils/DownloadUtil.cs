@@ -41,7 +41,9 @@ public class DownloadUtil : MonoBehaviour{
                 www.SendWebRequest();
                 if (www.isHttpError || www.isNetworkError) {
                     Debug.LogError(www.error);
-                    DownloadManager.finishDownload(this);
+                    gameObject.SetActive(false);
+                    DownloadManager.removeDownload(this);
+                    print(DownloadManager.Count());
                     done = true;
                 }
                 else {
@@ -68,11 +70,16 @@ public class DownloadUtil : MonoBehaviour{
                             File.Create(path).Dispose();
                         File.WriteAllBytes(path, www.downloadHandler.data);
                         Debug.Log("下载完成:" + path);
+                        
+                        print(DownloadManager.Count());
+                        DownloadManager.removeDownload(this);
                     }
                 }
             }
             
-            DownloadManager.finishDownload(this);
+            DownloadManager.removeDownload(this);
+            print(DownloadManager.Count());
+            gameObject.SetActive(false);
             done = true;
         }
         

@@ -42,4 +42,4 @@ ClassTypes:
 Assets:
 - Assets/Resources/Prefabs/PlayerInfos.prefab
 Dependencies:
-- /Users/mengyucheng/Desktop/UnityTestProgram/CompanyProject/CardGame/Assets/StreamingAssets/AssetBundles/picture.pic
+- /Users/mengyucheng/Desktop/UnityTestProgram/CompanyProject/CardGame/Assets/AssetBundles/picture.pic

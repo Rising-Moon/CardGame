@@ -14,6 +14,7 @@ socketObject:AddComponent(typeof(CS.ClientSocket));
 local responseHandle = {
     -- 处理服务器返回的消息
     SocketResponse = function()
+
         --解析消息到msg中
         local message = fileReader:read("Assets/Resources/Protos/Message.proto");
         assert(protoc:load(message));
@@ -44,6 +45,7 @@ local responseHandle = {
                 messageQueue:SendMessage(message);
             end
         }
+
         local f = switch[msg.type];
         if (f) then
             f();
