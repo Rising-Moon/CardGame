@@ -181,7 +181,7 @@ function PomkEventController.listenEvent(callback)
 
             --最初调用方法出错，暂时先使用cardlistmanager的接口
             CardListManager.userGet(num);
-            CardListManager:saveCards();
+            CardListManager.saveCards();
         end);
 
         initState =callback.initListener(initState);
