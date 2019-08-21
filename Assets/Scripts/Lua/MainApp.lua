@@ -48,7 +48,6 @@ local PomkController = require("PomkController");
 local currentController =nil;
 
 
-
 function start()
 
     --可以直接使用audio的加载也可以ResouresManager:LoadPath()

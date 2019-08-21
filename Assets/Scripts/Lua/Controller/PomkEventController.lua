@@ -4,9 +4,23 @@ local RM=require("ResourcesManager");
 --抽卡后使用
 local CardList =require("CardList");
 local CardListManager = require("CardListManager");
+--初始化卡牌管理并从文件中获得卡牌信息
+--没有在manager里面init，每次加载文件都要init？
+CardListManager.init();
 
---获取一个c#脚本调用startCoroutine
---local myClass =UE.GameObject.Find("mainApp"):GetComponent("LuaBehaviour");
+--[[
+local cardTable =CardListManager.getUserHaveCards();
+--返回的值和拥有的值之间有差别
+--直接使用insert进行插入后会导致我理解的出错
+for i,v in pairs(cardTable) do
+    print("Card user have id is:"..i);
+    print("Card id is:"..v);
+end
+
+for id,info in pairs(CardList.user_have) do
+    print("Card user have id is:"..id);
+end
+]]--
 
 local PomkEventController ={};
 
@@ -126,17 +140,48 @@ function PomkEventController.listenEvent(callback)
                 btn.interactable = false;
                 flag =1;
         end);
+        --性能非常差
         bun.onClick:AddListener(function ()
             bun.interactable =false;
             CardFlag =1;
             --num需要为卡牌的id，通过卡牌id来处理实例化
-            local num=math.random(1,1);
+            local num=math.random(1,4);
             print("Card number is:"..num);
-            RM:instantiatePath(CardPrefabsPathDir[num].ResourcesPath,CardPrefabsPathDir[num].name,uiRoot,CS.UnityEngine.Vector3(0,0,0));
-            --cardListmananger???没有实例话出卡牌信息
-            print(CardList.user_have[1]);
+            local newCard =RM:instantiatePath("Assets/StreamingAssets/AssetBundles/Card.pre","Card",uiRoot,CS.UnityEngine.Vector3(0,0,0));
+            --local cardName =newCard.transform:Find("name_back").gameObject.transform:Find("Name");
+            local cardName =newCard.transform:Find("name_back/Name");
+            local cardImage =newCard.transform:Find("Image/Image_back");
+            local cardCost =newCard.transform:Find("cost_back/cost/costValue");
+            local cardContent =newCard.transform:Find("Content/Text");
+            cardName:GetComponent("Text").text =cardInfo[num].name;
+            local pic =RM:LoadPath("Assets/StreamingAssets/AssetBundles/cardimage.pic",cardInfo[num].img);;
+            --print(cardImage:GetComponent("Image").sprite);
+            --由于预制体的设置，如果不设置color这里会出现全黑的情况
+            cardImage:GetComponent("Image").sprite =pic;
+            --print(cardImage:GetComponent("Image").color);
+            cardImage:GetComponent("Image").color =CS.UnityEngine.Color(1,1,1);
+            cardCost:GetComponent("TextMeshProUGUI").text =cardInfo[num].cost;
+            cardContent:GetComponent("Text").text=cardInfo[num].introduction;
+
+            print("是否未拥有卡牌："..num);
+            print(type(CardList.not_obtain[num]) =="table");
+            --[[
+            for i,v in pairs(CardList.not_obtain[num]) do
+                print(i);
+                print(v);
+            end
+            ]]--
             --暂时先使用cardlistmanager的接口
+            --这里获取任何card都会返回卡牌存在或已经销毁？？？
+            --userGet 通过name来判断not-obtain是否有卡的存在，但是打印出来实际上没看到name属性？nil~=""值为真
+            --此时卡牌拥有
             CardListManager:userGet(num);
+            --卡牌在数据文件中不存在，所以卡牌会一直显示未拥有
+            --每次获取卡牌后，保存最新消息
+            --此时卡牌未拥有
+            --无论什么时候都会返回卡牌不存在或者已经获得，使用方法不对？
+
+            --CardListManager:saveCards();
         end);
 
         initState =callback.initListener(initState);

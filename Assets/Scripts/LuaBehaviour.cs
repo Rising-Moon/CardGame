@@ -50,7 +50,7 @@ namespace XLuaBehaviour{
             //不销毁mainApp避免lua脚本失效
             DontDestroyOnLoad(gameObject);
 
-
+            
             luaPathList = new List<string>();
             //添加lua文件路径
             addLuaPath("Assets.Scripts.Lua");

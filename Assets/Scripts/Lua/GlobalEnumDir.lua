@@ -1,37 +1,50 @@
---抽卡的时候指定的card的实例话属性
---由于测试预制体数量较少，将healthbar也加上，后期删除
-CardPrefabsPathDir={
-    {name ="Card",ResourcesPath ="Assets/Resources/Prefabs/Card.prefab",AssetBundlePath="Assets/StreamingAssets/AssetBundles/Card.pre"},
-    {name ="HealthBar",ResourcesPath ="Assets/Resources/Prefabs/HealthBar.prefab"}
-}
-
-CardImageDir={
-    {name ="Close_2"},
-    {name ="Pikes_2"},
-    {name ="Lunge_2"},
-    {name ="Jeer_2"},
-    {name ="Adrenalin_2"},
-    {name ="SIH_01"},
-    {name ="SIH_02"},
-    {name ="SIH_07"},
-    {name ="ToFace_2"}
-
-}
-
 ----------------------卡牌属性表-------------------
---卡牌类型
-global.typeDir ={
-    fight = 1;
-    defense = 2;
-    treatment = 3;
-    effect = 4;
-};
+cardInfo ={
+    {
+        introduction="使用钝器攻击对方，\n造成5点伤害",
+        img="Stun_2",
+        name="棒击",
+        valueMap={
+            atk=5
+        },
+        cost=2,
+        cardId=1
+    },
 
---卡牌描述
-global.nameDictionary = {
-    fire =" this is fire card , use to fight",
-    water ="this is water card, use to fight",
-    wind ="this is wind card,use to fight"
-};
+    {
+        introduction="造成3点伤害",
+        img="SIR_12",
+        name="割裂",
+        valueMap={
+            atk=3
+        },
+        cost=1,
+        cardId=2
+    },
+
+    {
+        introduction="进行防御，产生2点\n防御值",
+        img="CoverUp_2",
+        name="防御",
+        valueMap={
+            def=2
+        },
+        cost=1,
+        cardId=3
+    },
+
+    {
+        introduction="警惕两个方向进行的\n攻击，防御值翻倍",
+        img="Close_2",
+        name="双向防御",
+        valueMap={
+            mul_def = 2
+        },
+        cost=3,
+        cardId=6
+    }
+
+}
+
 
 ---------------------怪物属性表------------------
