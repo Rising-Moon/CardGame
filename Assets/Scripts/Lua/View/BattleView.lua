@@ -78,9 +78,9 @@ end
 -- 手牌位置
 local handPosition = world2screen(uiMap["Hand"].position);
 -- 手牌最左最右位置的偏移值
-local offset = CS.UnityEngine.Screen.width * 1 / 3;
+local cardBoundOffset = CS.UnityEngine.Screen.width * 1 / 3;
 -- 最左和最右的位置
-local left = CS.UnityEngine.Vector3(handPosition.x - offset, handPosition.y, handPosition.z);
+local left = CS.UnityEngine.Vector3(handPosition.x - cardBoundOffset, handPosition.y, handPosition.z);
 --local right = CS.UnityEngine.Vector3(handPosition.x + offset, handPosition.y, handPosition.z);
 
 -- 手牌最大间隔
@@ -93,6 +93,8 @@ local handCards = {}
 local handCardCount = 0;
 -- 牌堆
 local cardPile = uiMap["CardPile"];
+-- 弃牌堆
+local discardPile = uiMap["DiscardPile"];
 
 -- 调整手牌位置
 function adjustHandsCard()
@@ -109,7 +111,7 @@ function adjustHandsCard()
             v.moveUtil:SmoothMove(screen2world(handPosition), moveSpeed, 1);
             v.moveUtil:SetOriginPoint(screen2world(handPosition));
         end
-    elseif ((handCardCount - 1) * maxInterval < offset * 2) then
+    elseif ((handCardCount - 1) * maxInterval < cardBoundOffset * 2) then
         local off = -handCardCount / 2;
         for _, v in pairs(handCards) do
             local pos = screen2world(handPosition + CS.UnityEngine.Vector3(maxInterval * off, 0, 0));
@@ -122,7 +124,7 @@ function adjustHandsCard()
         local pos = {};
         local index = 1;
         for i = 1, handCardCount do
-            table.insert(pos, left + CS.UnityEngine.Vector3(offset * 2 / (handCardCount - 1), 0, 0) * (i - 1));
+            table.insert(pos, left + CS.UnityEngine.Vector3(cardBoundOffset * 2 / (handCardCount - 1), 0, 0) * (i - 1));
         end
         for _, v in pairs(handCards) do
             v.moveUtil:SmoothMove(screen2world(pos[index]), moveSpeed, 1);
@@ -140,6 +142,18 @@ function BattleView:addCardToHand(card)
     handCards[cardObject:GetHashCode()] = { card = card, object = cardObject, moveUtil = cardObject:GetComponent("MoveUtil") };
     handCardCount = handCardCount + 1;
     adjustHandsCard();
+end
+
+-- 进入弃牌堆
+function putToDiscard(card)
+    if (handCards[card.object:GetHashCode()]) then
+        removeFromHand(card);
+    end
+    -- 消除标签，使其不会再被选中
+    card.object.tag = 'Untagged';
+    card.moveUtil:Discard(discardPile.transform.position, 15, 0, function()
+        destroyCard(card);
+    end);
 end
 
 -- 销毁卡牌（彻底删除卡牌）
@@ -193,10 +207,24 @@ local originSize = nil;
 local originSibling = nil;
 --卡牌使用回调
 local useCardCallBack = nil;
+--拿起卡牌回调
+local pickCardCallBack = nil;
+--放下卡牌回调
+local putCardCallBack = nil;
 
 --设置卡牌使用回调
 function BattleView:setUseCardListener(func)
     useCardCallBack = func;
+end
+
+--设置拿起卡牌回调
+function BattleView:setPickCardListener(func)
+    pickCardCallBack = func;
+end
+
+--设置放下卡牌回调
+function BattleView:setPutCardListener(func)
+    putCardCallBack = func;
 end
 
 --卡牌与鼠标的交互
@@ -223,11 +251,16 @@ function cardInteraction()
                 end
             end
             -- 卡牌移动回原位
-            if (moveUtil and useSuccess == false) then
+            if (moveUtil and not useSuccess) then
                 putToHand(card);
                 moveUtil:SmoothMoveBack(20, 1);
+                -- 使用卡牌失败时，卡牌回到原位并触发回调
+                if (putCard) then
+                    putCard(card.card);
+                end
             elseif (moveUtil and useSuccess) then
-                destroyCard(card);
+                -- destroyCard(card);
+                putToDiscard(card);
                 selectCard = nil;
             end
             card = nil;
@@ -250,10 +283,6 @@ function cardInteraction()
                 selectCard = hitObject;
                 selectCard.transform.localScale = originSize * 1.5;
                 selectCard.transform:SetAsLastSibling();
-
-                --调试
-                print(handCards[hitObject:GetHashCode()]);
-                print(handCards[hitObject:GetHashCode()].card.objId);
             elseif (hitObject == nil) then
                 originSize = nil;
                 originSibling = nil;
@@ -268,13 +297,17 @@ function cardInteraction()
                 offset = hitObject.transform.position - mousePosition;
                 originPosition = hitObject.transform.position;
                 moveUtil = card.moveUtil;
+                --抓起卡牌时使用回调
+                if (pickCardCallBack) then
+                    pickCardCallBack(card.card);
+                end
             end
         end
     end
 end
 
 -- view 初始化
-function BattleView:init(player,enemy)
+function BattleView:init(player, enemy)
     -- 创建玩家信息界面
     createPlayerInfo(player);
     -- 加载怪物
@@ -282,7 +315,7 @@ function BattleView:init(player,enemy)
 end
 
 -- 重载界面
-function BattleView:reload(player, enemy,hand)
+function BattleView:reload(player, enemy, hand)
     -- 卸载场景中的界面
     for k, v in pairs(handCards) do
         CardView:destroy(v.card, v.object);
@@ -305,7 +338,7 @@ function BattleView:reload(player, enemy,hand)
     ResourcesManager:clear();
 
     -- 初始化场景
-    BattleView:init(player,enemy);
+    BattleView:init(player, enemy);
 
 end
 

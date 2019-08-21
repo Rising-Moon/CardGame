@@ -43,10 +43,30 @@ local licensing = function()
         local cardId = unUsedCards[id];
         table.remove(unUsedCards, id);
         if (cardId) then
-            MusicManager.afx:playClip("Licens",1);
+            MusicManager.afx:playClip("Licens", 1);
             BattleView:addCardToHand(CardListManager.getCard(cardId));
         end
     end
+end
+
+-- 卡牌进入弃牌堆
+local abandonedCard = function(id)
+    local index = 0;
+    for i = 1, #usingCards do
+        if (usingCards[i] == id) then
+            index = i;
+        end
+    end
+    table.insert(abandonedCards, usingCards[index]);
+    table.remove(usingCards, index);
+end
+
+-- 弃牌堆回到卡组
+local shuffle = function()
+    for _, v in pairs(abandonedCards) do
+        table.insert(unUsedCards, v);
+    end
+    abandonedCards = {};
 end
 
 ----
@@ -67,12 +87,27 @@ function useCard(card)
             atk = function()
                 enemy.life = enemy.life - v;
                 BattleView:playEnemyAnim("injured");
-                MusicManager.afx:playClip("HitAfx",0.5);
+                MusicManager.afx:playClip("HitAfx", 0.5);
+                abandonedCard(card.cardId);
             end,
             -- def 防御
             def = function()
-                MusicManager.afx:playClip("Armor",0.5);
-            end
+                if (not player.attributeList.def) then
+                    player.attributeList.def = 0;
+                end
+                player.attributeList.def = player.attributeList.def + v;
+                MusicManager.afx:playClip("Armor", 0.5);
+                abandonedCard(card.cardId);
+            end,
+            -- 防御翻倍
+            mul_def = function()
+                if (not player.attributeList.def) then
+                    player.attributeList.def = 0;
+                end
+                player.attributeList.def = player.attributeList.def * v;
+                MusicManager.afx:playClip("Armor", 0.5);
+                abandonedCard(card.cardId);
+            end,
         }
         if (switch[k]) then
             switch[k]();
@@ -81,13 +116,24 @@ function useCard(card)
     return true;
 end
 
+-- 拿起卡牌的回调
+function pickCard(card)
+    MusicManager.afx:playClip("PickCard",1);
+    print("拿起卡牌:"..card.name);
+end
+
+-- 放下卡牌的回调
+function putCard(card)
+
+end
+
 ----
 --- 非逻辑部分
 ----
 
 function BattleController:reload()
-    BattleView:reload(player,enemy);
-    for _,v in pairs(usingCards) do
+    BattleView:reload(player, enemy);
+    for _, v in pairs(usingCards) do
         BattleView:addCardToHand(CardListManager.getCard(v));
     end
 end
@@ -101,7 +147,7 @@ end
 function BattleController:init(p, e)
 
     -- 调试数据，实际上应该由外部传入
-    defalutP = DataProxy.createProxy(PlayerObject.new("Knight", 100, 1, 20, 100), {});
+    defalutP = DataProxy.createProxy(PlayerObject.new("骑士", 100, 1, 20, 100), {});
     defaultE = DataProxy.createProxy(EnemyObject.new("树人", 100, 20, 76, 20, 2, 2), {});
 
     -- 初始化数据
@@ -124,11 +170,18 @@ function BattleController:init(p, e)
 
     -- 设置卡牌使用的回调
     BattleView:setUseCardListener(useCard);
+
+    -- 设置拿起卡牌的回调
+    BattleView:setPickCardListener(pickCard);
+
+    -- 设置放下卡牌的回调
+    BattleView:setPutCardListener(putCard);
 end
 
 function BattleController:start()
+    -- 播放背景音乐
     MusicManager.background:setMusic("BattleMusic");
-    MusicManager.background:play();
+    --MusicManager.background:play();
 end
 
 function BattleController:update()
@@ -158,20 +211,23 @@ function BattleController:update()
         BattleController:reload();
     end
 
-    -- 背景音乐调试
+    -- 卡牌调试
     if (CS.UnityEngine.Input.GetKeyDown("1")) then
-        MusicManager.background:play();
+        shuffle();
     end
     if (CS.UnityEngine.Input.GetKeyDown("2")) then
-        MusicManager.background:pause();
-    end
-    if (CS.UnityEngine.Input.GetKeyDown("3")) then
-        MusicManager.background:stop();
-    end
-
-    -- 音效调试
-    if (CS.UnityEngine.Input.GetKeyDown("4")) then
-        MusicManager.afx:playClip("HitAfx",0.5);
+        print("卡组：");
+        for k, v in pairs(unUsedCards) do
+            print(k .. ":" .. CardListManager.getCard(v).name);
+        end
+        print("手牌：");
+        for k, v in pairs(usingCards) do
+            print(k .. ":" .. CardListManager.getCard(v).name);
+        end
+        print("弃牌堆：");
+        for k, v in pairs(abandonedCards) do
+            print(k .. ":" .. CardListManager.getCard(v).name);
+        end
     end
 end
 

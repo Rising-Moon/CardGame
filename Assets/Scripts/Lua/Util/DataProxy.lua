@@ -4,15 +4,29 @@ function DataProxy.createProxy(sourceTable, listeners)
     local proxy = {
         listeners = listeners,
         -- 添加监听者
-        addListener = function(proxy,name,func)
-            proxy.listeners[name] = func;
+        addListener = function(self, name, func)
+            self.listeners[name] = func;
         end,
         -- 删除监听者
-        removeListener = function (proxy,name)
-            proxy.listeners[name] = nil;
+        removeListener = function(self, name)
+            self.listeners[name] = nil;
         end,
-        source = sourceTable
+        source = sourceTable;
     };
+
+
+    for k,v in pairs(sourceTable) do
+        if(type(v) == "table" and k ~= "__index") then
+            sourceTable[k] = DataProxy.createProxy(sourceTable[k],listeners);
+            for k, v in pairs(listeners) do
+                print(k);
+                if (v) then
+                    v(sourceTable[k], nil);
+                end
+            end
+        end
+    end
+
 
     -- 生成一个数据代理，对sourceTable的数据修改进行监控
     local meta = {
@@ -28,7 +42,8 @@ function DataProxy.createProxy(sourceTable, listeners)
                 end
                 sourceTable[name] = newValue;
 
-                for _, v in pairs(listeners) do
+                for k, v in pairs(listeners) do
+                    print(k);
                     if (v) then
                         v(oldValue, newValue);
                     end

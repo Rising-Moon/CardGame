@@ -44,6 +44,7 @@ function PlayerView:createView(player, parent)
 
     -- 添加update为card的监听者
     player:addListener(view:GetHashCode(), update);
+    --player.attributeList:addListener(view:GetHashCode(), update);
 
     return view;
 end

@@ -8,6 +8,8 @@ CardListManager = {}
 
 local filePath = "Assets/Resources/data/Cards.txt";
 
+local userHaveCards = {};
+
 function CardListManager.loadCards()
     --从文件中读取卡牌信息
     --卡牌信息文件
@@ -35,7 +37,11 @@ function CardListManager.loadCards()
                         userHaveCardId = "";
                     end
                     --创建一个空的卡牌对象的代理，以卡牌的id为键值存入相应表中
-                    cardList.user_have[tonumber(id)] = dataProxy.createProxy(CardObject.new(tonumber(id)),{});
+                    if(not cardList.user_have[tonumber(id)]) then
+                        cardList.user_have[tonumber(id)] = dataProxy.createProxy(CardObject.new(tonumber(id)),{});
+                    end
+                    table.insert(userHaveCards,tonumber(id));
+
                 end
                 --玩家未拥有卡牌
                 --逻辑同上
@@ -154,8 +160,8 @@ end
 -- 获取可用卡片列表
 function CardListManager.getUserHaveCards()
     local haveCards = {};
-    for k,_ in pairs(CardList.user_have) do
-        table.insert(haveCards,k);
+    for _,v in pairs(userHaveCards) do
+        table.insert(haveCards,v);
     end
     return haveCards;
 end

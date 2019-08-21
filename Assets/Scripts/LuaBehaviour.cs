@@ -59,6 +59,7 @@ namespace XLuaBehaviour{
             addLuaPath("Assets.Scripts.Lua.Controller");
             addLuaPath("Assets.Scripts.Lua.Util");
             addLuaPath("Assets.Scripts.Lua.View");
+            addLuaPath("Assets.Scripts.Lua.Manager");
 
 
             //将luaBehaviour注册到消息列表监听

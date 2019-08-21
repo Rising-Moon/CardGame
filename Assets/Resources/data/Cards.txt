@@ -1,5 +1,5 @@
-user_have:1,2,3,6,
-not_obtain:4,5,
+user_have:1,2,3,4,2,2,2,
+not_obtain:
 ----Card:1
 introduction=使用钝器攻击对方，\n造成5点伤害
 img=Stun_2
@@ -27,12 +27,12 @@ def=2
 }
 cost=1
 cardId=3
-----Card:6
+----Card:4
 introduction=警惕两个方向进行的\n攻击，防御值翻倍
 img=Close_2
 name=双向防御
 valueMap={
-mul_def = 2
+mul_def=2
 }
 cost=3
-cardId=6
+cardId=4
