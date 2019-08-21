@@ -50,23 +50,7 @@ local currentController =nil;
 
 function start()
 
-    --可以直接使用audio的加载也可以ResouresManager:LoadPath()
-    --该音乐前面有很长一段空白
-    --local music =AudioManager:LoadAudio("music/backGroundMusic");
-    --
-    --[[
-    local function callback()
-        print("nil");
-    end
 
-    ScenesManager:AsyncLoadSceneCallBack(1,callback);
-    ]]--
-    --AudioManager:PlayBacKGroundMusic(music,1);
-    --local d=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/picture.pic","daily",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
-    --local a =ResourcesManager:instantiatePath("Assets/Resources/Prefabs/healthBar.prefab","healthBar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
-    --local d=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre","healthbar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
-    local music =ResourcesManager:LoadPath("Assets/Resources/music/backGroundMusic.mp3","backGroundMusic");
-    AudioManager:PlayBacKGroundMusic(music);
     controllerList={
         loginInController,
         dailyController,
@@ -78,12 +62,10 @@ function start()
     if (currentController ~= nil and currentController.start ~= nil) then
         currentController.start();
     end
-    --print(ScenesManager:GetIndex());
+
 end
 
 function update()
-
-
 
     --切换场景
     currentController=controllerList[ScenesManager:GetIndex()+1];

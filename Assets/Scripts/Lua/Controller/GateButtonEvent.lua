@@ -1,6 +1,7 @@
 local util = require 'xlua.util';
 local RM =require("ResourcesManager");
 local SM =require("ScenesManager");
+local AM =require("AudioManager");
 --对背包使用
 local CardList =require("CardList");
 local CardListManager = require("CardListManager");
@@ -51,6 +52,8 @@ function GateButtonEvent.listenEvent(callback)
 
     if callback and initState then
 
+        local music =RM:LoadPath("Assets/Resources/music/backGroundMusic.mp3","backGroundMusic");
+        AM:PlayMusic(music);
         --静态函数
         uiRoot =CS.UnityEngine.GameObject.Find("Canvas");
         assert(uiRoot,"didnt get canvas");
@@ -93,17 +96,6 @@ function GateButtonEvent.listenEvent(callback)
 
      end
 
-        --
-        --[[  for i=0,cardBag.transform.childCount-1,1 do
-              local img =cardBag.transform:GetChild(i);
-              --点击背包的图片后，打印ui组件名字
-              --这里加载的应该是持有卡牌的贴图
-              print("set a new img");
-              local pic =RM:LoadPath("Assets/StreamingAssets/AssetBundles/cardimage.pic",CardImageDir[i+1].name);
-              img:GetComponent("Image").sprite =pic;
-              CS.UGUIEventListener.Get(img.gameObject).onClick =imgOnClick;
-          end
-        ]]--
          cardBag.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
 
          fightButton:GetComponent("Button").onClick:AddListener(function()

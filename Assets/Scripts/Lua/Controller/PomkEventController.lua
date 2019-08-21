@@ -1,5 +1,6 @@
 local ScenesManager=require("ScenesManager");
-local RM=require("ResourcesManager");
+local RM =require("ResourcesManager");
+local AM =require("AudioManager");
 
 --抽卡后使用
 local CardList =require("CardList");
@@ -63,29 +64,19 @@ local function getCard()
     --鼠标所在位置
     local mousePosition = CS.UnityEngine.Camera.main:ScreenToWorldPoint(CS.UnityEngine.Input.mousePosition);
     if (card) then
-        --已选中卡牌跟随鼠标
-        if (CS.UnityEngine.Input.GetMouseButton(0)) then
-            if(moveUtil)then
-                moveUtil:SmoothMove(mousePosition + offset,50);
-            end
-        end
-        --放开卡牌
-        if (CS.UnityEngine.Input.GetMouseButtonUp(0)) then
-            local threshold = CS.UnityEngine.Screen.height/5*2;
-            local cardScreenPoint = CS.UnityEngine.Camera.main:WorldToScreenPoint(card.transform.position);
 
+        --点击卡牌
+        if (CS.UnityEngine.Input.GetMouseButton(0)) then
             -- 卡牌点击会消失
-            if(moveUtil) then
-                moveUtil:SmoothMoveBack(20,1);
-                RM:dropResoureces(card);
-                --卡牌消失后继续抽卡
-                CardFlag =0;
-            end
+            --RM:dropResoureces(card);
+            RM:pushInPool("Assets/StreamingAssets/AssetBundles/Card.pre","Card",card);
+            print("恭喜你获得卡牌");
+            --卡牌消失后继续抽卡
+            CardFlag =0;
             card = nil;
             offset = nil;
             originPosition = nil;
             selectCard =nil;
-
         end
 
     else
@@ -109,6 +100,7 @@ local function getCard()
                 selectCard = nil;
             end
         end
+
         --抓住卡牌
         if (CS.UnityEngine.Input.GetMouseButtonDown(0)) then
             if (hitObject ~= nil and hitObject.tag == 'Card') then
@@ -118,6 +110,7 @@ local function getCard()
                 moveUtil = card:GetComponent("MoveUtil");
             end
         end
+
     end
 end
 
@@ -125,13 +118,15 @@ function PomkEventController.listenEvent(callback)
 
     if callback and initState then
 
+        local music =RM:LoadPath("Assets/Resources/music/PomkMusic.mp3","PomkMusic");
+        AM:PlayMusic(music);
+
         uiRoot =CS.UnityEngine.GameObject.Find("Canvas");
         backButton =uiRoot.transform:Find("back");
         pomkButton =uiRoot.transform:Find("pomk");
 
-
-        assert(backButton,"dont get button");
-
+        assert(backButton,"dont get backButton");
+        assert(pomkButton,"dont get pomkButton");
 
         btn = backButton:GetComponent("Button");
         bun = pomkButton:GetComponent("Button");
@@ -140,15 +135,20 @@ function PomkEventController.listenEvent(callback)
                 btn.interactable = false;
                 flag =1;
         end);
-        --性能非常差
+        --每次抽卡实际上是重新实例化一个卡牌的预制体。因此性能非常差
+        --将实例话的卡牌放入对象池中提高性能？
         bun.onClick:AddListener(function ()
             bun.interactable =false;
             CardFlag =1;
             --num需要为卡牌的id，通过卡牌id来处理实例化
             local num=math.random(1,4);
             print("Card number is:"..num);
-            local newCard =RM:instantiatePath("Assets/StreamingAssets/AssetBundles/Card.pre","Card",uiRoot,CS.UnityEngine.Vector3(0,0,0));
-            --local cardName =newCard.transform:Find("name_back").gameObject.transform:Find("Name");
+            local newCard =RM:popPool("Assets/StreamingAssets/AssetBundles/Card.pre","Card");
+            if not newCard then
+                newCard =RM:instantiatePath("Assets/StreamingAssets/AssetBundles/Card.pre","Card",uiRoot,CS.UnityEngine.Vector3(0,0,0));
+            end
+            newCard.transform.localScale =CS.UnityEngine.Vector3(1,1,1);
+             --local cardName =newCard.transform:Find("name_back").gameObject.transform:Find("Name");
             local cardName =newCard.transform:Find("name_back/Name");
             local cardImage =newCard.transform:Find("Image/Image_back");
             local cardCost =newCard.transform:Find("cost_back/cost/costValue");
