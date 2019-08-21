@@ -7,6 +7,7 @@ ScenesManager.__index =ScenesManager;
 
 local UE =CS.UnityEngine;
 
+--必须要从LoginInScene进入，否则就会出现nil错误
 --获取一个c#脚本调用startCoroutine
 local myClass =UE.GameObject.Find("mainApp"):GetComponent("LuaBehaviour");
 ------------------------------------

@@ -1,7 +1,6 @@
 -------------------------引用------------------
----为全局添加调用
---获取一个c#脚本调用
---local myClass =CS.UnityEngine.GameObject.Find("mainApp"):GetComponent("LuaBehaviour");
+--- 响应处理，处理来自服务器的响应
+local responseListener = require('ResponseListener');
 
 
 ---引用全局枚举表
@@ -36,14 +35,22 @@ local PathManager =require("PathManager");
 ---引入基类
 
 
+
 --引入logincontroller
 local loginInController =require("LoginInController");
---
-local dailyController =require("GatesController");
---
---local BattleController = require("BattleController");
---
+
+--引入gatesController
+local GatesController =require("GatesController");
+
+--引入battleController
+--目前不能使用，因为battleview在创建的时候，以场景battle的canvas创建uimap，导致在倒入battlecontroller的时候会报错
+--local BattleController = require('BattleController');
+
+--引入PomkController
 local PomkController = require("PomkController");
+
+-- 卡牌列表管理，卡牌信息都在其中进行管理
+local CardListManager = require('CardListManager');
 
 local currentController =nil;
 
@@ -53,7 +60,7 @@ function start()
 
     controllerList={
         loginInController,
-        dailyController,
+        GatesController,
         --BattleController,
         PomkController
     };

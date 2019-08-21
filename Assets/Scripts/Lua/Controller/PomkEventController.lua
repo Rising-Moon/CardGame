@@ -135,6 +135,7 @@ function PomkEventController.listenEvent(callback)
                 btn.interactable = false;
                 flag =1;
         end);
+        --这里也能用cardview来创建对象，但是采用来cardview后实际上是每次都实例化一次pre
         --每次抽卡实际上是重新实例化一个卡牌的预制体。因此性能非常差
         --将实例话的卡牌放入对象池中提高性能？
         bun.onClick:AddListener(function ()
