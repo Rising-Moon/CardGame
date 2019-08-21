@@ -142,7 +142,7 @@ function PomkEventController.listenEvent(callback)
             bun.interactable =false;
             CardFlag =1;
             --num需要为卡牌的id，通过卡牌id来处理实例化
-            local num=math.random(1,4);
+            local num=math.random(1,6);
             print("Card number is:"..num);
             local newCard =RM:popPool("Assets/StreamingAssets/AssetBundles/Card.pre","Card");
             if not newCard then
@@ -165,24 +165,23 @@ function PomkEventController.listenEvent(callback)
             cardContent:GetComponent("Text").text=cardInfo[num].introduction;
 
             print("是否未拥有卡牌："..num);
-            print(type(CardList.not_obtain[num]) =="table");
+
             --[[
-            for i,v in pairs(CardList.not_obtain[num]) do
-                print(i);
-                print(v);
+            --能够成功获取的未拥有卡牌的属性
+            print(CardList.not_obtain[num]);
+            print(type(CardList.not_obtain[num]) =="table");
+
+            if type(CardList.not_obtain[num]) =="table" then
+                for i,v in pairs(CardList.not_obtain[num]) do
+                    print(i);
+                    print(v);
+                end
             end
             ]]--
-            --暂时先使用cardlistmanager的接口
-            --这里获取任何card都会返回卡牌存在或已经销毁？？？
-            --userGet 通过name来判断not-obtain是否有卡的存在，但是打印出来实际上没看到name属性？nil~=""值为真
-            --此时卡牌拥有
-            CardListManager:userGet(num);
-            --卡牌在数据文件中不存在，所以卡牌会一直显示未拥有
-            --每次获取卡牌后，保存最新消息
-            --此时卡牌未拥有
-            --无论什么时候都会返回卡牌不存在或者已经获得，使用方法不对？
 
-            --CardListManager:saveCards();
+            --最初调用方法出错，暂时先使用cardlistmanager的接口
+            CardListManager.userGet(num);
+            CardListManager:saveCards();
         end);
 
         initState =callback.initListener(initState);

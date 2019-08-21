@@ -91,15 +91,24 @@ end
 
 --暂停
 function AudioManager:Pause()
+    if not self.currentMusic.clip then
+        return
+    end
     self.currentMusic:Pause();
 end
 --播放
 function AudioManager:Play()
+    if not self.currentMusic.clip then
+        return
+    end
     self.currentMusic:Play();
 end
 
 --停止，停止后再播放，声音从头开始播放
 function AudioManager:Stop()
+    if not self.currentMusic.clip then
+        return
+    end
     self.currentMusic:Stop();
 end
 

@@ -32,7 +32,26 @@ cardInfo ={
         cost=1,
         cardId=3
     },
-
+    {
+        introduction="射出两只箭\n造成4点伤害",
+        img="SIH_08",
+        name="双重箭",
+        valueMap={
+            mul_atk = 2,
+        },
+        cost=4,
+        cardId=4
+    },
+    {
+        introduction="造成4点伤害",
+        img="Lunge_2",
+        name="突进",
+        valueMap={
+            atk = 4,
+        },
+        cost=4,
+        cardId=5
+    },
     {
         introduction="警惕两个方向进行的\n攻击，防御值翻倍",
         img="Close_2",
