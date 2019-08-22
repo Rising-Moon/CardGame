@@ -208,7 +208,7 @@ function ScenesManager:QuitGame()
     print("game is quiting");
     CS.UnityEngine.Application.Quit();
 end
-
+--------------------------------------------------------------------------------------------------------------
 --应该在ui中单独使用，但是还没有完整的写uimanange，所以先放在scenesmanage里面
 --可以用对象池复用
 function ScenesManager:createDes(sprite,name,descri)
@@ -226,6 +226,17 @@ function ScenesManager:createDes(sprite,name,descri)
 
 end
 
+function ScenesManager:createGETFalse()
+    local info =RM:popPool("Assets/Resources/Prefabs/pomkBack.prefab","pomkBack");
+    if not info then
+        info =RM:instantiatePath("Assets/Resources/Prefabs/pomkBack.prefab","pomkBack",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
+    end
+    info.transform:Find("close"):GetComponent("Button").onClick:AddListener(function ()
+        RM:pushInPool("Assets/Resources/Prefabs/pomkBack.prefab","informa",info);
+    end);
+end
+
+------------------------------------------------------------------------------------------------------------
 --[[
 ---------------------内部接口----------------------
 ---异步加载场景

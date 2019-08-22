@@ -1,15 +1,8 @@
-local util = require 'xlua.util';
+local BagView =require("BagView");
 local RM =require("ResourcesManager");
 local SM =require("ScenesManager");
 local AM =require("AudioManager");
---对背包使用
-local CardList =require("CardList");
-local CardListManager = require("CardListManager");
---初始化卡牌管理并从文件中获得卡牌信息
-CardListManager.init();
-
---获取一个c#脚本调用
-local myClass =CS.UnityEngine.GameObject.Find("mainApp"):GetComponent("LuaBehaviour");
+local ProManager =require("ProManager");
 
 local GateButtonEvent = {};
 
@@ -24,6 +17,9 @@ local pomkButton =nil;
 local closeButton =nil;
 local bagButton =nil;
 
+local moneyText =nil;
+local levelText =nil;
+
 local cardBag =nil;
 local cardIma =nil
 
@@ -31,21 +27,7 @@ local initState =1;
 
 local bigTimer =nil;
 
-local function imgOnClick(gameObject)
-    local Show_Fuc = util.cs_generator(function()
-        gameObject.transform.localScale=CS.UnityEngine.Vector3(1.5,1.5,1.5);
 
-        --暂时不能同时点开两个，点开两个后存在错误
-        SM:createDes(gameObject:GetComponent("Image").sprite,gameObject.name,"this is :"..gameObject:GetComponent("Image").sprite.name);
-
-        coroutine.yield(CS.UnityEngine.WaitForSeconds(1));
-        gameObject.transform.localScale=CS.UnityEngine.Vector3(1,1,1);
-    end);
-    myClass:StartCoroutine(Show_Fuc);
-
-
-
-end
 
 
 function GateButtonEvent.listenEvent(callback)
@@ -74,27 +56,16 @@ function GateButtonEvent.listenEvent(callback)
         --cardBag =uiRoot.transform:Find("CardBag");
         assert(cardBag,"dont get card bag");
 
+        --每次GETComponet都在消耗性能
+        moneyText =uiRoot.transform:Find("user/money");
+        levelText =uiRoot.transform:Find("user/level");
+        moneyText:GetComponent("Text").text =ProManager.Info["Money"];
+        levelText:GetComponent("Text").text =ProManager.Level;
+
+
         --背包设置很简陋，根据现有的数据只存在六个背包 panel设置为grid
         --如果有后期会加入动态添加背包格子的
-
-         for id,info in pairs(CardList.user_have) do
-             print("user hava the card id is :"..id);
-             print(info);
-             if id <= 6 then
-                 local img =cardBag.transform:GetChild(id-1);
-                 assert(img,"dont get image");
-                 if img then
-                     print("get img");
-                     local pic =RM:LoadPath("Assets/StreamingAssets/AssetBundles/cardimage.pic",CardList.user_have[id].img);
-                     img:GetComponent("Image").sprite =pic;
-                     CS.UGUIEventListener.Get(img.gameObject).onClick =imgOnClick;
-                 else
-                     --超出限制之后退出，后期可能加上动态增加格子
-                     break
-                 end
-             end
-
-     end
+        BagView:createView(cardBag);
 
          cardBag.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
 
@@ -131,6 +102,8 @@ function GateButtonEvent.listenEvent(callback)
          end);
          initState =callback.initListener(initState);
      end
+
+
      --执行完upadte的代码后才会刷新
      if fightFlag ==1 then
          fightButton:GetComponent("Button").onClick:RemoveAllListeners();

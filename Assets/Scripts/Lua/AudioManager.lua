@@ -1,11 +1,6 @@
-local RM = require("ResourcesManager");
---local SM = require("ScenesManager");
-
 local AudioManager ={};
 
 local UE =CS.UnityEngine;
-
-local isPlayMusic = false;
 
 AudioManager.cmRoot =nil;
 

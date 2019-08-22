@@ -4,30 +4,15 @@ local AM =require("AudioManager");
 
 --抽卡后使用
 local CardList =require("CardList");
-local CardListManager = require("CardListManager");
+local CardListManager=require("CardListManager");
+local ProManager =require("ProManager");
+
 --初始化卡牌管理并从文件中获得卡牌信息
 --没有在manager里面init，每次加载文件都要init？
-CardListManager.init();
+--CardListManager.init();
 
---[[
-local cardTable =CardListManager.getUserHaveCards();
---返回的值和拥有的值之间有差别
---直接使用insert进行插入后会导致我理解的出错
-for i,v in pairs(cardTable) do
-    print("Card user have id is:"..i);
-    print("Card id is:"..v);
-end
-
-for id,info in pairs(CardList.user_have) do
-    print("Card user have id is:"..id);
-end
-]]--
 
 local PomkEventController ={};
-
-
-PomkEventController.callback ={};
-local callback =PomkEventController.callback;
 
 
 local CardFlag =0;
@@ -40,8 +25,13 @@ local btn;
 local pomkButton =nil;
 local bun;
 
+
+local moneyNum =nil;
+
+
 local initState =1;
 
+--------------------------------
 --选中的卡牌
 local card = nil;
 --待选卡牌
@@ -61,6 +51,7 @@ local originSibling = nil;
 --先将相关内容写在Pomk中，避免影响到cardcontroller
 --只能处理单张card
 local function getCard()
+
     --鼠标所在位置
     local mousePosition = CS.UnityEngine.Camera.main:ScreenToWorldPoint(CS.UnityEngine.Input.mousePosition);
     if (card) then
@@ -113,6 +104,8 @@ local function getCard()
 
     end
 end
+------------------------------------------
+
 
 function PomkEventController.listenEvent(callback)
 
@@ -122,11 +115,17 @@ function PomkEventController.listenEvent(callback)
         AM:PlayMusic(music);
 
         uiRoot =CS.UnityEngine.GameObject.Find("Canvas");
-        backButton =uiRoot.transform:Find("back");
-        pomkButton =uiRoot.transform:Find("pomk");
 
+
+        backButton =uiRoot.transform:Find("back");
         assert(backButton,"dont get backButton");
+        pomkButton =uiRoot.transform:Find("pomk");
         assert(pomkButton,"dont get pomkButton");
+        moneyNum =uiRoot.transform:Find("Money/moneyNum");
+        assert(moneyNum,"dont get moneyNum");
+
+        --每次GETComponet都在消耗性能
+        moneyNum:GetComponent("Text").text =ProManager.Info["Money"];
 
         btn = backButton:GetComponent("Button");
         bun = pomkButton:GetComponent("Button");
@@ -135,53 +134,61 @@ function PomkEventController.listenEvent(callback)
                 btn.interactable = false;
                 flag =1;
         end);
+
         --这里也能用cardview来创建对象，但是采用来cardview后实际上是每次都实例化一次pre
         --每次抽卡实际上是重新实例化一个卡牌的预制体。因此性能非常差
         --将实例话的卡牌放入对象池中提高性能？
         bun.onClick:AddListener(function ()
-            bun.interactable =false;
-            CardFlag =1;
-            --num需要为卡牌的id，通过卡牌id来处理实例化
-            local num=math.random(1,6);
-            print("Card number is:"..num);
-            local newCard =RM:popPool("Assets/StreamingAssets/AssetBundles/Card.pre","Card");
-            if not newCard then
-                newCard =RM:instantiatePath("Assets/StreamingAssets/AssetBundles/Card.pre","Card",uiRoot,CS.UnityEngine.Vector3(0,0,0));
-            end
-            newCard.transform.localScale =CS.UnityEngine.Vector3(1,1,1);
-             --local cardName =newCard.transform:Find("name_back").gameObject.transform:Find("Name");
-            local cardName =newCard.transform:Find("name_back/Name");
-            local cardImage =newCard.transform:Find("Image/Image_back");
-            local cardCost =newCard.transform:Find("cost_back/cost/costValue");
-            local cardContent =newCard.transform:Find("Content/Text");
-            cardName:GetComponent("Text").text =cardInfo[num].name;
-            local pic =RM:LoadPath("Assets/StreamingAssets/AssetBundles/cardimage.pic",cardInfo[num].img);;
-            --print(cardImage:GetComponent("Image").sprite);
-            --由于预制体的设置，如果不设置color这里会出现全黑的情况
-            cardImage:GetComponent("Image").sprite =pic;
-            --print(cardImage:GetComponent("Image").color);
-            cardImage:GetComponent("Image").color =CS.UnityEngine.Color(1,1,1);
-            cardCost:GetComponent("TextMeshProUGUI").text =cardInfo[num].cost;
-            cardContent:GetComponent("Text").text=cardInfo[num].introduction;
-
-            print("是否未拥有卡牌："..num);
-
-            --[[
-            --能够成功获取的未拥有卡牌的属性
-            print(CardList.not_obtain[num]);
-            print(type(CardList.not_obtain[num]) =="table");
-
-            if type(CardList.not_obtain[num]) =="table" then
-                for i,v in pairs(CardList.not_obtain[num]) do
-                    print(i);
-                    print(v);
+            print("the money you now have is:"..ProManager.Info["Money"]);
+            local boolUse =ProManager.useMoney(10);
+            if boolUse then
+                bun.interactable =false;
+                CardFlag =1;
+                --num需要为卡牌的id，通过卡牌id来处理实例化
+                local num=math.random(1,6);
+                print("Card number is:"..num);
+                local newCard =RM:popPool("Assets/StreamingAssets/AssetBundles/Card.pre","Card");
+                if not newCard then
+                    newCard =RM:instantiatePath("Assets/StreamingAssets/AssetBundles/Card.pre","Card",uiRoot,CS.UnityEngine.Vector3(0,0,0));
                 end
-            end
-            ]]--
+                newCard.transform.localScale =CS.UnityEngine.Vector3(1,1,1);
+                --local cardName =newCard.transform:Find("name_back").gameObject.transform:Find("Name");
+                local cardName =newCard.transform:Find("name_back/Name");
+                local cardImage =newCard.transform:Find("Image/Image_back");
+                local cardCost =newCard.transform:Find("cost_back/cost/costValue");
+                local cardContent =newCard.transform:Find("Content/Text");
+                cardName:GetComponent("Text").text =cardInfo[num].name;
+                local pic =RM:LoadPath("Assets/StreamingAssets/AssetBundles/cardimage.pic",cardInfo[num].img);;
+                --print(cardImage:GetComponent("Image").sprite);
+                --由于预制体的设置，如果不设置color这里会出现全黑的情况
+                cardImage:GetComponent("Image").sprite =pic;
+                --print(cardImage:GetComponent("Image").color);
+                cardImage:GetComponent("Image").color =CS.UnityEngine.Color(1,1,1);
+                cardCost:GetComponent("TextMeshProUGUI").text =cardInfo[num].cost;
+                cardContent:GetComponent("Text").text=cardInfo[num].introduction;
 
-            --最初调用方法出错，暂时先使用cardlistmanager的接口
-            CardListManager.userGet(num);
-            CardListManager.saveCards();
+
+                --最初调用方法出错，暂时先使用cardlistmanager的接口
+                local boolGet =CardListManager.userGet(num);
+                --更新
+                moneyNum:GetComponent("Text").text =ProManager.Info["Money"];
+                print("是否未拥有卡牌："..num);
+                print(boolGet);
+                if boolGet then
+                    --保存卡牌
+                    CardListManager.saveCards();
+                    --保存金币信息
+                    ProManager.saveInfo();
+                else
+                    ProManager.getMoney(10);
+                end
+                print("the money you now have is:"..ProManager.Info["Money"]);
+            else
+
+                print("金币不够，请前往充值");
+            end
+
+
         end);
 
         initState =callback.initListener(initState);
@@ -189,9 +196,6 @@ function PomkEventController.listenEvent(callback)
     end
 
     if flag ==1 then
-        --button:GetComponent("Button").onClick:RemoveAllListeners();
-        --先别使用协程
-        --ScenesManager:AsyncLoadScene(1);
         ScenesManager:LoadScene(1);
         initState =1;
         flag=0;
@@ -202,8 +206,6 @@ function PomkEventController.listenEvent(callback)
     if CardFlag ==0 then
         bun.interactable =true;
     end
-
-
 
 end
 

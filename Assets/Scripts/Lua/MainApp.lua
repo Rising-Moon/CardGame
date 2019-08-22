@@ -57,7 +57,6 @@ local currentController =nil;
 
 function start()
 
-
     controllerList={
         loginInController,
         GatesController,

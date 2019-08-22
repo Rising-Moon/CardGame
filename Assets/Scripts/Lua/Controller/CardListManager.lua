@@ -141,8 +141,10 @@ function CardListManager.userGet(cardId)
     if (card and card.name ~= "") then
         cardList.user_have[cardId] = card;
         cardList.not_obtain[cardId] = nil;
+        return true
     else
         print("这张卡不存在或者已经获得");
+        return false
     end
 end
 
@@ -165,5 +167,6 @@ function CardListManager.init()
     CardListManager.loadCards();
 end
 
+CardListManager.init();
 
 return CardListManager;
