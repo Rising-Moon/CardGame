@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 773033433
+CRC: 1788594395
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -19,8 +19,7 @@ AssetBundleManifest:
       Dependencies: {}
     Info_5:
       Name: enemy.pre
-      Dependencies:
-        Dependency_0: picture.pic
+      Dependencies: {}
     Info_6:
       Name: playerinfo.pre
       Dependencies:

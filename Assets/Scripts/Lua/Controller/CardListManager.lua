@@ -4,7 +4,7 @@ local serialize = require('serialize');
 local cardList = require('CardList');
 local dataProxy = require('DataProxy');
 
-CardListManager = {}
+local CardListManager = {}
 
 local filePath = "Assets/Resources/data/Cards.txt";
 

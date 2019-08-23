@@ -65,7 +65,7 @@ end
 function PathManager:findAllName(path)
     local fullName =nil;
     fullName =string.match(path,"/[%w]+%.[%w]+");
-    fullName =string.sub(fullName,2)
+    fullName =string.sub(fullName,2);
     --print("from PM fullName is :"..fullName);
     return fullName
 end

@@ -13,6 +13,9 @@ BattleView = {};
 -- 画布
 local canvas = ScenesManager:initRoot();
 
+-- 是否是玩家回合
+local playerTurn = false;
+
 -- 按ui节点名存储的map
 local uiMap = UIUtil.genAllChildNameMap(canvas);
 
@@ -26,6 +29,23 @@ local screen2world = function(pos)
     return CS.UnityEngine.Camera.main:ScreenToWorldPoint(pos);
 end
 
+-- 回合结束按钮
+local endTurnButton = nil;
+
+----
+--- 逻辑接口
+----
+
+function BattleView:startTurn()
+    endTurnButton.interactable = true;
+    playerTurn = true;
+end
+
+function BattleView:endTurn()
+    endTurnButton.interactable = false;
+    playerTurn = false;
+end
+
 ----
 --- 玩家
 ----
@@ -35,10 +55,25 @@ local playerObject = nil;
 -- 玩家位置
 local playerInfoPos = uiMap["PlayerInfoPos"];
 
+-- 玩家动画控制器
+local playerAnim = nil;
+
 -- 加载玩家信息
-function createPlayerInfo(player)
-    playerObject = PlayerView:createView(player, playerInfoPos);
+function createPlayerInfo(player, clickEvents)
+    playerObject = PlayerView:createView(player, playerInfoPos, clickEvents);
     playerObject.transform.position = playerInfoPos.transform.position;
+    playerAnim = playerObject:GetComponent("Animator");
+end
+
+-- 播放玩家动画
+function BattleView:playPlayerAnim(name)
+    print(name);
+    local anims = {
+        injured = function()
+            playerAnim:SetTrigger("injured");
+        end
+    }
+    anims[name]();
 end
 
 
@@ -61,7 +96,7 @@ function createEnemy(enemy)
     enemyAnim = enemyObject:GetComponent("Animator");
 end
 
--- 播发怪物动画
+-- 播放怪物动画
 function BattleView:playEnemyAnim(name)
     local anims = {
         injured = function()
@@ -151,9 +186,10 @@ function putToDiscard(card)
     end
     -- 消除标签，使其不会再被选中
     card.object.tag = 'Untagged';
-    card.moveUtil:Discard(discardPile.transform.position, 15, 0, function()
+    card.moveUtil:SetCallBack(function()
         destroyCard(card);
     end);
+    card.moveUtil:Discard(discardPile.transform.position, 15, 0);
 end
 
 -- 销毁卡牌（彻底删除卡牌）
@@ -255,8 +291,8 @@ function cardInteraction()
                 putToHand(card);
                 moveUtil:SmoothMoveBack(20, 1);
                 -- 使用卡牌失败时，卡牌回到原位并触发回调
-                if (putCard) then
-                    putCard(card.card);
+                if (putCardCallBack) then
+                    putCardCallBack(card.card);
                 end
             elseif (moveUtil and useSuccess) then
                 -- destroyCard(card);
@@ -307,15 +343,19 @@ function cardInteraction()
 end
 
 -- view 初始化
-function BattleView:init(player, enemy)
+function BattleView:init(player, enemy, clickEvents)
     -- 创建玩家信息界面
-    createPlayerInfo(player);
+    createPlayerInfo(player, clickEvents);
     -- 加载怪物
     createEnemy(enemy);
+    -- 重新生成uiMap
+    uiMap = UIUtil.genAllChildNameMap(canvas);
+    -- 赋值结束按钮
+    endTurnButton = uiMap["PlayerInfoPos.Player.NextTurn"]:GetComponent("Button");
 end
 
 -- 重载界面
-function BattleView:reload(player, enemy, hand)
+function BattleView:reload(player, enemy, clickEvents)
     -- 卸载场景中的界面
     for k, v in pairs(handCards) do
         CardView:destroy(v.card, v.object);
@@ -338,13 +378,15 @@ function BattleView:reload(player, enemy, hand)
     ResourcesManager:clear();
 
     -- 初始化场景
-    BattleView:init(player, enemy);
+    BattleView:init(player, enemy, clickEvents);
 
 end
 
 function BattleView:update()
-    -- 卡牌交互
-    cardInteraction();
+    if (playerTurn) then
+        -- 卡牌交互
+        cardInteraction();
+    end
 end
 
 return BattleView;

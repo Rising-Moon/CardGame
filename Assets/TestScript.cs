@@ -8,12 +8,15 @@ using UnityEngine.UI;
 
 public class TestScript : MonoBehaviour{
 
+    public GameObject player;
     // Start is called before the first frame update
     void Start(){
     }
 
     // Update is called once per frame
-    void FixedUpdate(){
-        gameObject.transform.Rotate(Vector3.up,1*0.02f);
+    void Update(){
+        if (Input.GetKeyDown("m")) {
+            player.GetComponent<Animator>().SetTrigger("injured");
+        }
     }
 }

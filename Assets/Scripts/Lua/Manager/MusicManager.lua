@@ -1,5 +1,7 @@
 -- 导包
 local ResourcesManager = require("ResourcesManager");
+
+
 local MusicManager = {};
 
 ----
@@ -8,10 +10,12 @@ local MusicManager = {};
 
 MusicManager.clips = {
     BattleMusic = { path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "battle_background" },
-    HitAfx = { path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "hit_3" },
+    HitAfx = { path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "hit_2" },
+    HitAfx2 = { path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "hit_3" },
     Armor = { path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "armor" },
     Licens = { path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "licens" },
-    PickCard = {path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "pick_card"}
+    PickCard = {path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "pick_card"},
+    PutCard = {path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "put_card"}
 }
 
 local clips = MusicManager.clips;

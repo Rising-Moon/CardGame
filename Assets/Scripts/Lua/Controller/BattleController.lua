@@ -8,6 +8,12 @@ local MusicManager = require("MusicManager");
 local BattleView = require("BattleView");
 
 ----
+--- Battle场景的控制器，对场景中的逻辑进行控制，从view获取输入，对model进行修改
+----
+
+local BattleController = {};
+
+----
 --- 初始化数据和方法
 ----
 -- 敌人
@@ -22,17 +28,14 @@ local unUsedCards = {};
 -- 弃牌池
 local abandonedCards = {};
 
-----
---- Battle场景的控制器，对场景中的逻辑进行控制，从view获取输入，对model进行修改
-----
-
-BattleController = {};
+-- 按钮点击事件
+local clickEvents = {};
 
 ----
 --- 卡牌处理
 ----
 
--- 随机获取卡牌(发牌)
+-- 发牌一次
 local licensing = function()
     if (#unUsedCards == 0) then
         print("卡池已空");
@@ -73,8 +76,37 @@ end
 --- 逻辑
 ----
 
--- 检查当前场景的状态
-function checkState()
+-- 回合数
+local turn = 0;
+
+-- 发牌数量
+local licensingNum = 3;
+
+-- 行动缓存(用于每次行动的结算)
+local Cache = {};
+
+-- 回合开始
+local function startTurn()
+    BattleView:startTurn();
+    -- 发牌
+    for i = 1,licensingNum do
+        invoke(licensing,0.2*(i-1));
+    end
+end
+
+-- 回合结束
+local function endTurn()
+    BattleView:endTurn();
+end
+
+-- 开始游戏
+local function start()
+    startTurn();
+end
+
+
+-- 结算每次行动效果
+local function checkState()
 
 end
 
@@ -92,10 +124,10 @@ function useCard(card)
             end,
             -- def 防御
             def = function()
-                if (not player.attributeList.def) then
-                    player.attributeList.def = 0;
+                if (not player.attributeList.Define) then
+                    player.attributeList.Define = 0;
                 end
-                player.attributeList.def = player.attributeList.def + v;
+                player.attributeList.Define = player.attributeList.Define + v;
                 MusicManager.afx:playClip("Armor", 0.5);
                 abandonedCard(card.cardId);
             end,
@@ -104,7 +136,7 @@ function useCard(card)
                 if (not player.attributeList.def) then
                     player.attributeList.def = 0;
                 end
-                player.attributeList.def = player.attributeList.def * v;
+                player.attributeList.Define = player.attributeList.Define * v;
                 MusicManager.afx:playClip("Armor", 0.5);
                 abandonedCard(card.cardId);
             end,
@@ -117,14 +149,24 @@ function useCard(card)
 end
 
 -- 拿起卡牌的回调
-function pickCard(card)
-    MusicManager.afx:playClip("PickCard",1);
-    print("拿起卡牌:"..card.name);
+local function pickCard(card)
+    MusicManager.afx:playClip("PickCard", 1);
+    print("拿起卡牌:" .. card.name);
 end
 
 -- 放下卡牌的回调
-function putCard(card)
+local function putCard(card)
+    MusicManager.afx:playClip("PutCard", 1);
+    print("放下卡牌:" .. card.name);
+end
 
+----
+--- 点击事件
+----
+
+-- 结束回合按钮
+function clickEvents.nextTurnfunc()
+    endTurn();
 end
 
 ----
@@ -132,7 +174,7 @@ end
 ----
 
 function BattleController:reload()
-    BattleView:reload(player, enemy);
+    BattleView:reload(player, enemy, clickEvents);
     for _, v in pairs(usingCards) do
         BattleView:addCardToHand(CardListManager.getCard(v));
     end
@@ -147,8 +189,8 @@ end
 function BattleController:init(p, e)
 
     -- 调试数据，实际上应该由外部传入
-    defalutP = DataProxy.createProxy(PlayerObject.new("骑士", 100, 1, 20, 100), {});
-    defaultE = DataProxy.createProxy(EnemyObject.new("树人", 100, 20, 76, 20, 2, 2), {});
+    defalutP = DataProxy.createProxy(PlayerObject.new("冒险者", 70, 1, 3, 100), {});
+    defaultE = DataProxy.createProxy(EnemyObject.new("树人", 30, 1, 76, 20, 2, "Treeman"), {});
 
     -- 初始化数据
     if (p) then
@@ -163,7 +205,7 @@ function BattleController:init(p, e)
     end
 
     -- 初始化view
-    BattleView:init(player, enemy);
+    BattleView:init(player, enemy, clickEvents);
 
     -- 初始化usingCards和unusedCards
     unUsedCards = CardListManager.getUserHaveCards();
@@ -176,16 +218,18 @@ function BattleController:init(p, e)
 
     -- 设置放下卡牌的回调
     BattleView:setPutCardListener(putCard);
+
+    -- 开始游戏
+    start();
 end
 
 function BattleController:start()
     -- 播放背景音乐
     MusicManager.background:setMusic("BattleMusic");
-    --MusicManager.background:play();
+    MusicManager.background:play();
 end
 
 function BattleController:update()
-
     BattleView:update()
 
     ----
@@ -195,11 +239,16 @@ function BattleController:update()
     if (CS.UnityEngine.Input.GetKeyDown("a")) then
         licensing();
     end
-    -- 怪物数据(减少两点生命，两点法力)
+    -- 玩家被攻击
     if (CS.UnityEngine.Input.GetKeyDown("n")) then
-        enemy.life = enemy.life - 2;
-        enemy.mana = enemy.mana - 2;
+        BattleView:playPlayerAnim("injured");
+        MusicManager.afx:playClip("HitAfx2", 0.5);
     end
+    -- 敌人buff
+    if (CS.UnityEngine.Input.GetKeyDown("m")) then
+        --enemy.attributeList.Define = 3;
+    end
+
 
     -- 发起热更请求
     if (CS.UnityEngine.Input.GetKeyDown("u")) then
@@ -207,7 +256,7 @@ function BattleController:update()
     end
 
     -- 重载场景
-    if (CS.UnityEngine.Input.GetKeyDown("t")) then
+    if (CS.UnityEngine.Input.GetKeyDown("r")) then
         BattleController:reload();
     end
 

@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2720151517
+CRC: 4110107546
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 99edf856017140c86a4cdef231a188f3
+    Hash: e3b44ad2d2d52e819d211a7dc2c8d3ca
   TypeTreeHash:
     serializedVersion: 2
     Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
@@ -16,6 +16,5 @@ Assets:
 - Assets/Resources/music/backGroundMusic.mp3
 - Assets/Music/armor.ogg
 - Assets/Music/hit_3.wav
-- Assets/Music/pick_card.wav
 - Assets/Music/battle_background.mp3
 Dependencies: []

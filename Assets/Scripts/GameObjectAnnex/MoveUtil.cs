@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
+using UnityEngine.UI;
 using XLua;
 
 public class MoveUtil : MonoBehaviour{
@@ -177,17 +179,20 @@ public class MoveUtil : MonoBehaviour{
     }
 
     [LuaCallCSharp]
-    public void Discard(Vector3 target, float speed, int type, Action callback){
+    public void Discard(Vector3 target, float speed, int typek){
         //变化时间
         var time = 0.2f;
-
         SmoothMove(target, speed, type);
-        callBack = callback;
         var v1 = (target - transform.position).normalized;
         var v2 = Vector3.down;
         var angle = Mathf.Acos(Vector3.Dot(v1, v2)) / Mathf.PI * 180 * (v1.x > v2.x ? 1 : -1);
         transform.Rotate(transform.forward, angle);
         Rotate(transform.rotation, Quaternion.Euler(Vector3.zero), time);
         ReSize(Vector3.one * 0.2f, transform.localScale, time);
+    }
+
+    [LuaCallCSharp]
+    public void SetCallBack(Action callback){
+        callBack = callback;
     }
 }
