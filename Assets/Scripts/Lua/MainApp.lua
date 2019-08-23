@@ -97,3 +97,7 @@ function ondestroy()
     end
 end
 
+function response()
+    -- 将响应信息交由responseListener代理
+    responseListener.response(messageCast);
+end

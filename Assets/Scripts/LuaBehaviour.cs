@@ -152,6 +152,7 @@ namespace XLuaBehaviour{
                 if (script.luaStart != null) {
                     script.luaStart();
                 }
+                
             }
         }
 

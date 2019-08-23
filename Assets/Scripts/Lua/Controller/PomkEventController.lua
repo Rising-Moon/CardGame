@@ -1,6 +1,7 @@
 local ScenesManager=require("ScenesManager");
 local RM =require("ResourcesManager");
 local AM =require("AudioManager");
+local UIUtil =require("UIUtil");
 
 --抽卡后使用
 local CardList =require("CardList");
@@ -152,6 +153,20 @@ function PomkEventController.listenEvent(callback)
                     newCard =RM:instantiatePath("Assets/StreamingAssets/AssetBundles/Card.pre","Card",uiRoot,CS.UnityEngine.Vector3(0,0,0));
                 end
                 newCard.transform.localScale =CS.UnityEngine.Vector3(1,1,1);
+                local cardMap =UIUtil.genAllChildNameMap(newCard);
+                local cardName =cardMap["name_back.Name"];
+                cardName:GetComponent("Text").text =cardInfo[num].name;
+
+                local cardImage =cardMap["Image.Image_back"];
+                cardImage:GetComponent("Image").color =CS.UnityEngine.Color(1,1,1);
+                cardImage:GetComponent("Image").sprite =RM:LoadPath("Assets/StreamingAssets/AssetBundles/cardimage.pic",cardInfo[num].img);
+
+                local cardCost =cardMap["cost_back.cost.costValue"];
+                cardCost:GetComponent("TextMeshProUGUI").text =cardInfo[num].cost;
+
+                local cardContent =cardMap["Content.Text"];
+                cardContent:GetComponent("Text").text=cardInfo[num].introduction;
+                --[[
                 --local cardName =newCard.transform:Find("name_back").gameObject.transform:Find("Name");
                 local cardName =newCard.transform:Find("name_back/Name");
                 local cardImage =newCard.transform:Find("Image/Image_back");
@@ -166,7 +181,7 @@ function PomkEventController.listenEvent(callback)
                 cardImage:GetComponent("Image").color =CS.UnityEngine.Color(1,1,1);
                 cardCost:GetComponent("TextMeshProUGUI").text =cardInfo[num].cost;
                 cardContent:GetComponent("Text").text=cardInfo[num].introduction;
-
+                ]]--
 
                 --最初调用方法出错，暂时先使用cardlistmanager的接口
                 local boolGet =CardListManager.userGet(num);
@@ -185,7 +200,7 @@ function PomkEventController.listenEvent(callback)
                     RM:pushInPool("Assets/StreamingAssets/AssetBundles/Card.pre","Card",newCard);
                     ScenesManager:CreateMessage("卡牌重复获得，金币原路返回");
                 end
-                print("the money you now have is:"..ProManager.Info["Money"]);
+                --print("the money you now have is:"..ProManager.Info["Money"]);
             else
                 ScenesManager:CreateMessage("金币不够，请前往充值");
                 print("金币不够，请前往充值");

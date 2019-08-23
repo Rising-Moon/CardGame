@@ -6,7 +6,7 @@ local ProManager =require("ProManager");
 local EventView =require("EventView");
 local GateButtonEvent = {};
 
-
+local fightFlag=0;
 local BagFlag =0;
 local pomkFlag =0;
 local quitFlag =0;
@@ -19,6 +19,7 @@ local bagButton =nil;
 
 local moneyText =nil;
 local levelText =nil;
+local gateText =nil;
 
 local cardBag =nil;
 
@@ -28,8 +29,11 @@ local Event3 =nil;
 
 local initState =1;
 
+local message =CS.MessageQueueManager.GetMessageQueue();
+
 local bigTimer =nil;
 
+--回调函数，便于更新text
 local function updateInfo(ifNum)
     if not ifNum then
         moneyText:GetComponent("Text").text =ProManager.Info["Money"];
@@ -37,8 +41,9 @@ local function updateInfo(ifNum)
         return
     end
 
-    initState =1;
-    print("now the new init is \t"..initState);
+    fightFlag =1;
+    --local msg =CS.Message("difficulty",ProManager.Info["Gate"])
+    --message:SendMessage(msg);
 
 end
 
@@ -48,7 +53,7 @@ end
 function GateButtonEvent.listenEvent(callback)
 
     if callback and initState then
-
+        print(message);
         local music =RM:LoadPath("Assets/Resources/music/backGroundMusic.mp3","backGroundMusic");
         AM:PlayMusic(music);
         --静态函数
@@ -73,8 +78,10 @@ function GateButtonEvent.listenEvent(callback)
         --每次GETComponet都在消耗性能
         moneyText =uiRoot.transform:Find("user/money");
         levelText =uiRoot.transform:Find("user/level");
+        gateText =uiRoot.transform:Find("user/Gates");
         moneyText:GetComponent("Text").text =ProManager.Info["Money"];
         levelText:GetComponent("Text").text =ProManager.Level;
+        gateText:GetComponent("Text").text =ProManager.Info["Gate"];
 
 
         --背包设置很简陋，根据现有的数据只存在六个背包 panel设置为grid
@@ -87,10 +94,12 @@ function GateButtonEvent.listenEvent(callback)
         assert(Event1,"dont get Message");
         Event3=uiRoot.transform:Find("Event3");
         assert(Event1,"dont get Message");
+
         EventView.createView("1",Event1,updateInfo);
         EventView.createView("2",Event2,updateInfo);
         EventView.createView("3",Event3,updateInfo);
-         cardBag.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
+
+        cardBag.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
 
 
          pomkButton:GetComponent("Button").onClick:AddListener(function()
@@ -123,7 +132,14 @@ function GateButtonEvent.listenEvent(callback)
      end
 
 
-
+    if fightFlag ==1 then
+        initState =1;
+        fightFlag =0;
+        --RM:clear();
+        SM:LoadScene(2);
+        --加载后将initState置回1，当下次重新加载入该场景后可以重现绑定事件
+        --
+    end
 
      if pomkFlag ==1 then
          pomkButton:GetComponent("Button").onClick:RemoveAllListeners();
@@ -145,8 +161,7 @@ function GateButtonEvent.listenEvent(callback)
          --application 在 调试时无法显示效果
          SM:QuitGame();
      end
-    print("when you back ");
-    print(initState);
+
 
  end
 

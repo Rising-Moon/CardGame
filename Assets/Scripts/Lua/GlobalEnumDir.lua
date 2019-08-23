@@ -69,9 +69,9 @@ cardInfo ={
 ---------------------事件属性表------------------
 EventDir={
     {
-        name ="树人",
+        name ="战斗",
         picName ="PacKForest01_6",
-        descri="你将挑战树人来获得奖赏",
+        descri="你通过战斗来获得奖赏",
         type =1
     },
     {
