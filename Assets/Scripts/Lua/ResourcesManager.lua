@@ -111,7 +111,7 @@ end
 --删除单个物体
 function ResourcesManager:dropResoureces(obj)
     --清除对象
-    CS.UnityEngine.Object.Destroy(obj);
+    CS.UnityEngine.GameObject.Destroy(obj);
 end
 
 ---------------------对象池处理---------------------------
