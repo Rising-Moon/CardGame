@@ -204,6 +204,7 @@ function ScenesManager:ReStart()
 end
 
 --退出游戏
+--在编辑器中没有反应，会被忽略
 function ScenesManager:QuitGame()
     print("game is quiting");
     CS.UnityEngine.Application.Quit();
@@ -212,7 +213,7 @@ end
 --应该在ui中单独使用，但是还没有完整的写uimanange，所以先放在scenesmanage里面
 --可以用对象池复用
 function ScenesManager:createDes(sprite,name,descri)
-    local info =RM:popPool("Assets/Resources/Prefabs/informa.prefab","informa");
+    local info =RM:popPool("Assets/Resources/Prefabs/informa.prefab","informa"..name);
     if not info then
         --ab打包的时候新出问题，先用resources加载测试
         info =RM:instantiatePath("Assets/Resources/Prefabs/informa.prefab","informa",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
@@ -221,20 +222,23 @@ function ScenesManager:createDes(sprite,name,descri)
     --设置预制体的时候text较小，使用后就尽量为一行描述
     info.transform:Find("info"):GetComponent("Text").text =name.."\t"..descri;
     info.transform:Find("close"):GetComponent("Button").onClick:AddListener(function ()
-        RM:pushInPool("Assets/Resources/Prefabs/informa.prefab","informa",info);
+        RM:pushInPool("Assets/Resources/Prefabs/informa.prefab","informa"..name,info);
     end);
 
 end
 
-function ScenesManager:createGETFalse()
-    local info =RM:popPool("Assets/Resources/Prefabs/pomkBack.prefab","pomkBack");
+function ScenesManager:CreateMessage(message)
+    local info =RM:popPool("Assets/Resources/Prefabs/textInfo.prefab","message");
     if not info then
-        info =RM:instantiatePath("Assets/Resources/Prefabs/pomkBack.prefab","pomkBack",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
+        info =RM:instantiatePath("Assets/Resources/Prefabs/textInfo.prefab","message",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
     end
-    info.transform:Find("close"):GetComponent("Button").onClick:AddListener(function ()
-        RM:pushInPool("Assets/Resources/Prefabs/pomkBack.prefab","informa",info);
+    info.transform:Find("Text"):GetComponent("Text").text =message;
+    info.transform:Find("Button"):GetComponent("Button").onClick:AddListener(function ()
+        RM:pushInPool("Assets/Resources/Prefabs/textInfo.prefab","message",info);
+
     end);
 end
+
 
 ------------------------------------------------------------------------------------------------------------
 --[[
@@ -262,6 +266,7 @@ AsyncLoad = coroutine.create(
  end)
 -----------------------------------------------------
 ]]--
+
 ScenesManager:init();
 
 return ScenesManager

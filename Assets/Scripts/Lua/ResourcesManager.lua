@@ -118,6 +118,8 @@ end
 --向对象池中存对象
 function ResourcesManager:pushInPool(path,abName,obj)
     local newPath =PM:GetTruePath(path);
+    --已经被存入了
+    --意味着第二次打开的化实例化
     if self.objPool[newPath..abName] then
         return
     end

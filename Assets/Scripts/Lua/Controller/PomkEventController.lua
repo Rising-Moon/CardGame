@@ -181,13 +181,16 @@ function PomkEventController.listenEvent(callback)
                     ProManager.saveInfo();
                 else
                     ProManager.getMoney(10);
+                    CardFlag =0;
+                    RM:pushInPool("Assets/StreamingAssets/AssetBundles/Card.pre","Card",newCard);
+                    ScenesManager:CreateMessage("卡牌重复获得，金币原路返回");
                 end
                 print("the money you now have is:"..ProManager.Info["Money"]);
             else
-
+                ScenesManager:CreateMessage("金币不够，请前往充值");
                 print("金币不够，请前往充值");
-            end
 
+            end
 
         end);
 
