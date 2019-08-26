@@ -8,11 +8,6 @@ local CardList =require("CardList");
 local CardListManager=require("CardListManager");
 local ProManager =require("ProManager");
 
---初始化卡牌管理并从文件中获得卡牌信息
---没有在manager里面init，每次加载文件都要init？
---CardListManager.init();
-
-
 local PomkEventController ={};
 
 
@@ -26,9 +21,11 @@ local btn;
 local pomkButton =nil;
 local bun;
 
+local temp =nil;
 
 local moneyNum =nil;
 
+local effictMusic =nil;
 
 local initState =1;
 
@@ -49,12 +46,14 @@ local originSize = nil;
 local originSibling = nil;
 
 
+
 --先将相关内容写在Pomk中，避免影响到cardcontroller
 --只能处理单张card
 local function getCard()
 
     --鼠标所在位置
     local mousePosition = CS.UnityEngine.Camera.main:ScreenToWorldPoint(CS.UnityEngine.Input.mousePosition);
+
     if (card) then
 
         --点击卡牌
@@ -106,12 +105,17 @@ local function getCard()
     end
 end
 ------------------------------------------
-
+function PomkEventController.getMessage(num)
+    temp =tostring(num);
+end
 
 function PomkEventController.listenEvent(callback)
 
     if callback and initState then
-
+        effictMusic=RM:LoadPath("Assets/Resources/music/Pomk.mp3","pomk");
+        if temp then
+            print("hello world");
+        end
         local music =RM:LoadPath("Assets/Resources/music/PomkMusic.mp3","PomkMusic");
         AM:PlayMusic(music);
 
@@ -194,6 +198,7 @@ function PomkEventController.listenEvent(callback)
                     CardListManager.saveCards();
                     --保存金币信息
                     ProManager.saveInfo();
+                    AM:PlayEffectMusic(effictMusic);
                 else
                     ProManager.getMoney(10);
                     CardFlag =0;

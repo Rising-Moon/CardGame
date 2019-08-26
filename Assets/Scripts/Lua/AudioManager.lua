@@ -15,12 +15,15 @@ function AudioManager:init()
     --记录当前播放的音乐
     --AudioSource—声音的控制组件，包含了控制声音播放、暂停、停止等方法。
     self.currentMusic =self.cmRoot.gameObject:AddComponent(typeof(UE.AudioSource));
+    --为抽卡，用牌留下
+    self.effectMusic =self.cmRoot.gameObject:AddComponent(typeof(UE.AudioSource));
     --循环播放设置
     self.currentMusic.loop =true;
-    self.currentMusic.volume =0.8;
-
-
-    --不同的音乐应当都为背景乐，同一时间只能播放一首乐曲
+    self.currentMusic.volume =0.3;
+    --
+    self.effectMusic.loop =false;
+    self.currentMusic.volume =0.9;
+    
     self.backGroundMusic =nil;
 
 
@@ -77,12 +80,26 @@ function AudioManager:PlayMusic(audio,delay)
     end
 end
 
---[[
---两个audio有些重复了，可以直接设置为两段音乐，然后在切换不同场景的时候切换，可用current作为temp，但是这样好像不太符合模块的定义？
-function AudioManager:PlayBattleMusic(audio,delay)
+function AudioManager:PlayEffectMusic(audio,delay)
+    if not self.effectMusic then
+        return
+    end
+    if audio then
+        if audio  == self.effectMusic.clip then
+            if self.effectMusic.isPlaying then
+                return
+            end
+        else
+            self.effectMusic.clip =audio;
+        end
+    end
+    if delay then
+        self.effectMusic:PlayDelayed(delay);
+    else
+        self.effectMusic:Play();
 
+    end
 end
-]]--
 
 --暂停
 function AudioManager:Pause()
@@ -105,6 +122,15 @@ function AudioManager:Stop()
         return
     end
     self.currentMusic:Stop();
+end
+
+function AudioManager:CloseMusic()
+    self.currentMusic =nil;
+    self.effectMusic =nil;
+end
+
+function AudioManager:reOpen()
+    self:init();
 end
 
 AudioManager:init();

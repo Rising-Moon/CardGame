@@ -54,8 +54,10 @@ local CardListManager = require('CardListManager');
 
 local currentController =nil;
 
+local message =CS.MessageQueueManager.GetMessageQueue();
 
 function start()
+
 
     controllerList={
         loginInController,

@@ -12,7 +12,7 @@ public class Message{
     public string msg;
 
     public enum MessageType{
-        TestMessage,SocketToServer,SocketResponse,SocketLuaPack,Debug
+        TestMessage,SocketToServer,SocketResponse,SocketLuaPack,Debug,Difficulty
     }
     
     public Message(MessageType head, string msg){

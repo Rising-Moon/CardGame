@@ -42,9 +42,10 @@ local function updateInfo(ifNum)
     end
 
     fightFlag =1;
-    --local msg =CS.Message("difficulty",ProManager.Info["Gate"])
-    --message:SendMessage(msg);
 
+    --发送信息给战斗模块，告知当前难度
+    local msg = CS.Message(CS.Message.MessageType.Difficulty,tostring(ProManager.Info["Gate"]));
+    message:SendMessage(msg);
 end
 
 
