@@ -86,8 +86,11 @@ end
 function ScenesManager:AsyncLoadSceneCall(index)
     --异步加载
     local LoadSceneAsync_Fun = util.cs_generator(function()
-        local LoadPre =RM:instantiatePath("Assets/StreamingAssets/AssetBundles/Load.pre","LoadSlider",UE.GameObject.Find("Canvas"),UE.Vector3(0,0,0));
+        --local LoadPre =RM:instantiatePath("Assets/StreamingAssets/AssetBundles/Load.pre","LoadSlider",UE.GameObject.Find("Canvas"),UE.Vector3(0,0,0));
+        local LoadPre =RM:instantiatePath("Assets/Resources/Prefabs/LoadSlider.pre","LoadSlider",UE.GameObject.Find("Canvas"),UE.Vector3(0,0,0));
+
         local slider=LoadPre.gameObject:GetComponent("Slider").value;
+
         slider =0;
         local Text =LoadPre.transform:Find("Text"):GetComponent(typeof(UE.UI.Text));
         assert(Text,"dont get Text");
@@ -102,13 +105,17 @@ function ScenesManager:AsyncLoadSceneCall(index)
             if async.progress <= 0.95 then
                 slider = async.progress;
                 print("loading>>>"..slider);
+
             else
                 slider = 1;
                 print("finish》》》"..slider);
+
             end
             --显示输出：但是加载太快看不到变化
             Text.text = "Loading: ".. math.ceil(slider * 100) .."%";
+            --coroutine.yield(UE.WaitForSeconds(2));
             coroutine.yield(UE.WaitForEndOfFrame);
+
         end
     end);
 
@@ -158,7 +165,7 @@ function ScenesManager:AsyncLoadSceneBack(index)
                     end
                 end
             end
-
+            --
             coroutine.yield(UE.WaitForEndOfFrame);
         end
     end)
@@ -212,22 +219,26 @@ end
 --------------------------------------------------------------------------------------------------------------
 --应该在ui中单独使用，但是还没有完整的写uimanange，所以先放在scenesmanage里面
 --可以用对象池复用
-function ScenesManager:createDes(sprite,name,descri)
+function ScenesManager.createDes(sprite,name,descri)
+    print("From SceneManager the name is:");
+    print(name);
     local info =RM:popPool("Assets/Resources/Prefabs/informa.prefab","informa"..name);
     if not info then
         --ab打包的时候新出问题，先用resources加载测试
         info =RM:instantiatePath("Assets/Resources/Prefabs/informa.prefab","informa",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
     end
+    info.transform.localScale=CS.UnityEngine.Vector3(2,2,2);
     info.transform:Find("Image"):GetComponent(typeof(CS.UnityEngine.UI.Image)).sprite =sprite;
     --设置预制体的时候text较小，使用后就尽量为一行描述
     info.transform:Find("info"):GetComponent("Text").text =name.."\t"..descri;
     info.transform:Find("close"):GetComponent("Button").onClick:AddListener(function ()
         RM:pushInPool("Assets/Resources/Prefabs/informa.prefab","informa"..name,info);
     end);
+    info.transform:Find("update"):GetComponent("Button").interactable =false;
 
 end
 
-function ScenesManager:CreateMessage(message)
+function ScenesManager.CreateMessage(message,callback)
     local info =RM:popPool("Assets/Resources/Prefabs/textInfo.prefab","message");
     if not info then
         info =RM:instantiatePath("Assets/Resources/Prefabs/textInfo.prefab","message",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
@@ -235,10 +246,38 @@ function ScenesManager:CreateMessage(message)
     info.transform:Find("Text"):GetComponent("Text").text =message;
     info.transform:Find("Button"):GetComponent("Button").onClick:AddListener(function ()
         RM:pushInPool("Assets/Resources/Prefabs/textInfo.prefab","message",info);
-
+        if callback then
+            callback();
+        end
     end);
 end
 
+--[[
+function ScenesManager.CreateDoubleMessage(message,callback)
+    local flag;
+    local info =RM:popPool("Assets/Resources/Prefabs/pomkCost.prefab","message");
+    if not info then
+        info =RM:instantiatePath("Assets/Resources/Prefabs/pomkCost.prefab","message",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
+    end
+
+    info.transform:Find("Text"):GetComponent("Text").text =message;
+
+    info.transform:Find("sure"):GetComponent("Button").onClick:AddListener(function ()
+        flag =1;
+        RM:pushInPool("Assets/Resources/Prefabs/pomkCost.prefab","message",info);
+        if callback then
+            callback();
+        end
+        return flag
+
+    end);
+    info.transform:Find("delay"):GetComponent("Button").onClick:AddListener(function ()
+        RM:pushInPool("Assets/Resources/Prefabs/pomkCost.prefab","message",info);
+        return flag
+    end);
+
+end
+]]--
 
 ------------------------------------------------------------------------------------------------------------
 --[[

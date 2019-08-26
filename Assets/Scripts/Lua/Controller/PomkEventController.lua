@@ -13,6 +13,8 @@ local PomkEventController ={};
 
 local CardFlag =0;
 local flag= 0;
+
+--组件
 local uiRoot=nil;
 
 local backButton =nil;
@@ -24,10 +26,13 @@ local bun;
 local temp =nil;
 
 local moneyNum =nil;
+local FragNum =nil;
 
 local effictMusic =nil;
 
 local initState =1;
+
+
 
 --------------------------------
 --选中的卡牌
@@ -105,17 +110,25 @@ local function getCard()
     end
 end
 ------------------------------------------
+---
+local function multiFlag()
+    CardFlag =0;
+end
+
+--[[
 function PomkEventController.getMessage(num)
     temp =tostring(num);
 end
-
+]]--
 function PomkEventController.listenEvent(callback)
 
     if callback and initState then
         effictMusic=RM:LoadPath("Assets/Resources/music/Pomk.mp3","pomk");
+        --[[
         if temp then
             print("hello world");
         end
+        ]]--
         local music =RM:LoadPath("Assets/Resources/music/PomkMusic.mp3","PomkMusic");
         AM:PlayMusic(music);
 
@@ -129,8 +142,13 @@ function PomkEventController.listenEvent(callback)
         moneyNum =uiRoot.transform:Find("Money/moneyNum");
         assert(moneyNum,"dont get moneyNum");
 
+        FragNum =uiRoot.transform:Find("Money/FragNum");
+        assert(FragNum,"dont get FragNum");
+
+
         --每次GETComponet都在消耗性能
         moneyNum:GetComponent("Text").text =ProManager.Info["Money"];
+        FragNum:GetComponent("Text").text =ProManager.Info["Frag"];
 
         btn = backButton:GetComponent("Button");
         bun = pomkButton:GetComponent("Button");
@@ -148,6 +166,13 @@ function PomkEventController.listenEvent(callback)
             local boolUse =ProManager.useMoney(10);
             if boolUse then
                 bun.interactable =false;
+                --这样实际上是柱塞线程
+                --[[
+                local boolchoose =ScenesManager.CreateDoubleMessage("是否花费10金币进行抽卡");
+                if boolchoose then
+
+                end
+                ]]--
                 CardFlag =1;
                 --num需要为卡牌的id，通过卡牌id来处理实例化
                 local num=math.random(1,6);
@@ -197,17 +222,19 @@ function PomkEventController.listenEvent(callback)
                     --保存卡牌
                     CardListManager.saveCards();
                     --保存金币信息
-                    ProManager.saveInfo();
+
                     AM:PlayEffectMusic(effictMusic);
                 else
-                    ProManager.getMoney(10);
-                    CardFlag =0;
+                    ProManager.getFrag(10);
+                    FragNum:GetComponent("Text").text =ProManager.Info["Frag"];
                     RM:pushInPool("Assets/StreamingAssets/AssetBundles/Card.pre","Card",newCard);
-                    ScenesManager:CreateMessage("卡牌重复获得，金币原路返回");
+                    ScenesManager.CreateMessage("卡牌重复获得，获得基础碎片",multiFlag);
+
                 end
+                ProManager.saveInfo();
                 --print("the money you now have is:"..ProManager.Info["Money"]);
             else
-                ScenesManager:CreateMessage("金币不够，请前往充值");
+                ScenesManager.CreateMessage("金币不够，请前往充值");
                 print("金币不够，请前往充值");
 
             end

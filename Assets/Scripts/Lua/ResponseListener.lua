@@ -68,7 +68,7 @@ function ResponseListener.response(message)
     elseif (messageCast.message.head == CS.Message.MessageType.Difficulty) then
         print("From message difficult");
         print(messageCast.message.msg);
-        pomk.getMessage(messageCast.message.msg);
+        --pomk.getMessage(messageCast.message.msg);
     end
 end
 

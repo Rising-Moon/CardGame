@@ -62,6 +62,14 @@ function ProManager.getExpr(num)
     ProManager.decodeExpr();
 end
 
+function ProManager.getFrag(num)
+    ProManager.Info["Frag"] =ProManager.Info["Frag"]+num;
+end
+
+function ProManager.upDifficult()
+    ProManager.Info["Gate"] =ProManager.Info["Gate"] +1;
+end
+
 function ProManager.saveInfo()
     local moneyFile = io.open(filePath, "w");
     local content = JS.encode(ProManager.Info);

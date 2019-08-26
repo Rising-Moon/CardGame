@@ -3,16 +3,19 @@ local ScenesManager=require("ScenesManager");
 local LoginButtonController ={};
 
 local flag= 0;
+--组件
 local uiRoot=nil;
 local password=nil;
 local username=nil;
 local button =nil;
 local errorText =nil;
-local UI_Alpha =1;
+
 local alphaSpeed =2;
 local remUP =nil;
 
+--显示数值
 local canvasGroup;
+local UI_Alpha =1;
 
 local initState =1;
 
@@ -57,7 +60,7 @@ function LoginButtonController.listenLogin(callback)
                 flag =1;
                 errorText.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
                 isON =remUP.gameObject:GetComponent(typeof(CS.UnityEngine.UI.Toggle)).isOn;
-                print(isON);
+                --print(isON);
                 if isON then
                     CS.UnityEngine.PlayerPrefs.SetString("username",usernameText);
                     CS.UnityEngine.PlayerPrefs.SetString("password",passwordText);
@@ -101,7 +104,5 @@ function LoginButtonController.listenLogin(callback)
 
 
 end
-
-
 
 return LoginButtonController

@@ -14,11 +14,13 @@ local CardListManager = require("CardListManager");
 
 local BagView ={};
 
+
+
 local function imgOnClick(gameObject)
     local Show_Fuc = util.cs_generator(function()
         gameObject.transform.localScale=CS.UnityEngine.Vector3(1.5,1.5,1.5);
-        --暂时不能同时点开两个，点开两个后存在错误
-        SM:createDes(gameObject:GetComponent("Image").sprite,gameObject.name,"this is :"..gameObject:GetComponent("Image").sprite.name);
+
+        SM.createDes(gameObject:GetComponent("Image").sprite,gameObject.name,"this is :"..gameObject:GetComponent("Image").sprite.name);
         --协程
         coroutine.yield(CS.UnityEngine.WaitForSeconds(1));
         gameObject.transform.localScale=CS.UnityEngine.Vector3(1,1,1);
@@ -36,7 +38,7 @@ function BagView:createView(bagObject)
             local img =bagObject.transform:GetChild(id-1);
             assert(img,"dont get image");
             if img then
-                print("get img");
+                --print("get img");
                 local pic =RM:LoadPath("Assets/StreamingAssets/AssetBundles/cardimage.pic",CardList.user_have[id].img);
                 img:GetComponent("Image").sprite =pic;
                 CS.UGUIEventListener.Get(img.gameObject).onClick =imgOnClick;
