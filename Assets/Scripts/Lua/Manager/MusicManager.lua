@@ -6,6 +6,8 @@ local MusicManager = {};
 
 ----
 --- 音效列表
+--- 例子：HitAfx = { path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "hit_2" }
+--- "HitAfx"为调用playClip时的参数（音效名）,path为音效所在ab包的路径,name为音效文件的名字
 ----
 
 MusicManager.clips = {
@@ -15,7 +17,11 @@ MusicManager.clips = {
     Armor = { path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "armor" },
     Licens = { path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "licens" },
     PickCard = {path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "pick_card"},
-    PutCard = {path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "put_card"}
+    PutCard = {path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "put_card"},
+    BreakArmor = {path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "break_armor"},
+    Debuff = {path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "debuff"},
+    Poison = {path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "poison"},
+    ReduceBuff = {path = "Assets/StreamingAssets/AssetBundles/loadingmusic.music", name = "reduce_buff"}
 }
 
 local clips = MusicManager.clips;
@@ -53,6 +59,7 @@ function background:setMusic(clipName)
     if (not background.audio) then
         background.audio = playerObject:AddComponent(typeof(CS.UnityEngine.AudioSource));
         background.audio.priority = 0;
+        background.audio.loop = true;
         background.audio.playOnAwake = false;
     end
     background.audio:Stop();

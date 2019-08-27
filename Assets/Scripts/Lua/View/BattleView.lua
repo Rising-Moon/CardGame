@@ -71,6 +71,9 @@ function BattleView:playPlayerAnim(name)
     local anims = {
         injured = function()
             playerAnim:SetTrigger("injured");
+        end,
+        poison = function()
+            playerAnim:SetTrigger("poison");
         end
     }
     anims[name]();
@@ -91,7 +94,7 @@ local enemyAnim = nil;
 
 -- 加载怪物（提供给controller使用）
 function createEnemy(enemy)
-    enemyObject = EnemyView:createView(enemy, enemyPos, "Enemy");
+    enemyObject = EnemyView:createView(enemy, enemyPos, enemy.name);
     enemyObject.transform.position = enemyPos.transform.position;
     enemyAnim = enemyObject:GetComponent("Animator");
 end
@@ -101,6 +104,12 @@ function BattleView:playEnemyAnim(name)
     local anims = {
         injured = function()
             enemyAnim:SetTrigger("injured");
+        end,
+        attack = function()
+            enemyAnim:SetTrigger("attack");
+        end,
+        die = function()
+            enemyAnim:SetTrigger("die");
         end
     }
     anims[name]();
@@ -110,16 +119,18 @@ end
 --- 设置手牌布局 界面中的所有用到卡牌的都在这部分中
 ----
 
+local hand = uiMap["Hand"];
 -- 手牌位置
-local handPosition = world2screen(uiMap["Hand"].position);
+local handPosition = world2screen(hand.position);
 -- 手牌最左最右位置的偏移值
-local cardBoundOffset = CS.UnityEngine.Screen.width * 1 / 3;
+local cardBoundOffset = hand.rect.xMax * 1 / 2;
+-- local cardBoundOffset = CS.UnityEngine.Screen.width * 1 / 2;
 -- 最左和最右的位置
 local left = CS.UnityEngine.Vector3(handPosition.x - cardBoundOffset, handPosition.y, handPosition.z);
---local right = CS.UnityEngine.Vector3(handPosition.x + offset, handPosition.y, handPosition.z);
+-- local right = CS.UnityEngine.Vector3(handPosition.x + offset, handPosition.y, handPosition.z);
 
 -- 手牌最大间隔
-local maxInterval = 60;
+local maxInterval = cardBoundOffset / 4;
 
 -- 手牌列表
 -- 列表中item的属性: card代表CardObject实例，object代表匹配的GameObject实例，moveUtil代表其上的C#脚本MoveUtil
@@ -132,7 +143,7 @@ local cardPile = uiMap["CardPile"];
 local discardPile = uiMap["DiscardPile"];
 
 -- 调整手牌位置
-function adjustHandsCard()
+local function adjustHandsCard()
     -- 卡牌位置调整速度
     local moveSpeed = 15;
     -- 排序一次手牌
@@ -173,8 +184,14 @@ end
 -- 新建卡牌到手牌（提供给controller使用）
 function BattleView:addCardToHand(card)
     local cardObject = CardView:createView(card, uiMap["Hand"]);
+    -- 发牌中不可被选中
+    cardObject.tag = "Untagged";
     cardObject.transform.position = cardPile.transform.position;
     handCards[cardObject:GetHashCode()] = { card = card, object = cardObject, moveUtil = cardObject:GetComponent("MoveUtil") };
+    -- 到达手牌后可被选中
+    handCards[cardObject:GetHashCode()].moveUtil:SetCallBack(function()
+        cardObject.tag = "Card";
+    end);
     handCardCount = handCardCount + 1;
     adjustHandsCard();
 end
@@ -376,6 +393,18 @@ function BattleView:reload(player, enemy, clickEvents)
     EnemyView = require("EnemyView");
     PlayerView = require("PlayerView");
     ResourcesManager:clear();
+
+    -- 手牌位置
+    handPosition = world2screen(hand.position);
+    -- 手牌最左最右位置的偏移值
+    cardBoundOffset = hand.rect.xMax * 1 / 2;
+    -- local cardBoundOffset = CS.UnityEngine.Screen.width * 1 / 2;
+    -- 最左和最右的位置
+    left = CS.UnityEngine.Vector3(handPosition.x - cardBoundOffset, handPosition.y, handPosition.z);
+    -- local right = CS.UnityEngine.Vector3(handPosition.x + offset, handPosition.y, handPosition.z);
+    -- 手牌最大间隔
+    maxInterval = cardBoundOffset / 4;
+    adjustHandsCard();
 
     -- 初始化场景
     BattleView:init(player, enemy, clickEvents);

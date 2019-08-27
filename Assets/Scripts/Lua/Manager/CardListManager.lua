@@ -73,6 +73,7 @@ function CardListManager.loadCards()
                 --反序列化数据存储到卡片对象中
                 if (cardInfo ~= "") then
                     serialize.decodeCard(cardInfo, currentCard);
+                    currentCard.valueMap.cost = currentCard.cost;
                     cardInfo = "";
                 end
 
@@ -99,6 +100,7 @@ function CardListManager.loadCards()
         --循环结束后可能残存一张卡片的信息，将其反序列化
         if (cardInfo ~= "") then
             serialize.decodeCard(cardInfo, currentCard);
+            currentCard.valueMap.cost = currentCard.cost;
         end
     end
 

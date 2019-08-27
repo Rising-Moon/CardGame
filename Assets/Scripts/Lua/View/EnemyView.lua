@@ -33,25 +33,25 @@ function EnemyView:createView(enemy, parent, name)
         --更新卡牌信息
         view.name = enemy.name;
         lifeRect:GetComponent("Slider").value = enemy.life / enemy.maxLife;
-        lifeText:GetComponent("Text").text = enemy.life .. "/" .. enemy.maxLife;
+        lifeText:GetComponent("Text").text = math.floor(enemy.life) .. "/" .. math.floor(enemy.maxLife);
         manaRect:GetComponent("Slider").value = enemy.mana / enemy.maxMana;
-        manaText:GetComponent("Text").text = enemy.mana .. "/" .. enemy.maxMana;
+        manaText:GetComponent("Text").text = math.floor(enemy.mana) .. "/" .. math.floor(enemy.maxMana);
 
         -- 更新buff栏
         for k, v in pairs(enemy.attributeList) do
             if (not v or v == 0) then
-                if(buffViewList[k]) then
-                    BuffView:destroy(buffViewList[k].object,buffViewList[k].view);
+                if (buffViewList[k]) then
+                    BuffView:destroy(buffViewList[k].object, buffViewList[k].view);
                     buffViewList[k].object.value = 0;
                     buffViewList[k] = nil;
                 end
             else
-                v = tostring(v);
-                v = string.sub(v,1,string.find(v,"."));
+                v = math.floor(v);
                 if (not buffViewList[k]) then
-                    local buf = DataProxy.createProxy(Buff:newBuff(k),{});
-                    if(buf) then
-                        buffViewList[k] = {object = buf,view = BuffView:createView(buf,buffs)};
+                    local buff = Buff:newBuff(k);
+                    if (buff) then
+                        local buf = DataProxy.createProxy(buff, {});
+                        buffViewList[k] = { object = buf, view = BuffView:createView(buf, buffs) };
                         buffViewList[k].object.value = v;
                     end
                 else

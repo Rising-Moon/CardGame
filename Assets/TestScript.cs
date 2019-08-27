@@ -18,5 +18,7 @@ public class TestScript : MonoBehaviour{
         if (Input.GetKeyDown("m")) {
             player.GetComponent<Animator>().SetTrigger("injured");
         }
+        RectTransform rect;
+
     }
 }

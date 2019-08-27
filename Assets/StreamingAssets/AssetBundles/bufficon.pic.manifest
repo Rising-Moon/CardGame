@@ -1,0 +1,25 @@
+ManifestFileVersion: 0
+CRC: 3629431810
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: be7862b321db0380a7c848fca67c0faa
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: ea5a42e0fd8ea905efa7aa926a3b8944
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Pictures/Buff/Health.png
+- Assets/Pictures/Buff/Poison.png
+- Assets/Pictures/Buff/Define.png
+- Assets/Pictures/Buff/Water.png
+- Assets/Pictures/Buff/Attack.png
+- Assets/Pictures/Buff/Bleed.png
+- Assets/Pictures/Buff/Mana.png
+- Assets/Pictures/Buff/Fire.png
+Dependencies: []

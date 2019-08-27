@@ -15,7 +15,8 @@ Enemy.dropMoney = 0;
 Enemy.buhaviour = {};
 
 
---构造函数
+-- 构造函数
+-- 最大生命值，最大魔力值，掉落经验，掉落金币都与等级有关.
 function Enemy:ctor(name, maxLife, level, maxMana, dropExp, dropMoney,behaviour)
     Enemy.super.ctor(self, name, maxLife * (1 + (level - 1) * 0.2), level, maxMana * (1 + (level - 1) * 0.2));
     self.dropExperience = dropExp * level * 0.5;

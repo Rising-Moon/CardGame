@@ -42,8 +42,7 @@ function DataProxy.createProxy(sourceTable, listeners)
                 end
                 sourceTable[name] = newValue;
 
-                for k, v in pairs(listeners) do
-                    print(k);
+                for _, v in pairs(listeners) do
                     if (v) then
                         v(oldValue, newValue);
                     end

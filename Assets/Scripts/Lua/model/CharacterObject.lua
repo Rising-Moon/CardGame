@@ -31,6 +31,7 @@ function Character:ctor(name,maxLife,level,maxMana)
     self.level = level;
     self.maxMana = maxMana;
     self.mana = maxMana;
+    self.attributeList = {};
 end
 
 return Character

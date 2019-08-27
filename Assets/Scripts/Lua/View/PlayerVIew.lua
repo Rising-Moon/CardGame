@@ -41,9 +41,9 @@ function PlayerView:createView(player, parent, clickEvents)
         view.name = "Player";
         playerName:GetComponent("Text").text = player.name;
         lifeRect:GetComponent("Slider").value = player.life / player.maxLife;
-        lifeText:GetComponent("Text").text = player.life .. "/" .. player.maxLife;
+        lifeText:GetComponent("Text").text = math.floor(player.life) .. "/" .. math.floor(player.maxLife);
         manaRect:GetComponent("Slider").value = player.mana / player.maxMana;
-        manaText:GetComponent("Text").text = player.mana .. "/" .. player.maxMana;
+        manaText:GetComponent("Text").text = math.floor(player.mana) .. "/" .. math.floor(player.maxMana);
         experienceRect:GetComponent("Image").fillAmount = player.experience / player.maxExperience;
 
         -- 更新buff栏
@@ -55,11 +55,11 @@ function PlayerView:createView(player, parent, clickEvents)
                     buffViewList[k] = nil;
                 end
             else
-                v = tostring(v);
-                v = string.sub(v, 1, string.find(v, "."));
+                v = math.floor(v);
                 if (not buffViewList[k]) then
-                    local buf = DataProxy.createProxy(Buff:newBuff(k), {});
-                    if (buf) then
+                    local buff = Buff:newBuff(k);
+                    if (buff) then
+                        local buf = DataProxy.createProxy(buff, {});
                         buffViewList[k] = { object = buf, view = BuffView:createView(buf, buffs) };
                         buffViewList[k].object.value = v;
                     end
