@@ -6,6 +6,10 @@ local UpdateUtil = require("HotUpdate");
 local MusicManager = require("MusicManager");
 --对应的view
 local BattleView = require("BattleView");
+local AudioManager =require("AudioManager");
+local ScenesManager =require("ScenesManager");
+local ProManager =require("ProManager");
+local MessageBoxManager =require("MessageBoxManager");
 
 ----
 --- Battle场景的控制器，对场景中的逻辑进行控制，从view获取输入，对model进行修改
@@ -157,16 +161,27 @@ local function start()
     startTurn();
 end
 
+local function changeScene()
+    MusicManager.background:stop();
+    ProManager.getMoney(10);
+    ProManager.getExpr(10);
+    ProManager.upDifficult();
+    ScenesManager:LoadScene(1);
+    switchController(GatesController);
+end
 -- 游戏结算
 -- 0:玩家胜利
 -- 1:敌人胜利
 local function settle(winner)
     if (winner == 0) then
         enemyDie();
+        MessageBoxManager.CreateMessage("玩家胜利",changeScene);
         print("玩家胜利");
     else
+        MessageBoxManager.CreateMessage("敌人胜利",changeScene);
         print("敌人胜利");
     end
+
 end
 
 -- 行动缓存(用于每次行动的结算)
@@ -587,8 +602,9 @@ end
 
 -- 初始化(由app.lua调用，可接收参数)
 -- 调试用
-function BattleController:init(p, e)
-
+function BattleController.init(p, e)
+    AudioManager:Stop();
+    BattleController:start();
     -- 调试数据，实际上应该由外部传入
     local defalutP = DataProxy.createProxy(PlayerObject.new("冒险者", 70, 1, 3, 100), {});
     local defaultE = DataProxy.createProxy(EnemyList:create("Vampire"), {});

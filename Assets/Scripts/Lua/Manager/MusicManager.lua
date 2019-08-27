@@ -35,6 +35,7 @@ local playerObject = nil;
 
 if (playerObject == nil) then
     playerObject = CS.UnityEngine.GameObject("MusicPlayer");
+    CS.UnityEngine.GameObject.DontDestroyOnLoad(playerObject);
 end
 
 -- 加载音乐

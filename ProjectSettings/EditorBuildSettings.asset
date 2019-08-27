@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/GatesScene.unity
     guid: 14bfb9b6c34e34018b66f12995e84a9f
   - enabled: 1
+    path: Assets/Scenes/BattleScene.unity
+    guid: 5dd4d3f228bcd4721a496d237fe56945
+  - enabled: 1
     path: Assets/Scenes/PomkScene.unity
     guid: c936599b885884e70b72dad6c91ced76
   m_configObjects: {}

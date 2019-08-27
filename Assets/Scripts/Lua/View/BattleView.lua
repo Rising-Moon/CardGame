@@ -10,14 +10,19 @@ local BattleView = {};
 ----
 --- 初始化变量和函数
 ----
+
+
+
+
+
 -- 画布
-local canvas = ScenesManager:initRoot();
+local canvas =  nil;
 
 -- 是否是玩家回合
 local playerTurn = false;
 
 -- 按ui节点名存储的map
-local uiMap = UIUtil.genAllChildNameMap(canvas);
+local uiMap = nil;
 
 -- 世界坐标转换到屏幕坐标
 local world2screen = function(pos)
@@ -53,7 +58,8 @@ end
 local playerObject = nil;
 
 -- 玩家位置
-local playerInfoPos = uiMap["PlayerInfoPos"];
+local playerInfoPos = nil;
+
 
 -- 玩家动画控制器
 local playerAnim = nil;
@@ -87,7 +93,10 @@ end
 local enemyObject = nil;
 
 -- 怪物位置
-local enemyPos = uiMap["EnemyPos"];
+local enemyPos = nil;
+
+
+
 
 -- 怪物动画
 local enemyAnim = nil;
@@ -119,18 +128,20 @@ end
 --- 设置手牌布局 界面中的所有用到卡牌的都在这部分中
 ----
 
-local hand = uiMap["Hand"];
+local hand = nil;
 -- 手牌位置
-local handPosition = world2screen(hand.position);
+local handPosition = nil;
 -- 手牌最左最右位置的偏移值
-local cardBoundOffset = hand.rect.xMax * 1 / 2;
+local cardBoundOffset = nil;
 -- local cardBoundOffset = CS.UnityEngine.Screen.width * 1 / 2;
 -- 最左和最右的位置
-local left = CS.UnityEngine.Vector3(handPosition.x - cardBoundOffset, handPosition.y, handPosition.z);
+local left = nil;
 -- local right = CS.UnityEngine.Vector3(handPosition.x + offset, handPosition.y, handPosition.z);
 
 -- 手牌最大间隔
-local maxInterval = cardBoundOffset / 4;
+local maxInterval = nil;
+
+
 
 -- 手牌列表
 -- 列表中item的属性: card代表CardObject实例，object代表匹配的GameObject实例，moveUtil代表其上的C#脚本MoveUtil
@@ -138,9 +149,11 @@ local handCards = {}
 -- 手牌数量
 local handCardCount = 0;
 -- 牌堆
-local cardPile = uiMap["CardPile"];
+local cardPile = nil;
 -- 弃牌堆
-local discardPile = uiMap["DiscardPile"];
+local discardPile = nil;
+
+
 
 -- 调整手牌位置
 local function adjustHandsCard()
@@ -197,7 +210,7 @@ function BattleView:addCardToHand(card)
 end
 
 -- 进入弃牌堆
-local function putToDiscard(card)
+function putToDiscard(card)
     if (handCards[card.object:GetHashCode()]) then
         removeFromHand(card);
     end
@@ -210,7 +223,7 @@ local function putToDiscard(card)
 end
 
 -- 销毁卡牌（彻底删除卡牌）
-local function destroyCard(card)
+function destroyCard(card)
     if (handCards[card.object:GetHashCode()]) then
         handCards[card.object:GetHashCode()] = nil;
     end
@@ -221,7 +234,7 @@ local function destroyCard(card)
 end
 
 -- 从手牌列表中移除（即不参与手牌的排列）
-local function removeFromHand(object)
+function removeFromHand(object)
     local card = handCards[object:GetHashCode()];
     handCards[object:GetHashCode()] = nil;
     handCardCount = handCardCount - 1;
@@ -361,6 +374,38 @@ end
 
 -- view 初始化
 function BattleView:init(player, enemy, clickEvents)
+    -- 画布
+    canvas = ScenesManager:initRoot();
+    -- 按ui节点名存储的map
+    uiMap = UIUtil.genAllChildNameMap(canvas);
+    -- 玩家位置
+    playerInfoPos = uiMap["PlayerInfoPos"];
+    -- 怪物位置
+    enemyPos = uiMap["EnemyPos"];
+    --手牌位置
+    hand = uiMap["Hand"];
+    -- 手牌位置
+    handPosition = world2screen(hand.position);
+    -- 手牌最左最右位置的偏移值
+    cardBoundOffset = hand.rect.xMax * 1 / 2;
+    -- local cardBoundOffset = CS.UnityEngine.Screen.width * 1 / 2;
+    -- 最左和最右的位置
+    left = CS.UnityEngine.Vector3(handPosition.x - cardBoundOffset, handPosition.y, handPosition.z);
+    -- local right = CS.UnityEngine.Vector3(handPosition.x + offset, handPosition.y, handPosition.z);
+
+    -- 手牌最大间隔
+    maxInterval = cardBoundOffset / 4;
+
+    -- 手牌列表
+    -- 列表中item的属性: card代表CardObject实例，object代表匹配的GameObject实例，moveUtil代表其上的C#脚本MoveUtil
+    handCards = {}
+    -- 手牌数量
+    handCardCount = 0;
+    -- 牌堆
+    cardPile = uiMap["CardPile"];
+    -- 弃牌堆
+    discardPile = uiMap["DiscardPile"];
+
     -- 创建玩家信息界面
     createPlayerInfo(player, clickEvents);
     -- 加载怪物

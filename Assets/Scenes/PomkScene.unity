@@ -760,6 +760,7 @@ GameObject:
   - component: {fileID: 919806356}
   - component: {fileID: 919806359}
   - component: {fileID: 919806358}
+  - component: {fileID: 919806360}
   - component: {fileID: 919806357}
   m_Layer: 5
   m_Name: Money
@@ -870,6 +871,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919806355}
   m_CullTransparentMesh: 0
+--- !u!114 &919806360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919806355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 736702095afe5456aad1366fafb271e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &953305882
 GameObject:
   m_ObjectHideFlags: 0

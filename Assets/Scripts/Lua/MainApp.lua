@@ -1,71 +1,52 @@
 -------------------------引用------------------
 --- 响应处理，处理来自服务器的响应
 local responseListener = require('ResponseListener');
-
-
----引用全局枚举表
----各个基类可以调用枚举表的值
+---登陆控制器，现在暂时作为初始控制器
+local loginInController = require('loginInController');
+---场景管理
+local ScenesManager =require("ScenesManager");
+---xlua协程
+local util = require 'xlua.util';
+---全局响应表
 require("GlobalEnumDir");
 
----引入class基类
----先引入可避免后引入的基于class方法的文件出错
-local class = require("class");
+--获取一个c#脚本调用
+local myClass =CS.UnityEngine.GameObject.Find("mainApp"):GetComponent("LuaBehaviour");
 
----引入文件读写模块
-local FileRead =require("FileRead");
----引入序列化函数
-require("serialize");
+-- 延时调用列表
+local delayFunc = {};
 
----引入json处理
-local json =require("json");
+-- 延时调用函数(全局)
+function global.invoke(func,delay)
+    table.insert(delayFunc,{delay,func});
+end
 
+--声明变量
+-- 当前控制器(作为当前的主逻辑控制，当场景变更时变更控制器即可)
+local currentController = nil;
 
----引入场景管理模块
-local ScenesManager =require("ScenesManager");
+-- 初始化
+local function init()
+    -- 控制器设置
+    currentController = loginInController;
+    -- 控制器初始化
+    currentController.init();
+end
 
----引入资源管理模块
-local ResourcesManager = require("ResourcesManager");
-
----引入音频管理模块
-local AudioManager =require("AudioManager");
-
----引入路径管理模块
-local PathManager =require("PathManager");
-
----引入基类
-
-
-
---引入logincontroller
-local loginInController =require("LoginInController");
-
---引入gatesController
-local GatesController =require("GatesController");
-
---引入battleController
---目前不能使用，因为battleview在创建的时候，以场景battle的canvas创建uimap，导致在倒入battlecontroller的时候会报错
---local BattleController = require('BattleController');
-
---引入PomkController
-local PomkController = require("PomkController");
-
--- 卡牌列表管理，卡牌信息都在其中进行管理
-local CardListManager = require('CardListManager');
-
-local currentController =nil;
-
---local message =CS.MessageQueueManager.GetMessageQueue();
+-- 切换控制器(全局)
+function global.switchController(controller)
+    currentController = controller;
+    local switch_FUC = util.cs_generator(function()
+        coroutine.yield(CS.UnityEngine.WaitForSeconds(0.2))
+        --coroutine.yield(CS.UnityEngine.WaitForEndOfFrame);
+         --协程
+        currentController.init();
+    end);
+    myClass:StartCoroutine(switch_FUC);
+end
 
 function start()
-
-    controllerList={
-        loginInController,
-        GatesController,
-        --BattleController,
-        PomkController
-    };
-
-    currentController = loginInController;
+    init();
     if (currentController ~= nil and currentController.start ~= nil) then
         currentController.start();
     end
@@ -74,8 +55,14 @@ end
 
 function update()
 
-    --切换场景
-    currentController=controllerList[ScenesManager:GetIndex()+1];
+    -- 遍历延时函数
+    for i = #delayFunc,1,-1 do
+        delayFunc[i][1] = delayFunc[i][1] - CS.UnityEngine.Time.deltaTime;
+        if(delayFunc[i][1] < 0) then
+            delayFunc[i][2]();
+            table.remove(delayFunc,i);
+        end
+    end
 
     if (currentController ~= nil and currentController.update ~= nil) then
         currentController.update();
@@ -86,7 +73,6 @@ function update()
 end
 
 function fixedupdate()
-
     if (currentController ~= nil and currentController.fixedupdate ~= nil) then
         currentController.fixedupdate();
     end

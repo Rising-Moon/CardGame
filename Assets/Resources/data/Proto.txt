@@ -1,1 +1,1 @@
-{"Gate":1,"Frag":30,"Moneybuff":{"descri":"获得金币变为两倍","ref":10},"Expr":123,"Exprbuff":{"descri":"获得经验变为两倍","ref":10},"Money":10}
+{"Gate":3,"Money":50,"Exprbuff":{"ref":0,"descri":"获得经验变为两倍"},"Frag":50,"Moneybuff":{"ref":5,"descri":"获得金币变为两倍"},"Expr":247}
