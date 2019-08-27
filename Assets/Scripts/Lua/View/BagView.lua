@@ -1,7 +1,7 @@
 --导包
 local util = require 'xlua.util';
 local RM = require('ResourcesManager');
-local SM =require("ScenesManager");
+local MBM =require("MessageBoxManager");
 
 --获取一个c#脚本调用
 local myClass =CS.UnityEngine.GameObject.Find("mainApp"):GetComponent("LuaBehaviour");
@@ -14,13 +14,11 @@ local CardListManager = require("CardListManager");
 
 local BagView ={};
 
-
-
 local function imgOnClick(gameObject)
     local Show_Fuc = util.cs_generator(function()
         gameObject.transform.localScale=CS.UnityEngine.Vector3(1.5,1.5,1.5);
 
-        SM.createDes(gameObject:GetComponent("Image").sprite,gameObject.name,"this is :"..gameObject:GetComponent("Image").sprite.name);
+        MBM.createDes(gameObject:GetComponent("Image").sprite,gameObject.name,"this is :"..gameObject:GetComponent("Image").sprite.name);
         --协程
         coroutine.yield(CS.UnityEngine.WaitForSeconds(1));
         gameObject.transform.localScale=CS.UnityEngine.Vector3(1,1,1);
@@ -50,5 +48,7 @@ function BagView:createView(bagObject)
 
     end
 end
+
+
 
 return BagView

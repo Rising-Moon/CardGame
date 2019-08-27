@@ -5,6 +5,7 @@ local SM =require("ScenesManager");
 local AM =require("AudioManager");
 local ProManager =require("ProManager");
 local EventView =require("EventView");
+local CardListManager =require("CardListManager");
 local GateButtonEvent = {};
 
 --按钮使用标志
@@ -23,6 +24,8 @@ local bagButton =nil;
 local moneyText =nil;
 local levelText =nil;
 local gateText =nil;
+local MoneyBuff =nil;
+local ExprBuff =nil;
 
 local cardBag =nil;
 
@@ -43,6 +46,8 @@ local function updateInfo(ifNum)
     if not ifNum then
         moneyText:GetComponent("Text").text =ProManager.Info["Money"];
         levelText:GetComponent("Text").text =ProManager.Level;
+        MoneyBuff:GetComponent("Text").text =ProManager.Info["Moneybuff"].ref;
+        ExprBuff:GetComponent("Text").text =ProManager.Info["Exprbuff"].ref;
         return
     end
 
@@ -52,6 +57,10 @@ local function updateInfo(ifNum)
     --由当前难度来决定当前怪物血量等信息
     local msg = CS.Message(CS.Message.MessageType.Difficulty,tostring(ProManager.Info["Gate"]));
     message:SendMessage(msg);
+end
+
+local function updateCard(cardId)
+    CardListManager.updateCard(cardId);
 end
 
 --[[
@@ -95,10 +104,15 @@ function GateButtonEvent.listenEvent(callback)
         moneyText =uiRoot.transform:Find("user/money");
         levelText =uiRoot.transform:Find("user/level");
         gateText =uiRoot.transform:Find("user/Gates");
+        MoneyBuff =uiRoot.transform:Find("user/MoneyBuff");
+        assert(MoneyBuff,"dont get money buff");
+        ExprBuff =uiRoot.transform:Find("user/ExprBuff");
+
         moneyText:GetComponent("Text").text =ProManager.Info["Money"];
         levelText:GetComponent("Text").text =ProManager.Level;
         gateText:GetComponent("Text").text =ProManager.Info["Gate"];
-
+        MoneyBuff:GetComponent("Text").text =ProManager.Info["Moneybuff"].ref;
+        ExprBuff:GetComponent("Text").text =ProManager.Info["Exprbuff"].ref;
 
         --背包设置很简陋，根据现有的数据只存在六个背包 panel设置为grid
         --如果有后期会加入动态添加背包格子的
@@ -169,8 +183,7 @@ function GateButtonEvent.listenEvent(callback)
          --在bag中由于将对象放在对象池后，当场景发生切换后,需要对对象池的引用进行清除
          RM:clear();
          SM:LoadScene(2);
-
-
+         
      end
 
      if quitFlag ==1  then

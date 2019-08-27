@@ -2,6 +2,7 @@ local ScenesManager=require("ScenesManager");
 local RM =require("ResourcesManager");
 local AM =require("AudioManager");
 local UIUtil =require("UIUtil");
+local MBM =require("MessageBoxManager");
 
 --抽卡后使用
 local CardList =require("CardList");
@@ -166,13 +167,7 @@ function PomkEventController.listenEvent(callback)
             local boolUse =ProManager.useMoney(10);
             if boolUse then
                 bun.interactable =false;
-                --这样实际上是柱塞线程
-                --[[
-                local boolchoose =ScenesManager.CreateDoubleMessage("是否花费10金币进行抽卡");
-                if boolchoose then
 
-                end
-                ]]--
                 CardFlag =1;
                 --num需要为卡牌的id，通过卡牌id来处理实例化
                 local num=math.random(1,6);
@@ -228,13 +223,13 @@ function PomkEventController.listenEvent(callback)
                     ProManager.getFrag(10);
                     FragNum:GetComponent("Text").text =ProManager.Info["Frag"];
                     RM:pushInPool("Assets/StreamingAssets/AssetBundles/Card.pre","Card",newCard);
-                    ScenesManager.CreateMessage("卡牌重复获得，获得基础碎片",multiFlag);
+                    MBM.CreateMessage("卡牌重复获得，获得基础碎片",multiFlag);
 
                 end
                 ProManager.saveInfo();
                 --print("the money you now have is:"..ProManager.Info["Money"]);
             else
-                ScenesManager.CreateMessage("金币不够，请前往充值");
+                MBM.CreateMessage("金币不够，请前往充值");
                 print("金币不够，请前往充值");
 
             end

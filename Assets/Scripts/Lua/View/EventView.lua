@@ -18,7 +18,7 @@ function EventView.InitView(Event,parent,callBack,typeNum)
 
     if EventDir[typeNum].type == 1 then
         EventDes:GetComponent("Image").sprite =RM:LoadPath("Assets/StreamingAssets/AssetBundles/cardimage.pic","Close_2");
-
+        EventText:GetComponent("Text").text =EventDir[typeNum].descri;
         EventButton:GetComponent("Button").onClick:AddListener(function()
             GDM.handleEvent(tonumber(Event));
             callBack(1);
@@ -32,12 +32,11 @@ function EventView.InitView(Event,parent,callBack,typeNum)
         --local pic =CS.UnityEngine.Sprite:Create(RM:LoadPath("Assets/Resources/Picture/money.jpg","money"));
         --EventDes:GetComponent("Image").sprite =pic;
         EventDes:GetComponent("Image").sprite =RM:LoadPath("Assets/StreamingAssets/AssetBundles/cardimage.pic","SIH_11");
-
-        print(EventDes:GetComponent("Image").sprite);
+        local num =math.random(2,6);
+        EventText:GetComponent("Text").text =EventDir[typeNum].descri..num;
+        --print(EventDes:GetComponent("Image").sprite);
         EventButton:GetComponent("Button").onClick:AddListener(function()
-
-            ProManager.getMoney(math.random(2,6));
-
+            ProManager.getMoney(num);
             GDM.handleEvent(tonumber(Event));
             EventView.destroyView(view);
             --新建一个
@@ -50,10 +49,11 @@ function EventView.InitView(Event,parent,callBack,typeNum)
     elseif callBack then
         print("Expr Event");
         EventDes:GetComponent("Image").sprite =RM:LoadPath("Assets/StreamingAssets/AssetBundles/cardimage.pic","SIH_02");
-
+        local num =math.random(1,10);
+        EventText:GetComponent("Text").text =EventDir[typeNum].descri..num;
         --EventDes:GetComponent("Image").sprite =RM:LoadPath("Assets/Resources/Picture/Expr.jpg","Expr");
         EventButton:GetComponent("Button").onClick:AddListener(function()
-            ProManager.getExpr(math.random(1,10));
+            ProManager.getExpr(num);
             GDM.handleEvent(tonumber(Event));
 
             EventView.destroyView(view);
@@ -69,7 +69,7 @@ function EventView.InitView(Event,parent,callBack,typeNum)
         print("nil");
     end
     GDM.saveInfo();
-    EventText:GetComponent("Text").text =EventDir[typeNum].descri;
+    --EventText:GetComponent("Text").text =EventDir[typeNum].descri;
 
     return view
 end

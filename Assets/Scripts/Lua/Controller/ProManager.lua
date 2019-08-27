@@ -44,10 +44,23 @@ function ProManager.getMoney(num)
     if not num then
         return
     end
+    if ProManager.Info["Moneybuff"].ref ~=0 then
+        ProManager.Info["Money"] =ProManager.Info["Money"]+num;
+        ProManager.Info["Moneybuff"].ref =ProManager.Info["Moneybuff"].ref -1;
+    end
     ProManager.Info["Money"] =ProManager.Info["Money"]+num;
 end
 
+function ProManager.getExprBuff()
+    ProManager.Info["Exprbuff"].ref =ProManager.Info["Exprbuff"].ref+3;
+end
+
+function ProManager.getMoneyBuff()
+    ProManager.Info["Moneybuff"].ref =ProManager.Info["Moneybuff"].ref+3;
+end
+
 function ProManager.useMoney(num)
+
     local newNum =ProManager.Info["Money"]-num;
     if newNum >= 0 then
         ProManager.Info["Money"] =newNum;
@@ -58,7 +71,16 @@ function ProManager.useMoney(num)
 end
 
 function ProManager.getExpr(num)
-    ProManager.Info["Expr"] =ProManager.Info["Expr"]+num;
+    if not num then
+        return
+    end
+    if ProManager.Info["Exprbuff"].ref ~=0 then
+        ProManager.Info["Expr"] =ProManager.Info["Expr"]+num*2;
+        ProManager.Info["Exprbuff"].ref =ProManager.Info["Exprbuff"].ref -1;
+    else
+        ProManager.Info["Expr"] =ProManager.Info["Expr"]+num;
+    end
+
     ProManager.decodeExpr();
 end
 
@@ -66,9 +88,28 @@ function ProManager.getFrag(num)
     ProManager.Info["Frag"] =ProManager.Info["Frag"]+num;
 end
 
+function ProManager.boolUpdateCard()
+    if ProManager.Info["Frag"] >= 50 and ProManager.Info["Money"]>=100 then
+        return true
+    end
+    return false
+end
+
+function ProManager.useFrag(num)
+    ProManager.Info["Frag"] =ProManager.Info["Frag"] -num;
+end
+
 function ProManager.upDifficult()
     ProManager.Info["Gate"] =ProManager.Info["Gate"] +1;
 end
+
+function ProManager.UpdateCardData()
+    ProManager.useMoney(100);
+    ProManager.useFrag(50);
+    --由controller控制存储信息会更好？
+    --ProManager.saveInfo();
+end
+
 
 function ProManager.saveInfo()
     local moneyFile = io.open(filePath, "w");

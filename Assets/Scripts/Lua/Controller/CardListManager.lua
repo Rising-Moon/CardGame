@@ -153,6 +153,12 @@ function CardListManager.getCard(cardId)
     return CardList.user_have[cardId];
 end
 
+-- 卡牌升级
+--只留出接口，不具体实现
+function CardListManager.updateCard(cardId)
+
+end
+
 -- 获取可用卡片列表
 function CardListManager.getUserHaveCards()
     local haveCards = {};

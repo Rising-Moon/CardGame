@@ -8,7 +8,8 @@ cardInfo ={
             atk=5
         },
         cost=2,
-        cardId=1
+        cardId=1,
+        level =1
     },
 
     {
@@ -19,7 +20,8 @@ cardInfo ={
             atk=3
         },
         cost=1,
-        cardId=2
+        cardId=2,
+        level =1
     },
 
     {
@@ -30,7 +32,8 @@ cardInfo ={
             def=2
         },
         cost=1,
-        cardId=3
+        cardId=3,
+        level =1
     },
     {
         introduction="射出两只箭\n造成4点伤害",
@@ -40,7 +43,8 @@ cardInfo ={
             mul_atk = 2,
         },
         cost=4,
-        cardId=4
+        cardId=4,
+        level =1
     },
     {
         introduction="造成4点伤害",
@@ -50,7 +54,8 @@ cardInfo ={
             atk = 4,
         },
         cost=4,
-        cardId=5
+        cardId=5,
+        level =1
     },
     {
         introduction="警惕两个方向进行的\n攻击，防御值翻倍",
@@ -60,7 +65,8 @@ cardInfo ={
             mul_def = 2
         },
         cost=3,
-        cardId=6
+        cardId=6,
+        level =1
     }
 
 }
@@ -76,12 +82,28 @@ EventDir={
     },
     {
         name ="money",
-        descri ="你将直接获得金钱",
+        descri ="你将直接获得金钱：",
         type =2
     },
     {
         name ="Expr",
-        descri ="你将直接获得经验",
+        descri ="你将直接获得经验：",
         type =3
+    },
+    {
+        name ="Expr",
+        descri ="你将获得三次经验加成",
+        type =4
+    },
+    {
+        name ="Money",
+        descri ="你将获得三次金币加成",
+        type =5
+    },
+    {
+        name ="update",
+        descri ="你将随机升级一张卡牌",
+        type =6
     }
 }
+-----------------------------------------------
