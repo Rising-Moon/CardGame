@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 244330797
+CRC: 4034033425
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -25,3 +25,10 @@ AssetBundleManifest:
       Name: playerinfo.pre
       Dependencies:
         Dependency_0: picture.pic
+    Info_7:
+      Name: buff.pre
+      Dependencies:
+        Dependency_0: bufficon.pic
+    Info_8:
+      Name: bufficon.pic
+      Dependencies: {}

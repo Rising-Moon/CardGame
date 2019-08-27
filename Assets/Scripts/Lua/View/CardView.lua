@@ -26,7 +26,6 @@ function CardView:createView(card, parent)
         local cardTexture = nil;
         if (view.img ~= "img") then
             cardTexture = resourcesManager:LoadPath("Assets/StreamingAssets/AssetBundles/cardimage.pic", card.img);
-            print("load img:" .. cardTexture:ToString());
         end
 
         print("卡牌信息更新");

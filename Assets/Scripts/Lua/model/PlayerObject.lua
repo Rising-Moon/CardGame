@@ -15,7 +15,7 @@ PlayerObject.maxExperience = 0;
 function PlayerObject:ctor(name,maxLife,level,maxMana,maxExp)
     PlayerObject.super.ctor(self,name,maxLife,level,maxMana);
     self.experience = 0;
-    self.maxExperience = maxExp;
+    self.maxExperience = maxExp * level;
 end
 
 return PlayerObject;

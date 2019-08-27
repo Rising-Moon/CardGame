@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1642941401
+CRC: 893234683
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 6fbaa5ac4a98a05c8a3a1d6bc0717edd
+    Hash: 9d1bbb35138020f44dbcbe60c873ecf2
   TypeTreeHash:
     serializedVersion: 2
     Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
@@ -12,5 +12,15 @@ ClassTypes:
 - Class: 83
   Script: {instanceID: 0}
 Assets:
+- Assets/Music/licens.wav
 - Assets/Resources/music/backGroundMusic.mp3
+- Assets/Music/break_armor.ogg
+- Assets/Music/debuff.wav
+- Assets/Music/armor.ogg
+- Assets/Music/hit_3.wav
+- Assets/Music/hit_2.wav
+- Assets/Music/pick_card.wav
+- Assets/Music/poison.wav
+- Assets/Music/put_card.wav
+- Assets/Music/battle_background.mp3
 Dependencies: []

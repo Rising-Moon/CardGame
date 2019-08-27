@@ -13,23 +13,28 @@ public static class DownloadManager{
     }
 
     //添加新的下载
-    public static void addDownload(DownloadUtil.Item download){
+    public static void AddDownload(DownloadUtil.Item download){
         downloads.Add(download);
     }
 
     //删除现有下载
-    public static void finishDownload(DownloadUtil.Item download){
+    public static void FinishDownload(DownloadUtil.Item download){
         downloads.Remove(download);
         finish.Enqueue(download);
     }
 
     //是否下载完成
-    public static bool isDone(){
+    public static bool IsDone(){
         return downloads.Count == 0;
     }
 
-    //未完成数量
-    public static int Count(){
-        return downloads.Count;
+    //进度
+    public static float GetProgress(){
+        return finish.Count / (downloads.Count + finish.Count);
+    }
+    
+    //将完成列表清空
+    public static void Clear(){
+        finish.Clear();
     }
 }

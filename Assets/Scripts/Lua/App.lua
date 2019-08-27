@@ -6,6 +6,18 @@ local battleController = require('BattleController');
 -- 卡牌列表管理，卡牌信息都在其中进行管理
 local CardListManager = require('CardListManager');
 
+----
+--- 全局函数
+----
+
+-- 延时调用列表
+local delayFunc = {};
+
+-- 延时调用函数
+function global.invoke(func,delay)
+    table.insert(delayFunc,{delay,func});
+end
+
 --声明变量
 -- 当前控制器(作为当前的主逻辑控制，当场景变更时变更控制器即可)
 local currentController = nil;
@@ -38,6 +50,15 @@ function start()
 end
 
 function update()
+    -- 遍历延时函数
+    for i = #delayFunc,1,-1 do
+        delayFunc[i][1] = delayFunc[i][1] - CS.UnityEngine.Time.deltaTime;
+        if(delayFunc[i][1] < 0) then
+            delayFunc[i][2]();
+            table.remove(delayFunc,i);
+        end
+    end
+
     if (currentController ~= nil and currentController.update ~= nil) then
         currentController:update();
     end

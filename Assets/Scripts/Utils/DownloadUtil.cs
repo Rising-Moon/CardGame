@@ -21,7 +21,7 @@ public class DownloadUtil : MonoBehaviour{
         Item item = downLoadObject.GetComponent<Item>();
         item.url = url;
         item.path = path;
-        DownloadManager.addDownload(item);
+        DownloadManager.AddDownload(item);
         item.StartDownload();
     }
 
@@ -41,7 +41,7 @@ public class DownloadUtil : MonoBehaviour{
                 www.SendWebRequest();
                 if (www.isHttpError || www.isNetworkError) {
                     Debug.LogError(www.error);
-                    DownloadManager.finishDownload(this);
+                    DownloadManager.FinishDownload(this);
                     done = true;
                 }
                 else {
@@ -72,7 +72,7 @@ public class DownloadUtil : MonoBehaviour{
                 }
             }
             
-            DownloadManager.finishDownload(this);
+            DownloadManager.FinishDownload(this);
             done = true;
         }
         
