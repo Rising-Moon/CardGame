@@ -1,6 +1,6 @@
 --序列化
 --参照网上方法
-serialize = {};
+local serialize = {};
 
 function serialize.encode(obj)
     local lua = "";

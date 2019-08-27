@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 4287342398
+CRC: 2695597113
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 097976ec834c284532960d2448b60ce0
+    Hash: 519f5910e2e67a288f74247376b1db1c
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5ad585dd02dfb5016c0dad519eab8f49
@@ -12,11 +12,12 @@ ClassTypes:
 - Class: 49
   Script: {instanceID: 0}
 Assets:
-- Assets/Scripts/Lua/out/Timer.lua.bytes
-- Assets/Scripts/Lua/out/PlayerVIew.lua.bytes
+- Assets/Scripts/Lua/out/EnemyBehaviourList.lua.bytes
 - Assets/Scripts/Lua/out/ScenesManager.lua.bytes
+- Assets/Scripts/Lua/out/MusicManager.lua.bytes
 - Assets/Scripts/Lua/out/class.lua.bytes
 - Assets/Scripts/Lua/out/ResourcesManager.lua.bytes
+- Assets/Scripts/Lua/out/Buff.lua.bytes
 - Assets/Scripts/Lua/out/CharacterObject.lua.bytes
 - Assets/Scripts/Lua/out/json.lua.bytes
 - Assets/Scripts/Lua/out/EnemyObject.lua.bytes
@@ -28,25 +29,33 @@ Assets:
 - Assets/Scripts/Lua/out/DataProxy.lua.bytes
 - Assets/Scripts/Lua/out/BattleController.lua.bytes
 - Assets/Scripts/Lua/out/FileRead.lua.bytes
-- Assets/Scripts/Lua/out/EnemyView.lua.bytes
+- Assets/Scripts/Lua/out/CardAdapter.lua.bytes
+- Assets/Scripts/Lua/out/LoginEvent.lua.bytes
 - Assets/Scripts/Lua/out/serialize.lua.bytes
+- Assets/Scripts/Lua/out/EventView.lua.bytes
+- Assets/Scripts/Lua/out/MessageBoxManager.lua.bytes
+- Assets/Scripts/Lua/out/PlayerAdapter.lua.bytes
 - Assets/Scripts/Lua/out/GatesController.lua.bytes
 - Assets/Scripts/Lua/out/App.lua.bytes
 - Assets/Scripts/Lua/out/CardObject.lua.bytes
 - Assets/Scripts/Lua/out/PathManager.lua.bytes
 - Assets/Scripts/Lua/out/GateButtonEvent.lua.bytes
+- Assets/Scripts/Lua/out/ProManager.lua.bytes
 - Assets/Scripts/Lua/out/loginInController.lua.bytes
 - Assets/Scripts/Lua/out/MainApp.lua.bytes
 - Assets/Scripts/Lua/out/GlobalEnumDir.lua.bytes
+- Assets/Scripts/Lua/out/GateDataManager.lua.bytes
+- Assets/Scripts/Lua/out/HotUpdate.lua.bytes
 - Assets/Scripts/Lua/out/CardList.lua.bytes
 - Assets/Scripts/Lua/out/PomkEventController.lua.bytes
 - Assets/Scripts/Lua/out/AudioManager.lua.bytes
 - Assets/Scripts/Lua/out/proto_test.lua.bytes
+- Assets/Scripts/Lua/out/BagView.lua.bytes
 - Assets/Scripts/Lua/out/ResponseListener.lua.bytes
-- Assets/Scripts/Lua/out/CardView.lua.bytes
+- Assets/Scripts/Lua/out/EnemyList.lua.bytes
 - Assets/Scripts/Lua/out/BattleView.lua.bytes
+- Assets/Scripts/Lua/out/BuffAdapter.lua.bytes
+- Assets/Scripts/Lua/out/EnemyAdapter.lua.bytes
 - Assets/Scripts/Lua/out/PlayerObject.lua.bytes
 - Assets/Scripts/Lua/out/CardListManager.lua.bytes
-- Assets/Scripts/Lua/out/Coroutine.lua.bytes
-- Assets/Scripts/Lua/out/LoginButtonEvent.lua.bytes
 Dependencies: []

@@ -1,4 +1,4 @@
-CardList = {};
+local CardList = {};
 
 --玩家拥有的卡牌id
 CardList.user_have = {};

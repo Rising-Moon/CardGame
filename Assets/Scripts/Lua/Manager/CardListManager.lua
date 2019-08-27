@@ -1,8 +1,8 @@
 -- 导包
 local CardObject = require('CardObject');
 local serialize = require('serialize');
-local cardList = require('CardList');
-local dataProxy = require('DataProxy');
+local CardList = require('CardList');
+local DataProxy = require('DataProxy');
 
 local CardListManager = {}
 
@@ -37,8 +37,8 @@ function CardListManager.loadCards()
                         userHaveCardId = "";
                     end
                     --创建一个空的卡牌对象的代理，以卡牌的id为键值存入相应表中
-                    if(not cardList.user_have[tonumber(id)]) then
-                        cardList.user_have[tonumber(id)] = dataProxy.createProxy(CardObject.new(tonumber(id)),{});
+                    if(not CardList.user_have[tonumber(id)]) then
+                        CardList.user_have[tonumber(id)] = DataProxy.createProxy(CardObject.new(tonumber(id)),{});
                     end
                     table.insert(userHaveCards,tonumber(id));
 
@@ -56,7 +56,7 @@ function CardListManager.loadCards()
                         id = string.sub(userHaveCardId, 1, string.find(userHaveCardId, "\n"));
                         userHaveCardId = "";
                     end
-                    cardList.not_obtain[tonumber(id)] = CardObject.new(id);
+                    CardList.not_obtain[tonumber(id)] = CardObject.new(id);
                 end
                 --分割卡牌信息
             elseif (string.find(line, "----Card:") == 1) then
@@ -64,10 +64,10 @@ function CardListManager.loadCards()
                 local card = nil;
 
                 --判读卡牌是否存在与游戏中
-                if (cardList.user_have[id]) then
-                    card = cardList.user_have[id];
-                elseif (cardList.not_obtain[id]) then
-                    card = cardList.not_obtain[id];
+                if (CardList.user_have[id]) then
+                    card = CardList.user_have[id];
+                elseif (CardList.not_obtain[id]) then
+                    card = CardList.not_obtain[id];
                 end
 
                 --反序列化数据存储到卡片对象中
@@ -116,22 +116,22 @@ function CardListManager.saveCards()
     local content = "";
     --更新拥有和未拥有卡片id
     content = content .. "user_have:";
-    for k, _ in pairs(cardList.user_have) do
+    for k, _ in pairs(CardList.user_have) do
         content = content .. k .. ",";
     end
     content = content .. "\n" .. "not_obtain:";
-    for k, _ in pairs(cardList.not_obtain) do
+    for k, _ in pairs(CardList.not_obtain) do
         content = content .. k .. ",";
     end
     content = content .. "\n";
 
     --遍历卡牌列表
-    for k, v in pairs(cardList.user_have) do
+    for k, v in pairs(CardList.user_have) do
         if (v.name ~= "name") then
             content = content .. "----Card:" .. k .. "\n" .. serialize.encodeCard(v);
         end
     end
-    for k, v in pairs(cardList.not_obtain) do
+    for k, v in pairs(CardList.not_obtain) do
         if (v.name ~= "name") then
             content = content .. "----Card:" .. k .. "\n" .. serialize.encodeCard(v);
         end
@@ -145,10 +145,10 @@ end
 
 --处理玩家获得卡片
 function CardListManager.userGet(cardId)
-    local card = cardList.not_obtain[cardId];
+    local card = CardList.not_obtain[cardId];
     if (card and card.name ~= "") then
-        cardList.user_have[cardId] = card;
-        cardList.not_obtain[cardId] = nil;
+        CardList.user_have[cardId] = card;
+        CardList.not_obtain[cardId] = nil;
         return true
     else
         print("这张卡不存在或者已经获得");

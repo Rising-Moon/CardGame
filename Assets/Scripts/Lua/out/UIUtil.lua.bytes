@@ -1,4 +1,4 @@
-UIUtil = {}
+local UIUtil = {}
 
 --将传入gameobject的所有子节点生成一张表
 function UIUtil.genAllChildNameMap(root)

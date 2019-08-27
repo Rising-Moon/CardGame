@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 4034033425
+CRC: 1797642426
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -31,4 +31,11 @@ AssetBundleManifest:
         Dependency_0: bufficon.pic
     Info_8:
       Name: bufficon.pic
+      Dependencies: {}
+    Info_9:
+      Name: info.pre
+      Dependencies:
+        Dependency_0: picture.pic
+    Info_10:
+      Name: load.pre
       Dependencies: {}

@@ -1,5 +1,5 @@
 local RM =require("ResourcesManager");
-local LoginButtonController =require("LoginButtonEvent");
+local LoginButtonController =require("LoginEvent");
 
 local loginInController = {};
 

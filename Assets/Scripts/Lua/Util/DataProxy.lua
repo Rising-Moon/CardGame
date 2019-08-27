@@ -1,4 +1,4 @@
-DataProxy = {};
+local DataProxy = {};
 
 function DataProxy.createProxy(sourceTable, listeners)
     local proxy = {

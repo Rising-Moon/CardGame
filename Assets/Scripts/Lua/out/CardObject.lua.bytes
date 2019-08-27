@@ -19,10 +19,12 @@ Card.img = "";
 Card.introduction = "";
 --属性表
 Card.valueMap = {};
-
+--制作卡牌升级会用到的接口
+--默认为一
+Card.level =1;
 
 --构造函数
-function Card:ctor(cardId,name,cost,img,introduction,valueMap)
+function Card:ctor(cardId,name,cost,img,introduction,valueMap,level)
     Card.super.ctor(self);
     --属性设置
     self.cardId = cardId;
@@ -31,6 +33,7 @@ function Card:ctor(cardId,name,cost,img,introduction,valueMap)
     self.valueMap = valueMap
     self.img = img
     self.introduction = introduction
+    self.level =level;
 end
 
 --toString方法

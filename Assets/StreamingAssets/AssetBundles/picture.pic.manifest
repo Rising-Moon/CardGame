@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3943788128
+CRC: 1084042664
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 3d5cf0c2a3f16018107317b9c3f18a6e
+    Hash: bb50fef49b4fa14bbc4aa72612e9627f
   TypeTreeHash:
     serializedVersion: 2
     Hash: ea5a42e0fd8ea905efa7aa926a3b8944
@@ -14,7 +14,8 @@ ClassTypes:
 - Class: 213
   Script: {instanceID: 0}
 Assets:
-- Assets/Pictures/ad.jpg
 - Assets/Pictures/StateBar/heart.png
-- Assets/Pictures/daily.jpg
+- Assets/Pictures/BackGround/Border_03.jpg
+- Assets/Pictures/BackGround/Border_02.jpg
+- Assets/Pictures/BackGround/Border_01.jpg
 Dependencies: []

@@ -1,4 +1,8 @@
 -------------------------引用------------------
+--- 响应处理，处理来自服务器的响应
+local responseListener = require('ResponseListener');
+
+
 ---引用全局枚举表
 ---各个基类可以调用枚举表的值
 require("GlobalEnumDir");
@@ -15,6 +19,7 @@ require("serialize");
 ---引入json处理
 local json =require("json");
 
+
 ---引入场景管理模块
 local ScenesManager =require("ScenesManager");
 
@@ -28,53 +33,35 @@ local AudioManager =require("AudioManager");
 local PathManager =require("PathManager");
 
 ---引入基类
-local BaseObject = require("BaseObject");
-local CardObeject =require("CardObject");
-local PlayerObject = require("PlayerObject");
-local MonsterObject = require("MonsterObject");
-local UserObject =require("UserObject");
-local CardList =require("CardList");
+
+
 
 --引入logincontroller
 local loginInController =require("LoginInController");
---
-local dailyController =require("GatesController");
---
-local BattleController = require("BattleController");
---
+
+--引入gatesController
+local GatesController =require("GatesController");
+
+--引入battleController
+--目前不能使用，因为battleview在创建的时候，以场景battle的canvas创建uimap，导致在倒入battlecontroller的时候会报错
+--local BattleController = require('BattleController');
+
+--引入PomkController
 local PomkController = require("PomkController");
+
+-- 卡牌列表管理，卡牌信息都在其中进行管理
+local CardListManager = require('CardListManager');
 
 local currentController =nil;
 
-
+--local message =CS.MessageQueueManager.GetMessageQueue();
 
 function start()
 
-    --可以直接使用audio的加载也可以ResouresManager:LoadPath()
-    --该音乐前面有很长一段空白
-    --local music =AudioManager:LoadAudio("music/backGroundMusic");
-    --local music =ResourcesManager:LoadPath("Assets/Resources/music/backGroundMusic.mp3");
-    --[[
-    local function callback()
-        print("nil");
-    end
-
-    ScenesManager:AsyncLoadSceneCallBack(1,callback);
-    ]]--
-    --AudioManager:PlayBacKGroundMusic(music,1);
-    --local d=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/picture.pic","daily",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
-    --local a =ResourcesManager:instantiatePath("Assets/Resources/Prefabs/healthBar.prefab","healthBar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
-    --local d=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre","healthbar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
-     print("this is test area");
-    tTest=CS.Timer(1);
-    tTest:Start();
-
-    print("test area is down");
-
     controllerList={
         loginInController,
-        dailyController,
-        BattleController,
+        GatesController,
+        --BattleController,
         PomkController
     };
 
@@ -82,18 +69,11 @@ function start()
     if (currentController ~= nil and currentController.start ~= nil) then
         currentController.start();
     end
-    --print(ScenesManager:GetIndex());
+
 end
 
 function update()
 
-
-    if tTest and tTest.IsTimeUp then
-        print("down");
-        tTest =nil;
-        --coroutine.waitforframes(1);
-        --print("bagin");
-    end
     --切换场景
     currentController=controllerList[ScenesManager:GetIndex()+1];
 
@@ -118,3 +98,7 @@ function ondestroy()
     end
 end
 
+function response()
+    -- 将响应信息交由responseListener代理
+    responseListener.response(messageCast);
+end

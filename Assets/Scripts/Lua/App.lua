@@ -13,7 +13,7 @@ local CardListManager = require('CardListManager');
 -- 延时调用列表
 local delayFunc = {};
 
--- 延时调用函数
+-- 延时调用函数(全局)
 function global.invoke(func,delay)
     table.insert(delayFunc,{delay,func});
 end
@@ -23,8 +23,7 @@ end
 local currentController = nil;
 
 -- 初始化
-function init()
-    --CS.UnityEngine.Threading.Thread.Sleep(1000);
+local function init()
     -- 控制器设置
     currentController = battleController;
     -- 卡牌列表初始化
@@ -33,8 +32,8 @@ function init()
     currentController:init();
 end
 
--- 切换控制器
-function switchController(controller,...)
+-- 切换控制器(全局)
+function global.switchController(controller,...)
     currentController = controller;
     currentController:init(...);
 end

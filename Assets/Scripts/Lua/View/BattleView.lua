@@ -1,11 +1,11 @@
 local ScenesManager = require("ScenesManager");
 local UIUtil = require("UIUtil");
-local CardView = require("CardView");
-local EnemyView = require("EnemyView");
-local PlayerView = require("PlayerView");
+local CardAdapter = require("CardAdapter");
+local EnemyAdapter = require("EnemyAdapter");
+local PlayerAdapter = require("PlayerAdapter");
 local ResourcesManager = require("ResourcesManager");
 
-BattleView = {};
+local BattleView = {};
 
 ----
 --- 初始化变量和函数
@@ -58,9 +58,9 @@ local playerInfoPos = uiMap["PlayerInfoPos"];
 -- 玩家动画控制器
 local playerAnim = nil;
 
--- 加载玩家信息
-function createPlayerInfo(player, clickEvents)
-    playerObject = PlayerView:createView(player, playerInfoPos, clickEvents);
+-- 加载玩家信息界面
+local function createPlayerInfo(player, clickEvents)
+    playerObject = PlayerAdapter:createView(player, playerInfoPos, clickEvents);
     playerObject.transform.position = playerInfoPos.transform.position;
     playerAnim = playerObject:GetComponent("Animator");
 end
@@ -94,7 +94,7 @@ local enemyAnim = nil;
 
 -- 加载怪物（提供给controller使用）
 function createEnemy(enemy)
-    enemyObject = EnemyView:createView(enemy, enemyPos, enemy.name);
+    enemyObject = EnemyAdapter:createView(enemy, enemyPos, enemy.name);
     enemyObject.transform.position = enemyPos.transform.position;
     enemyAnim = enemyObject:GetComponent("Animator");
 end
@@ -183,7 +183,7 @@ end
 
 -- 新建卡牌到手牌（提供给controller使用）
 function BattleView:addCardToHand(card)
-    local cardObject = CardView:createView(card, uiMap["Hand"]);
+    local cardObject = CardAdapter:createView(card, uiMap["Hand"]);
     -- 发牌中不可被选中
     cardObject.tag = "Untagged";
     cardObject.transform.position = cardPile.transform.position;
@@ -197,7 +197,7 @@ function BattleView:addCardToHand(card)
 end
 
 -- 进入弃牌堆
-function putToDiscard(card)
+local function putToDiscard(card)
     if (handCards[card.object:GetHashCode()]) then
         removeFromHand(card);
     end
@@ -210,18 +210,18 @@ function putToDiscard(card)
 end
 
 -- 销毁卡牌（彻底删除卡牌）
-function destroyCard(card)
+local function destroyCard(card)
     if (handCards[card.object:GetHashCode()]) then
         handCards[card.object:GetHashCode()] = nil;
     end
-    CardView:destroy(card.card, card.object);
+    CardAdapter:destroy(card.card, card.object);
     card.card = nil;
     card.cardObject = nil;
     moveUtil = nil;
 end
 
 -- 从手牌列表中移除（即不参与手牌的排列）
-function removeFromHand(object)
+local function removeFromHand(object)
     local card = handCards[object:GetHashCode()];
     handCards[object:GetHashCode()] = nil;
     handCardCount = handCardCount - 1;
@@ -230,7 +230,7 @@ function removeFromHand(object)
 end
 
 -- 加入到手牌列表（参与手牌排列）
-function putToHand(card)
+local function putToHand(card)
     handCards[card.object:GetHashCode()] = card;
     handCardCount = handCardCount + 1;
     adjustHandsCard();
@@ -281,7 +281,7 @@ function BattleView:setPutCardListener(func)
 end
 
 --卡牌与鼠标的交互
-function cardInteraction()
+local function cardInteraction()
     --鼠标所在位置
     local mousePosition = screen2world(CS.UnityEngine.Input.mousePosition);
     if (card) then
@@ -375,23 +375,23 @@ end
 function BattleView:reload(player, enemy, clickEvents)
     -- 卸载场景中的界面
     for k, v in pairs(handCards) do
-        CardView:destroy(v.card, v.object);
+        CardAdapter:destroy(v.card, v.object);
     end
     handCards = {};
     handCardCount = 0;
     if (playerObject) then
-        PlayerView:destroy(player, playerObject);
+        PlayerAdapter:destroy(player, playerObject);
     end
     if (enemyObject) then
-        EnemyView:destroy(enemy, enemyObject);
+        EnemyAdapter:destroy(enemy, enemyObject);
     end
     -- 重载界面
-    package.loaded["PlayerView"] = nil;
-    package.loaded["EnemyView"] = nil;
-    package.loaded["CardView"] = nil;
-    CardView = require("CardView");
-    EnemyView = require("EnemyView");
-    PlayerView = require("PlayerView");
+    package.loaded["PlayerAdapter"] = nil;
+    package.loaded["EnemyAdapter"] = nil;
+    package.loaded["CardAdapter"] = nil;
+    CardAdapter = require("CardAdapter");
+    EnemyAdapter = require("EnemyAdapter");
+    PlayerAdapter = require("PlayerAdapter");
     ResourcesManager:clear();
 
     -- 手牌位置

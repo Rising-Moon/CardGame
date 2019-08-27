@@ -60,6 +60,7 @@ namespace XLuaBehaviour{
             addLuaPath("Assets.Scripts.Lua.Util");
             addLuaPath("Assets.Scripts.Lua.View");
             addLuaPath("Assets.Scripts.Lua.Manager");
+            addLuaPath("Assets.Scripts.Lua.Adapter");
 
 
             //将luaBehaviour注册到消息列表监听
@@ -190,8 +191,6 @@ namespace XLuaBehaviour{
                 script.scriptEnv.Dispose();
                 script.injections = null;
             }
-
-           
         }
         
         //接收消息处理后映射到lua中，消息内容在lua的messageCast变量中
