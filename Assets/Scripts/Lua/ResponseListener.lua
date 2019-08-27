@@ -2,6 +2,7 @@
 local pb = require('pb');
 local protoc = require('protoc');
 local fileReader = require('FileRead');
+local pomk =require("PomkEventController");
 
 -- 初始化变量
 local messageQueue = CS.MessageQueueManager.GetMessageQueue();
@@ -64,6 +65,10 @@ function ResponseListener.response(message)
         responseHandle.SocketResponse();
     elseif (messageCast.message.head == CS.Message.MessageType.SocketLuaPack) then
         responseHandle.SocketLuaPack();
+    elseif (messageCast.message.head == CS.Message.MessageType.Difficulty) then
+        print("From message difficult");
+        print(messageCast.message.msg);
+        --pomk.getMessage(messageCast.message.msg);
     end
 end
 

@@ -1,6 +1,6 @@
 -------------------------引用------------------
----
-
+--- 响应处理，处理来自服务器的响应
+local responseListener = require('ResponseListener');
 
 
 ---引用全局枚举表
@@ -35,43 +35,33 @@ local PathManager =require("PathManager");
 ---引入基类
 
 
+
 --引入logincontroller
 local loginInController =require("LoginInController");
---
-local dailyController =require("GatesController");
---
---local BattleController = require("BattleController");
---
+
+--引入gatesController
+local GatesController =require("GatesController");
+
+--引入battleController
+--目前不能使用，因为battleview在创建的时候，以场景battle的canvas创建uimap，导致在倒入battlecontroller的时候会报错
+--local BattleController = require('BattleController');
+
+--引入PomkController
 local PomkController = require("PomkController");
+
+-- 卡牌列表管理，卡牌信息都在其中进行管理
+local CardListManager = require('CardListManager');
 
 local currentController =nil;
 
-
+--local message =CS.MessageQueueManager.GetMessageQueue();
 
 function start()
 
-    --可以直接使用audio的加载也可以ResouresManager:LoadPath()
-    --该音乐前面有很长一段空白
-    --local music =AudioManager:LoadAudio("music/backGroundMusic");
-    --local music =ResourcesManager:LoadPath("Assets/Resources/music/backGroundMusic.mp3");
-    --[[
-    local function callback()
-        print("nil");
-    end
-
-    ScenesManager:AsyncLoadSceneCallBack(1,callback);
-    ]]--
-    --AudioManager:PlayBacKGroundMusic(music,1);
-    --local d=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/picture.pic","daily",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
-    --local a =ResourcesManager:instantiatePath("Assets/Resources/Prefabs/healthBar.prefab","healthBar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
-    --local d=ResourcesManager:instantiatePath("Assets/StreamingAssets/AssetBundles/human.pre","healthbar",ScenesManager:initRoot(),CS.UnityEngine.Vector3(0,0,0));
-     print("this is test area");
-
-    print("test area is down");
 
     controllerList={
         loginInController,
-        dailyController,
+        GatesController,
         --BattleController,
         PomkController
     };
@@ -80,12 +70,10 @@ function start()
     if (currentController ~= nil and currentController.start ~= nil) then
         currentController.start();
     end
-    --print(ScenesManager:GetIndex());
+
 end
 
 function update()
-
-
 
     --切换场景
     currentController=controllerList[ScenesManager:GetIndex()+1];
@@ -111,3 +99,7 @@ function ondestroy()
     end
 end
 
+function response()
+    -- 将响应信息交由responseListener代理
+    responseListener.response(messageCast);
+end

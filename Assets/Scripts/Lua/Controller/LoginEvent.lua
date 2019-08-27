@@ -3,16 +3,19 @@ local ScenesManager=require("ScenesManager");
 local LoginButtonController ={};
 
 local flag= 0;
+--组件
 local uiRoot=nil;
 local password=nil;
 local username=nil;
 local button =nil;
 local errorText =nil;
-local UI_Alpha =1;
+
 local alphaSpeed =2;
 local remUP =nil;
 
+--显示数值
 local canvasGroup;
+local UI_Alpha =1;
 
 local initState =1;
 
@@ -57,7 +60,7 @@ function LoginButtonController.listenLogin(callback)
                 flag =1;
                 errorText.transform.localScale=CS.UnityEngine.Vector3(0,0,0);
                 isON =remUP.gameObject:GetComponent(typeof(CS.UnityEngine.UI.Toggle)).isOn;
-                print(isON);
+                --print(isON);
                 if isON then
                     CS.UnityEngine.PlayerPrefs.SetString("username",usernameText);
                     CS.UnityEngine.PlayerPrefs.SetString("password",passwordText);
@@ -76,9 +79,7 @@ function LoginButtonController.listenLogin(callback)
 
     if flag ==1 then
         --button:GetComponent("Button").onClick:RemoveAllListeners();
-        --先别使用协程
-        --ScenesManager:AsyncLoadScene(1);
-        ScenesManager:LoadScene(1);
+        ScenesManager:AsyncLoadSceneBack(1);
         initState =1;
         flag=0;
     end
@@ -92,17 +93,16 @@ function LoginButtonController.listenLogin(callback)
 
     if UPTimer and UPTimer.IsTimeUp then
         UPTimer =nil;
-        if CS.UnityEngine.PlayerPrefs:HasKey("username") then
+        if CS.UnityEngine.PlayerPrefs:HasKey("username") and #username:GetComponent("InputField").text==0 then
             print("local username and password is on");
             username:GetComponent("InputField").text =CS.UnityEngine.PlayerPrefs.GetString("username","demo");
             password:GetComponent("InputField").text =CS.UnityEngine.PlayerPrefs.GetString("password","12345");
-
+        else
+            print("please input");
         end
     end
 
 
 end
-
-
 
 return LoginButtonController

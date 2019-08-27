@@ -4,15 +4,17 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
+
+
 //消息类
 public class Message{
     public Message.MessageType head;
     public string msg;
 
     public enum MessageType{
-        TestMessage,SocketToServer,SocketResponse,SocketLuaPack,Debug
+        TestMessage,SocketToServer,SocketResponse,SocketLuaPack,Debug,Difficulty
     }
-
+    
     public Message(MessageType head, string msg){
         this.head = head;
         this.msg = msg;
