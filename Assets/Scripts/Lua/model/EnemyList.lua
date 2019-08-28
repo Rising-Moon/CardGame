@@ -8,7 +8,7 @@ local EnemyList = {};
 local objectList = {
     TreeMan = {"TreeMan", 40, 1, 3, 20, 2, "Treeman"},
     Magician = {"Magician",30,1,20,20,2,"Magician"},
-    Vampire = {"Vampire",80,1,0,60,30,"Vampire"}
+    Vampire = {"Vampire",20,1,0,10,10,"Vampire"}
 }
 
 -- 创建敌人

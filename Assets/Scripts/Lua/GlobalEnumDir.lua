@@ -1,11 +1,12 @@
 ----------------------卡牌属性表-------------------
 cardInfo ={
     {
-        introduction="使用钝器攻击对方，\n造成5点伤害",
-        img="Stun_2",
-        name="棒击",
+        introduction="造成8点伤害，给予2层流血",
+        img="SIR_07",
+        name="背刺",
         valueMap={
-            atk=5
+            atk=8,
+            bleed=2
         },
         cost=2,
         cardId=1,
@@ -13,11 +14,11 @@ cardInfo ={
     },
 
     {
-        introduction="造成3点伤害",
+        introduction="造成6点伤害",
         img="SIR_12",
         name="割裂",
         valueMap={
-            atk=3
+            atk=6
         },
         cost=1,
         cardId=2,
@@ -25,46 +26,46 @@ cardInfo ={
     },
 
     {
-        introduction="进行防御，产生2点\n防御值",
+        introduction="进行防御，产生5点\n防御值",
         img="CoverUp_2",
         name="防御",
         valueMap={
-            def=2
+            def=5
         },
         cost=1,
         cardId=3,
         level =1
     },
     {
-        introduction="射出两只箭\n造成4点伤害",
-        img="SIH_08",
-        name="双重箭",
+        introduction="将你当前的防御值翻倍",
+        img="Close_2",
+        name="巩固",
         valueMap={
             mul_atk = 2,
         },
-        cost=4,
+        cost=2,
         cardId=4,
         level =1
     },
     {
-        introduction="造成4点伤害",
-        img="Lunge_2",
-        name="突进",
+        introduction="造成你当前护盾值的伤害",
+        img="ToFace_2",
+        name="盾击",
         valueMap={
-            atk = 4,
+            atk_def=1
         },
-        cost=4,
+        cost=1,
         cardId=5,
         level =1
     },
     {
-        introduction="警惕两个方向进行的\n攻击，防御值翻倍",
-        img="Close_2",
-        name="双向防御",
+        introduction="使对方失去3点力量",
+        img="Unarmed_2",
+        name="缴械",
         valueMap={
-            mul_def = 2
+            pow=-3
         },
-        cost=3,
+        cost=2,
         cardId=6,
         level =1
     }
