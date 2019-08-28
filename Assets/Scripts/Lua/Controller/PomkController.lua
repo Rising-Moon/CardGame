@@ -245,7 +245,9 @@ end
 
 function PomkController.update()
     if flag ==1 then
+        RM:clear();
         ScenesManager:LoadScene(1);
+
         switchController(GatesController);
         flag=0;
     end
